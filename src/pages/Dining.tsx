@@ -168,6 +168,19 @@ export const diningProductsByCity = {
       ],
       tags: ["Houston", "Coming Soon"]
     }
+  ],
+  "Knoxville": [
+    {
+      brand: "Connor's Steak & Seafood",
+      title: "Premium steaks and fresh seafood",
+      images: [
+        "/lovable-uploads/connors-steak-seafood.png",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&h=200&fit=crop"
+      ],
+      tags: ["Knoxville Exclusive", "Steak", "Seafood"]
+    }
   ]
 };
 
