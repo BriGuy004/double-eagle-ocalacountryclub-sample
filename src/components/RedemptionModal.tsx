@@ -10,6 +10,7 @@ import stKateLogo from "@/assets/st-kate-logo.png";
 import tennesseeNationalLogo from "@/assets/tennessee-national-logo.png";
 import northlandLogo from "@/assets/northland-country-club-logo.png";
 import tennesseanHotelLogo from "@/assets/tennessean-hotel-logo.png";
+import misterCarWashLogo from "@/assets/mister-car-wash-logo.png";
 
 interface RedemptionModalProps {
   isOpen: boolean;
@@ -535,6 +536,35 @@ export const RedemptionModal = ({
                   style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
                 >
                   Website: https://www.thetennesseanhotel.com/
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Lifestyle Details - Mister Car Wash */}
+          {category === "Lifestyle" && brand.includes("Mister Car Wash") && (
+            <div className="space-y-4 border-t border-white/10 pt-4">
+              <div className="space-y-4 text-[#94a3b8]">
+                <p className="text-sm md:text-base leading-relaxed">
+                  At Mister Car Wash®, we are committed to providing you with a high-quality wash with a personal touch. We use the latest technology and services to deliver the best car washing experience for your car and the environment. Customers can enjoy self-service vacuums, exterior clean services, Unlimited Wash Club® Membership Plans, locations nationwide, and on-site team members that can assist with questions. Join the Unlimited Wash Club® and experience value and convenience with unlimited car washes at any of our locations.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <img 
+                  src={misterCarWashLogo}
+                  alt="Mister Car Wash Logo"
+                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
+                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
+                />
+                <a 
+                  href="https://mistercarwash.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
+                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
+                >
+                  Website: https://mistercarwash.com/
                 </a>
               </div>
             </div>
