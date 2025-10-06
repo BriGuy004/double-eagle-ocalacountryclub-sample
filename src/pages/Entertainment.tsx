@@ -4,9 +4,21 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { SortFilter } from "@/components/SortFilter";
 import { ProductCard } from "@/components/ProductCard";
 import { CategorySelector } from "@/components/CategorySelector";
+import { useUser } from "@/contexts/UserContext";
 
 export const entertainmentProductsByCity = {
   "Rochester": [
+    {
+      brand: "Bowlocity",
+      title: "25% Off Birthday Packages",
+      images: [
+        "/lovable-uploads/bowlocity.png",
+        "https://images.unsplash.com/photo-1511882150382-421056c89033?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop"
+      ],
+      tags: ["Rochester Special", "Bowling", "Birthday"]
+    },
     {
       brand: "Rochester Civic Theatre",
       title: "Season ticket discounts",
@@ -169,7 +181,7 @@ export const entertainmentProductsByCity = {
 };
 
 const Entertainment = () => {
-  const [selectedLocation, setSelectedLocation] = useState("All Cities");
+  const { selectedLocation, setSelectedLocation } = useUser();
   const [selectedSort, setSelectedSort] = useState("Popular");
 
   // Get products based on selected location
