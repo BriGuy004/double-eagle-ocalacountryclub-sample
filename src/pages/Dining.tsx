@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
@@ -7,6 +6,7 @@ import { FilterPanel } from "@/components/FilterPanel";
 import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/UserContext";
 
 export const diningProductsByCity = {
   "Rochester": [
@@ -185,7 +185,7 @@ export const diningProductsByCity = {
 };
 
 const Dining = () => {
-  const [selectedLocation, setSelectedLocation] = useState("Rochester");
+  const { selectedLocation, setSelectedLocation } = useUser();
   const isMobile = useIsMobile();
 
   // Get products for the selected location only

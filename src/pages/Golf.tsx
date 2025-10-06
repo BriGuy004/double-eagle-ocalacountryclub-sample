@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
@@ -7,6 +6,7 @@ import { FilterPanel } from "@/components/FilterPanel";
 import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/UserContext";
 
 // Golf offers data organized by city
 export const golfProductsByCity = {
@@ -133,7 +133,7 @@ export const golfProductsByCity = {
 };
 
 const Golf = () => {
-  const [selectedLocation, setSelectedLocation] = useState("Milwaukee");
+  const { selectedLocation, setSelectedLocation } = useUser();
   const isMobile = useIsMobile();
 
   // Get products for the selected location only

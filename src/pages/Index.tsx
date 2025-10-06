@@ -7,6 +7,7 @@ import { FilterPanel } from "@/components/FilterPanel";
 import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/UserContext";
 
 // Premium lifestyle brands data organized by city
 const lifestyleProductsByCity = {
@@ -88,7 +89,7 @@ const lifestyleProductsByCity = {
 };
 
 const Index = () => {
-  const [selectedLocation, setSelectedLocation] = useState("Rochester");
+  const { selectedLocation, setSelectedLocation } = useUser();
   const [selectedCategory, setSelectedCategory] = useState("Lifestyle");
   const isMobile = useIsMobile();
 

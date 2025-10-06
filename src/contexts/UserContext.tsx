@@ -30,6 +30,8 @@ interface UserContextType {
   redeemOffer: (offer: { brand: string; title: string; discountAmount: number; category: string }) => void;
   toggleBookmark: (offer: { id: string; brand: string; title: string; category: string }) => void;
   isBookmarked: (offerId: string) => boolean;
+  selectedLocation: string;
+  setSelectedLocation: (location: string) => void;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -63,10 +65,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
   });
 
+  // Global location state persisted in localStorage
+  const [selectedLocation, setSelectedLocation] = useState<string>(() => {
+    const saved = localStorage.getItem('doubleEagleSelectedLocation');
+    return saved || "Rochester";
+  });
+
   // Save to localStorage whenever userData changes
   useEffect(() => {
     localStorage.setItem('doubleEagleUserData', JSON.stringify(userData));
   }, [userData]);
+
+  // Save selected location to localStorage
+  useEffect(() => {
+    localStorage.setItem('doubleEagleSelectedLocation', selectedLocation);
+  }, [selectedLocation]);
 
   const redeemOffer = (offer: { brand: string; title: string; discountAmount: number; category: string }) => {
     setUserData(prev => ({
@@ -118,7 +131,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ userData, redeemOffer, toggleBookmark, isBookmarked }}>
+    <UserContext.Provider value={{ userData, redeemOffer, toggleBookmark, isBookmarked, selectedLocation, setSelectedLocation }}>
       {children}
     </UserContext.Provider>
   );
