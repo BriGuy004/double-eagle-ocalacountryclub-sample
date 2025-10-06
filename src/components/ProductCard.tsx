@@ -25,32 +25,11 @@ const categoryColors = {
   Entertainment: "#f59e0b"
 };
 
-const extractDiscount = (title: string): string | null => {
-  const patterns = [
-    /(\d+%\s*off)/i,
-    /(\$\d+[,\d]*\s*off)/i,
-    /(save \$?\d+[,\d]*)/i,
-    /(up to \$?\d+[,\d]* off)/i,
-    /(bogo|buy one get one)/i,
-    /(complimentary|free)/i,
-    /(preferred pricing|member rate)/i
-  ];
-  
-  for (const pattern of patterns) {
-    const match = title.match(pattern);
-    if (match) {
-      return match[1].toUpperCase();
-    }
-  }
-  return null;
-};
-
 export const ProductCard = ({ brand, title, images, tags, offerId, category = "Lifestyle", discountAmount, discountPercent }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isBookmarked, toggleBookmark } = useBookmarks();
   
-  const discount = extractDiscount(title);
   const categoryColor = categoryColors[category];
   const isCurrentlyBookmarked = offerId ? isBookmarked(offerId) : false;
 
@@ -115,15 +94,6 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
             }`}
           />
         </button>
-        
-        {/* Large Discount Text - centered */}
-        {discount && (
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <h2 className="text-[24px] md:text-[32px] font-bold text-[#e67e3c] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              {discount}
-            </h2>
-          </div>
-        )}
       </div>
 
       {/* Card Content Area */}
