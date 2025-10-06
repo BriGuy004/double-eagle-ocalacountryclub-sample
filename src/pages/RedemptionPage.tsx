@@ -90,6 +90,14 @@ const redemptionData = {
   // HOTELS  
   "mayo-clinic-hotel": { brand: "Mayo Clinic Hotel", title: "Extended stay packages", description: "Mayo Clinic Hotel provides comfortable accommodations for medical visitors.", images: ["https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop"], offer: "Extended stay packages", terms: "Valid for 7+ nights." },
   "westin-edina-galleria": { brand: "Westin Edina Galleria", title: "Shopping package deals", description: "Connected to Galleria shopping center with luxury accommodations.", images: ["https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&h=600&fit=crop"], offer: "Shopping package deals", terms: "Includes gift cards." },
+  "the-tennessean-hotel": { 
+    brand: "The Tennessean Hotel", 
+    title: "Personal Luxury Hotel", 
+    description: "In a building dating from the 1982 World's Fair, this polished, modern hotel is a 7-minute walk from restaurants and shops in Market Square, 1 mile from Interstate 40 and 37 miles from Great Smoky Mountains National Park.\n\nThe unfussy rooms provide flat-screen TVs and free Wi-Fi, in addition to coffeemakers, minifridges and pillow-top mattresses. Some offer city views. Suites add sofabeds; 1-bedroom suites have separate living rooms. An upgraded suite features a fireplace, a piano and butler service. Room service is available 24 hours.\n\nThere's an elegant restaurant/bar with an old-world vibe, plus an indoor pool and a gym.", 
+    images: ["/lovable-uploads/tennessean-hotel.png", "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop", "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop"], 
+    offer: "Personal Luxury Hotel", 
+    terms: "Website: https://www.thetennesseanhotel.com/" 
+  },
   "four-seasons-minneapolis": { brand: "Four Seasons Minneapolis", title: "City skyline suites", description: "Four Seasons Minneapolis offers luxury suites with city views.", images: ["https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop"], offer: "City skyline suites", terms: "Subject to availability." },
   "hotel-minnetonka": { brand: "Hotel Minnetonka", title: "Lakefront luxury suites", description: "Hotel Minnetonka offers luxury on Lake Minnetonka shores.", images: ["https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&h=600&fit=crop"], offer: "Lakefront luxury suites", terms: "Lake view subject to availability." },
   "st-kate-the-arts-hotel": { 

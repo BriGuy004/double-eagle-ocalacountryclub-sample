@@ -69,7 +69,7 @@ export const getAllOffers = (): Offer[] => {
   Object.entries(hotelProductsByCity).forEach(([city, products]) => {
     products.forEach((product: any) => {
       offers.push({
-        offerId: product.brand.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''),
+        offerId: product.offerId || product.brand.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''),
         brand: product.brand,
         title: product.title,
         images: product.images,

@@ -171,6 +171,21 @@ export const hotelProductsByCity = {
       ],
       tags: ["Houston", "Coming Soon"]
     }
+  ],
+  "Knoxville": [
+    {
+      brand: "The Tennessean Hotel",
+      title: "Personal Luxury Hotel",
+      images: [
+        "/lovable-uploads/tennessean-hotel.png",
+        "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=300&h=200&fit=crop",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop"
+      ],
+      tags: ["Knoxville Exclusive", "Luxury", "Historic"],
+      description: "In a building dating from the 1982 World's Fair, this polished, modern hotel is a 7-minute walk from restaurants and shops in Market Square, 1 mile from Interstate 40 and 37 miles from Great Smoky Mountains National Park.\n\nThe unfussy rooms provide flat-screen TVs and free Wi-Fi, in addition to coffeemakers, minifridges and pillow-top mattresses. Some offer city views. Suites add sofabeds; 1-bedroom suites have separate living rooms. An upgraded suite features a fireplace, a piano and butler service. Room service is available 24 hours.\n\nThere's an elegant restaurant/bar with an old-world vibe, plus an indoor pool and a gym.",
+      website: "https://www.thetennesseanhotel.com/"
+    }
   ]
 };
 
