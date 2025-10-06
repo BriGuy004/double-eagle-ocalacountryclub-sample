@@ -48,6 +48,7 @@ export const arcisClubs: ClubLocation[] = [
   { id: "hyperion", name: "Hyperion Field Club", city: "Johnston", state: "Iowa", stateAbbrev: "IA", majorCity: "Des Moines", category: "private" },
   { id: "interlachen", name: "Interlachen Country Club", city: "Edina", state: "Minnesota", stateAbbrev: "MN", majorCity: "Minneapolis", category: "private" },
   { id: "minikahda", name: "Minikahda Club", city: "Minneapolis", state: "Minnesota", stateAbbrev: "MN", majorCity: "Minneapolis", category: "private" },
+  { id: "rochester-mn", name: "Rochester Golf Club", city: "Rochester", state: "Minnesota", stateAbbrev: "MN", majorCity: "Rochester", category: "private" },
   { id: "milwaukee", name: "Milwaukee Country Club", city: "River Hills", state: "Wisconsin", stateAbbrev: "WI", majorCity: "Milwaukee", category: "private" },
   { id: "blue-mound", name: "Blue Mound Golf & Country Club", city: "Wauwatosa", state: "Wisconsin", stateAbbrev: "WI", majorCity: "Milwaukee", category: "private" },
   { id: "belle-meade", name: "Belle Meade Country Club", city: "Nashville", state: "Tennessee", stateAbbrev: "TN", majorCity: "Nashville", category: "private" },
