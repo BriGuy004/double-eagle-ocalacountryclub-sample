@@ -9,6 +9,7 @@ import northgateLogo from "@/assets/northgate-logo.png";
 import stKateLogo from "@/assets/st-kate-logo.png";
 import tennesseeNationalLogo from "@/assets/tennessee-national-logo.png";
 import northlandLogo from "@/assets/northland-country-club-logo.png";
+import tennesseanHotelLogo from "@/assets/tennessean-hotel-logo.png";
 
 interface RedemptionModalProps {
   isOpen: boolean;
@@ -499,6 +500,41 @@ export const RedemptionModal = ({
                   style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
                 >
                   Hotel website
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Hotel Details - The Tennessean Hotel */}
+          {category === "Hotels" && brand.includes("The Tennessean Hotel") && (
+            <div className="space-y-4 border-t border-white/10 pt-4">
+              <div className="space-y-4 text-[#94a3b8]">
+                <p className="text-sm md:text-base leading-relaxed">
+                  In a building dating from the 1982 World's Fair, this polished, modern hotel is a 7-minute walk from restaurants and shops in Market Square, 1 mile from Interstate 40 and 37 miles from Great Smoky Mountains National Park.
+                </p>
+                <p className="text-sm md:text-base leading-relaxed">
+                  The unfussy rooms provide flat-screen TVs and free Wi-Fi, in addition to coffeemakers, minifridges and pillow-top mattresses. Some offer city views. Suites add sofabeds; 1-bedroom suites have separate living rooms. An upgraded suite features a fireplace, a piano and butler service. Room service is available 24 hours.
+                </p>
+                <p className="text-sm md:text-base leading-relaxed">
+                  There's an elegant restaurant/bar with an old-world vibe, plus an indoor pool and a gym.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <img 
+                  src={tennesseanHotelLogo}
+                  alt="The Tennessean Hotel Logo"
+                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
+                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
+                />
+                <a 
+                  href="https://www.thetennesseanhotel.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
+                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
+                >
+                  Website: https://www.thetennesseanhotel.com/
                 </a>
               </div>
             </div>
