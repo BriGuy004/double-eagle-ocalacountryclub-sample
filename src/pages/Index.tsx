@@ -19,6 +19,15 @@ const lifestyleProductsByCity = {
       ],
       tags: ["Popular", "Rochester"],
       offerId: "ferragamo-lifestyle"
+    },
+    {
+      brand: "Mister Car Wash",
+      title: "22% Off Unlimited Platinum Wash Club",
+      images: [
+        "/lovable-uploads/mister-car-wash.png"
+      ],
+      tags: ["Popular", "Rochester"],
+      offerId: "mister-car-wash-lifestyle"
     }
   ],
   "Edina": [
