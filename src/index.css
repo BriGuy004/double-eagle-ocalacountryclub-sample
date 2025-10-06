@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium Select Lifestyle Marketplace Design System */
+
+@layer base {
+  :root {
+    /* Lantana Golf Club Theme - Dark Blue & Orange */
+    --background: 210 35% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 210 35% 16%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 210 35% 18%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 25 85% 48%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 35% 22%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 210 35% 14%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 25 85% 48%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 35% 24%;
+    --input: 210 35% 18%;
+    --ring: 25 85% 48%;
+
+    --radius: 0.5rem;
+
+    /* Lantana gradients */
+    --gradient-premium: linear-gradient(135deg, hsl(210 35% 10%) 0%, hsl(210 35% 14%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(210 35% 14%) 0%, hsl(210 35% 18%) 100%);
+    
+    /* Shadows */
+    --shadow-luxury: 0 20px 40px -12px hsl(210 35% 8% / 0.4);
+    --shadow-card: 0 8px 25px -8px hsl(210 35% 8% / 0.3);
+    
+    /* Transitions */
+    --transition-luxury: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 210 35% 12%;
+    --foreground: 0 0% 95%;
+    --card: 210 35% 16%;
+    --card-foreground: 0 0% 95%;
+    --popover: 210 35% 16%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 25 85% 48%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 35% 22%;
+    --secondary-foreground: 0 0% 80%;
+    --muted: 210 35% 14%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 25 85% 48%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 35% 24%;
+    --input: 210 35% 20%;
+    --ring: 25 85% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background: var(--gradient-premium);
+    min-height: 100vh;
+  }
+
+  /* Premium typography - Mobile optimized */
+  h1 {
+    @apply text-2xl md:text-4xl lg:text-6xl font-light tracking-tight;
+    line-height: 1.6;
+  }
+
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl font-light tracking-tight;
+    line-height: 1.6;
+  }
+  
+  /* Mobile-optimized body text */
+  body {
+    line-height: 1.6;
+  }
+  
+  /* Touch-friendly minimum sizes */
+  @media (max-width: 768px) {
+    button, a, input, select {
+      min-height: 44px;
+    }
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-accent rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ring;
+  }
+}
+
+@layer components {
+  .card-luxury {
+    @apply bg-card border border-border rounded-lg overflow-hidden;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-luxury);
+    transform-style: preserve-3d;
+  }
+
+  .card-luxury:hover {
+    box-shadow: var(--shadow-luxury);
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  .card-dynamic {
+    @apply relative overflow-hidden rounded-xl;
+    background: linear-gradient(135deg, hsl(238 90% 16%) 0%, hsl(238 90% 22%) 100%);
+    border: 1px solid hsl(238 90% 30%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .card-dynamic:hover {
+    transform: translateY(-12px) rotateX(5deg) rotateY(5deg);
+    box-shadow: 
+      0 25px 50px -12px hsl(0 0% 100% / 0.15),
+      0 15px 35px -8px hsl(0 0% 100% / 0.1),
+      0 0 0 1px hsl(0 0% 100% / 0.1),
+      inset 0 1px 0 hsl(0 0% 100% / 0.2);
+  }
+
+  .card-dynamic::before {
+    content: '';
+    @apply absolute inset-0 opacity-0;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.1) 0%, transparent 50%);
+    transition: opacity var(--transition-luxury);
+  }
+
+  .card-dynamic:hover::before {
+    opacity: 1;
+  }
+
+  .image-gallery-dynamic {
+    @apply relative overflow-hidden;
+    perspective: 1000px;
+  }
+
+  .image-gallery-dynamic img {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .image-gallery-dynamic:hover img {
+    transform: scale(1.1) rotateY(2deg);
+  }
+
+  .tag-dynamic {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.9) 0%, hsl(0 0% 100% / 0.7) 100%);
+    color: hsl(238 90% 12%);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(0 0% 100% / 0.3);
+    transition: all 0.3s ease;
+  }
+
+  /* Only apply hover effects on devices that support hover */
+  @media (hover: hover) {
+    .tag-dynamic:hover {
+      background: hsl(0 0% 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px hsl(238 90% 5% / 0.3);
+    }
+  }
+  
+  /* Mobile-specific styles */
+  .mobile-container {
+    @apply px-4 md:px-6;
+  }
+  
+  .mobile-spacing {
+    @apply py-8 md:py-12;
+  }
+  
+  .mobile-gap {
+    @apply gap-4 md:gap-6;
+  }
+  
+  /* Touch states for mobile */
+  .touch-active:active {
+    @apply scale-95 opacity-90;
+  }
+  
+  /* Lazy loading placeholder */
+  .lazy-image {
+    @apply bg-muted animate-pulse;
+  }
+  
+  .lazy-image.loaded {
+    @apply animate-none;
+  }
+}
+
+/* Animation for mobile nav */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
