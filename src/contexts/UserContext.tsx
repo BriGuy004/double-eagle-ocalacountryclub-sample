@@ -41,7 +41,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     // Load from localStorage
     const saved = localStorage.getItem('doubleEagleUserData');
     if (saved) {
-      return JSON.parse(saved);
+      const data = JSON.parse(saved);
+      // Recalculate moneySaved from recentActivity to ensure sync
+      const moneySaved = data.recentActivity.reduce((sum: number, activity: Activity) => sum + activity.savings, 0);
+      return { ...data, moneySaved };
     }
     // Default data
     const recentActivity = [
