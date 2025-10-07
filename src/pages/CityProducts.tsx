@@ -4,7 +4,7 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { SortFilter } from "@/components/SortFilter";
 import { ProductCard } from "@/components/ProductCard";
 import { CategorySelector } from "@/components/CategorySelector";
-import { getClubsByMajorCity } from "@/data/arcisClubs";
+import { getClubsByMajorCity } from "@/data/allClubs";
 
 // Sample products generator based on selected city
 const generateCityProducts = (majorCity: string) => {

@@ -9,7 +9,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-import { getCitiesByState } from "@/data/arcisClubs";
+import { getCitiesByState } from "@/data/allClubs";
 
 interface LocationSelectorProps {
   selectedLocation: string;
