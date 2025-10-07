@@ -4,9 +4,10 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { SortFilter } from "@/components/SortFilter";
 import { ProductCard } from "@/components/ProductCard";
 import { CategorySelector } from "@/components/CategorySelector";
+import { useUser } from "@/contexts/UserContext";
 
 const Shopping = () => {
-  const [selectedLocation, setSelectedLocation] = useState("All Cities");
+  const { selectedLocation, setSelectedLocation } = useUser();
   const [selectedSort, setSelectedSort] = useState("Popular");
 
   // Shopping offers data organized by city

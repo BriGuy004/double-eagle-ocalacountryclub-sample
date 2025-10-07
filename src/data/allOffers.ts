@@ -53,9 +53,9 @@ const defaultClubImage = "/lovable-uploads/golf-course-main.png";
 
 // Club-specific images mapping
 const clubImages: Record<string, string> = {
-  "ancala-country-club": "/lovable-uploads/ancala-country-club.png",
-  "tatum-ranch-golf-club": "/lovable-uploads/tatum-ranch-golf-club.png",
-  "clubs-at-arrowhead-arizona": "/lovable-uploads/clubs-at-arrowhead.png",
+  "ancala": "/lovable-uploads/ancala-country-club.png",
+  "tatum-ranch": "/lovable-uploads/tatum-ranch-golf-club.png",
+  "arrowhead": "/lovable-uploads/clubs-at-arrowhead.png",
 };
 
 // Generate all offers from clubs
