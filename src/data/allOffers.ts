@@ -56,6 +56,7 @@ const clubImages: Record<string, string> = {
   "ancala": "/lovable-uploads/ancala-country-club.png",
   "tatum-ranch": "/lovable-uploads/tatum-ranch-golf-club.png",
   "arrowhead": "/lovable-uploads/clubs-at-arrowhead.png",
+  "eagle-brook": "/lovable-uploads/eagle-brook-country-club.png",
 };
 
 // Generate all offers from clubs

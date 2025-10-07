@@ -492,7 +492,7 @@ export const arcisClubs: ClubLocation[] = [
     city: "Chesterton",
     state: "Indiana",
     stateAbbrev: "IN",
-    majorCity: "Chicago",
+    majorCity: "Indianapolis",
     category: "private",
     portfolioCompany: "concert-golf",
     address: "1001 Sand Creek Drive, Chesterton, IN 46304",
