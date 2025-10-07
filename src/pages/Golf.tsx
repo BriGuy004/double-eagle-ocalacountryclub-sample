@@ -7,141 +7,19 @@ import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
-
-// Golf offers data organized by city
-export const golfProductsByCity = {
-    "Milwaukee": [
-      {
-        brand: "The Wisconsin Country Club - Concert Golf Partners",
-        title: "6200 Good Hope Rd, Milwaukee, WI 53223",
-        images: [
-          "/lovable-uploads/wisconsin-country-club.jpeg",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Milwaukee"],
-        offerId: "wisconsin-country-club"
-      }
-    ],
-    "Houston": [
-      {
-        brand: "Northgate Country Club - Concert Golf Properties",
-        title: "Houston, TX, United States",
-        images: [
-          "/lovable-uploads/northgate-country-club-v2.png",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Houston"],
-        offerId: "northgate-country-club"
-      },
-      {
-        brand: "Walden Golf Club - Concert Golf Partners",
-        title: "Montgomery, TX, United States",
-        images: [
-          "/lovable-uploads/walden-golf-club.png",
-          "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Montgomery"],
-        offerId: "walden-golf-club"
-      }
-    ],
-    "Knoxville": [
-      {
-        brand: "Tennessee National Golf Club – Hampton Golf",
-        title: "Loudon, United States",
-        images: [
-          "/lovable-uploads/tennessee-national-golf-club.png",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Knoxville"],
-        offerId: "tennessee-national-golf-club"
-      }
-    ],
-    "Duluth": [
-      {
-        brand: "Northland Country Club – Hampton Golf",
-        title: "Duluth, MN, United States",
-        images: [
-          "/lovable-uploads/northland-country-club.png",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Duluth"],
-        offerId: "northland-country-club"
-      }
-    ],
-    "Naples": [
-      {
-        brand: "Golf Club of The Everglades – Concert Golf Partners",
-        title: "Naples, FL, United States",
-        images: [
-          "/lovable-uploads/golf-club-everglades.png",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Naples"],
-        offerId: "golf-club-everglades"
-      }
-    ],
-    "Ponte Vedra Beach": [
-      {
-        brand: "Marsh Landing Country Club – Concert Golf Partners",
-        title: "Ponte Vedra Beach, FL, United States",
-        images: [
-          "https://images.unsplash.com/photo-1592919505780-303950717480?w=600&h=400&fit=crop",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Ponte Vedra Beach"],
-        offerId: "marsh-landing-country-club"
-      }
-    ],
-    "Kissimmee": [
-      {
-        brand: "Stonegate Golf Club – Hampton Golf",
-        title: "Kissimmee, FL, United States",
-        images: [
-          "/lovable-uploads/stonegate-golf-club.png",
-          "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Kissimmee"],
-        offerId: "stonegate-golf-club"
-      }
-    ],
-    "Fernandina Beach": [
-      {
-        brand: "The Golf Club Of Amelia Island – Concert Golf Partners",
-        title: "Fernandina Beach, FL, United States",
-        images: [
-          "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=600&h=400&fit=crop",
-          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=300&h=200&fit=crop",
-          "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=300&h=200&fit=crop"
-        ],
-        tags: ["Championship", "Fernandina Beach"],
-        offerId: "golf-club-amelia-island"
-      }
-    ]
-};
+import { getAllOffers } from "@/data/allOffers";
 
 const Golf = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const isMobile = useIsMobile();
 
-  // Get products for the selected location only
-  const locationProducts = (golfProductsByCity[selectedLocation as keyof typeof golfProductsByCity] || []).map(p => ({
-    ...p,
-    category: "Golf" as const,
-    city: selectedLocation
-  }));
+  // Get all golf offers from the centralized data
+  const allGolfOffers = getAllOffers().filter(offer => offer.category === "Golf");
+  
+  // Filter by selected location (majorCity)
+  const locationProducts = selectedLocation === "All Cities" 
+    ? allGolfOffers 
+    : allGolfOffers.filter(offer => offer.majorCity === selectedLocation);
 
   const {
     searchQuery,
@@ -220,15 +98,15 @@ const Golf = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade-in">
-            {filteredProducts.map((product, index) => (
+            {filteredProducts.map((offer) => (
             <ProductCard
-              key={`${selectedLocation}-${index}`}
-              brand={product.brand}
-              title={product.title}
-              images={product.images}
-              tags={product.tags}
-              description={product.title}
-              offerId={product.offerId}
+              key={offer.offerId}
+              brand={offer.brand}
+              title={offer.title}
+              images={offer.images}
+              tags={offer.tags}
+              description={offer.description}
+              offerId={offer.offerId}
               category="Golf"
             />
             ))}

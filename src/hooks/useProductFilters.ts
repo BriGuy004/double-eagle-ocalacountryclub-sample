@@ -8,8 +8,9 @@ export interface Product {
   tags: string[];
   description?: string;
   offerId?: string;
-  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle";
+  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment";
   city?: string;
+  majorCity?: string;
 }
 
 export const useProductFilters = (products: Product[]) => {
