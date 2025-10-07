@@ -44,9 +44,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       return JSON.parse(saved);
     }
     // Default data
+    const recentActivity = [
+      { id: "1", brand: "BMW", offer: "Up to $3000 off select models", dateSaved: "Dec 8, 2024", savings: 2800 },
+      { id: "2", brand: "Tumi", offer: "Up to 40% off online purchases", dateSaved: "Dec 5, 2024", savings: 320 },
+      { id: "3", brand: "Brooks Brothers", offer: "15% off", dateSaved: "Dec 1, 2024", savings: 180 },
+      { id: "4", brand: "Maui Jim", offer: "Up to 35% off", dateSaved: "Nov 28, 2024", savings: 150 }
+    ];
+    
+    // Calculate total money saved from recent activity
+    const moneySaved = recentActivity.reduce((sum, activity) => sum + activity.savings, 0);
+    
     return {
       offersRedeemed: 12,
-      moneySaved: 2450,
+      moneySaved,
       pointsBalance: 1250,
       bookmarkedOffers: [
         { id: "mb-1", brand: "Mercedes-Benz", offer: "Preferred Pricing", category: "Automotive" },
@@ -54,12 +64,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         { id: "fs-1", brand: "Four Seasons", offer: "Member Rates", category: "Hotels" },
         { id: "nobu-1", brand: "Nobu", offer: "VIP Dining Experience", category: "Dining" }
       ],
-      recentActivity: [
-        { id: "1", brand: "BMW", offer: "Up to $3000 off select models", dateSaved: "Dec 8, 2024", savings: 2800 },
-        { id: "2", brand: "Tumi", offer: "Up to 40% off online purchases", dateSaved: "Dec 5, 2024", savings: 320 },
-        { id: "3", brand: "Brooks Brothers", offer: "15% off", dateSaved: "Dec 1, 2024", savings: 180 },
-        { id: "4", brand: "Maui Jim", offer: "Up to 35% off", dateSaved: "Nov 28, 2024", savings: 150 }
-      ],
+      recentActivity,
       memberSince: "March 2008",
       currentTier: "Platinum"
     };
