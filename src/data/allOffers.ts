@@ -57,6 +57,9 @@ const clubImages: Record<string, string> = {
   "tatum-ranch": "/lovable-uploads/tatum-ranch-golf-club.png",
   "arrowhead": "/lovable-uploads/clubs-at-arrowhead.png",
   "eagle-brook": "/lovable-uploads/eagle-brook-country-club.png",
+  "sand-creek-cc": "/lovable-uploads/sand-creek-country-club.png",
+  "hawthorns-gcc": "/lovable-uploads/hawthorns-golf-country-club.png",
+  "sagamore-club": "/lovable-uploads/sagamore-club.png",
 };
 
 // Generate all offers from clubs
