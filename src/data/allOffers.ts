@@ -51,11 +51,21 @@ const entertainmentDiscounts = [
 // Default club image
 const defaultClubImage = "/lovable-uploads/golf-course-main.png";
 
+// Club-specific images mapping
+const clubImages: Record<string, string> = {
+  "ancala-country-club": "/lovable-uploads/ancala-country-club.png",
+  "tatum-ranch-golf-club": "/lovable-uploads/tatum-ranch-golf-club.png",
+  "clubs-at-arrowhead-arizona": "/lovable-uploads/clubs-at-arrowhead.png",
+};
+
 // Generate all offers from clubs
 export const getAllOffers = (): Offer[] => {
   const offers: Offer[] = [];
 
   arcisClubs.forEach((club) => {
+    // Get club-specific image or use default
+    const clubImage = clubImages[club.id] || defaultClubImage;
+    
     // Golf offer
     offers.push({
       offerId: `${club.id}-golf`,
@@ -64,7 +74,7 @@ export const getAllOffers = (): Offer[] => {
       title: `${club.name} - Golf Access`,
       description: `Exclusive golf benefits at ${club.name} in ${club.city}, ${club.state}`,
       discount: golfDiscounts[Math.floor(Math.random() * golfDiscounts.length)],
-      images: [defaultClubImage],
+      images: [clubImage],
       tags: ["Golf", "Private Club", club.category],
       category: "Golf",
       city: club.city,
@@ -80,7 +90,7 @@ export const getAllOffers = (): Offer[] => {
       title: `${club.name} - Dining`,
       description: `Fine dining privileges at ${club.name} in ${club.city}, ${club.state}`,
       discount: diningDiscounts[Math.floor(Math.random() * diningDiscounts.length)],
-      images: [defaultClubImage],
+      images: [clubImage],
       tags: ["Dining", "Restaurant", club.category],
       category: "Dining",
       city: club.city,
@@ -96,7 +106,7 @@ export const getAllOffers = (): Offer[] => {
       title: `${club.name} - Club Amenities`,
       description: `Full amenity access at ${club.name} in ${club.city}, ${club.state}`,
       discount: entertainmentDiscounts[Math.floor(Math.random() * entertainmentDiscounts.length)],
-      images: [defaultClubImage],
+      images: [clubImage],
       tags: ["Entertainment", "Amenities", club.category],
       category: "Entertainment",
       city: club.city,
