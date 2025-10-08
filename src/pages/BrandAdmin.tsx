@@ -136,15 +136,15 @@ const BrandAdmin = () => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Brand Management</h1>
-            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">/admin/golf</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/lifestyle</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/hotels</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/dining</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/shopping</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/travel</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/entertainment</code></p>
+            <h1 className="text-4xl font-bold text-white mb-2">Golf Club Management</h1>
+            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">/admin/golf</code></p>
           </div>
           <Button
             onClick={() => setIsAddingBrand(!isAddingBrand)}
             variant="orange"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add New Brand
+            Add New Golf Club
           </Button>
         </div>
 
@@ -250,7 +250,7 @@ const BrandAdmin = () => {
                         <CardTitle className="flex items-center gap-2">
                           {brand.name}
                           {brand.is_active && (
-                            <Badge variant="default" className="ml-2">
+                            <Badge variant="orange" className="ml-2">
                               <CheckCircle2 className="w-3 h-3 mr-1" />
                               Active
                             </Badge>
