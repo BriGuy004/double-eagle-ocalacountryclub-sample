@@ -10,8 +10,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { ColorPicker } from "@/components/ColorPicker";
+import { useLocation } from "react-router-dom";
 
 const BrandAdmin = () => {
+  const location = useLocation();
   const { currentBrand, allBrands, setActiveBrand, isLoading } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
@@ -26,6 +28,21 @@ const BrandAdmin = () => {
     primary_glow_color: "38 70% 25%",
     accent_color: "45 85% 50%"
   });
+
+  // Determine category based on route
+  const getCategoryInfo = () => {
+    const path = location.pathname;
+    if (path.includes('/golf')) return { title: 'Golf Club', route: '/admin/golf' };
+    if (path.includes('/hotels')) return { title: 'Hotel', route: '/admin/hotels' };
+    if (path.includes('/dining')) return { title: 'Dining', route: '/admin/dining' };
+    if (path.includes('/entertainment')) return { title: 'Entertainment', route: '/admin/entertainment' };
+    if (path.includes('/shopping')) return { title: 'Shopping', route: '/admin/shopping' };
+    if (path.includes('/travel')) return { title: 'Travel', route: '/admin/travel' };
+    if (path.includes('/lifestyle')) return { title: 'Lifestyle', route: '/admin/lifestyle' };
+    return { title: 'Brand', route: '/admin' };
+  };
+
+  const categoryInfo = getCategoryInfo();
 
   const handleBrandSwitch = async (clubId: string) => {
     await setActiveBrand(clubId);
@@ -136,15 +153,15 @@ const BrandAdmin = () => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Golf Club Management</h1>
-            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">/admin/golf</code></p>
+            <h1 className="text-4xl font-bold text-white mb-2">{categoryInfo.title} Management</h1>
+            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">{categoryInfo.route}</code></p>
           </div>
           <Button
             onClick={() => setIsAddingBrand(!isAddingBrand)}
             variant="orange"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add New Golf Club
+            Add New {categoryInfo.title}
           </Button>
         </div>
 
@@ -152,7 +169,7 @@ const BrandAdmin = () => {
         {isAddingBrand && (
           <Card className="mb-8 border-primary">
             <CardHeader>
-              <CardTitle>Add New Country Club Brand</CardTitle>
+              <CardTitle>Add New {categoryInfo.title}</CardTitle>
               <CardDescription>Upload logos and configure brand colors</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -233,8 +250,8 @@ const BrandAdmin = () => {
         {editingBrandId && (
           <Card className="mb-8 border-primary">
             <CardHeader>
-              <CardTitle>Edit Golf Club</CardTitle>
-              <CardDescription>Update club information and branding</CardDescription>
+              <CardTitle>Edit {categoryInfo.title}</CardTitle>
+              <CardDescription>Update information and branding</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
