@@ -308,5 +308,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.thetennesseanhotel.com/",
     redemption_info: "Present member card at check-in",
     description: "Personal luxury hotel in downtown Knoxville"
+  },
+  {
+    club_id: "karishma",
+    name: "Karishma Boutique",
+    logo_url: "/lovable-uploads/karishma-logo.png",
+    hero_image_url: "/lovable-uploads/karishma-hero.png",
+    offer_card_url: "/lovable-uploads/karishma-hero.png",
+    primary_color: "0 0% 25%",
+    primary_glow_color: "0 0% 35%",
+    accent_color: "15 85% 55%",
+    is_active: false,
+    category: "Shopping",
+    state: "FL",
+    city: "Ocala",
+    full_address: "56 SE 1st Avenue #102, Ocala, FL 34471",
+    website: "https://karishmaboutique.com/",
+    redemption_info: "Show member card at checkout",
+    description: "Boutique fashion in downtown Ocala"
   }
 ];
