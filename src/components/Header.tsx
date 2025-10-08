@@ -87,7 +87,12 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                   variant="outline" 
                   size="sm"
                   onClick={() => navigate('/member-dashboard')}
-                  className="bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+                  className="font-semibold"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    borderColor: 'var(--color-primary)'
+                  }}
                 >
                   Member Account
                 </Button>
