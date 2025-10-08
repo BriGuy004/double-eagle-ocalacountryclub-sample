@@ -580,6 +580,7 @@ const BrandAdmin = () => {
                         <Button
                           onClick={() => handleBrandSwitch(brand.club_id)}
                           className="flex-1"
+                          variant="orange"
                         >
                           Switch
                         </Button>
