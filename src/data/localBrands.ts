@@ -200,5 +200,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.aesthetichouse.com",
     redemption_info: "Show member card when booking services",
     description: "Premier aesthetic and wellness services"
+  },
+  {
+    club_id: "hampshire",
+    name: "Hampshire Country Club",
+    logo_url: "/lovable-uploads/hampshire-logo.png",
+    hero_image_url: "/lovable-uploads/hampshire-hero.png",
+    offer_card_url: "/lovable-uploads/hampshire-hero.png",
+    primary_color: "210 50% 30%",
+    primary_glow_color: "210 50% 40%",
+    accent_color: "160 40% 35%",
+    is_active: false,
+    category: "Golf",
+    state: "NY",
+    city: "Mamaroneck",
+    full_address: "Mamaroneck, NY",
+    website: "https://www.hampshireclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Devereaux Emmet design, Long Island Sound views, 18-hole private club, Hampton Golf managed"
   }
 ];
