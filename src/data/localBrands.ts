@@ -74,5 +74,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.southernhillsplantationclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Pete Dye Signature design, Top 100 Residential Courses in US, dramatic elevation changes"
+  },
+  {
+    club_id: "palencia",
+    name: "The Palencia Club",
+    logo_url: "/lovable-uploads/placeholder.png",
+    hero_image_url: "/lovable-uploads/palencia-hero.png",
+    offer_card_url: "/lovable-uploads/palencia-hero.png",
+    primary_color: "210 45% 35%",
+    primary_glow_color: "210 45% 45%",
+    accent_color: "30 60% 50%",
+    is_active: false,
+    category: "Golf",
+    state: "FL",
+    city: "St. Augustine",
+    full_address: "St. Augustine, FL",
+    website: "https://www.palenciaclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Arthur Hills design, opened 2002, along Intracoastal Waterway, 7,071 yards"
   }
 ];
