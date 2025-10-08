@@ -60,8 +60,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             className={isEdit ? "bg-muted" : errors.club_id ? "border-destructive" : ""}
             required
           />
-          {errors.club_id && (
+          {errors.club_id ? (
             <p className="text-sm text-destructive mt-1">{errors.club_id}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-1">
+              Used in URLs. Only lowercase letters, numbers, and hyphens. Cannot be changed after creation.
+            </p>
           )}
         </div>
         <div>
@@ -130,8 +134,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           placeholder="e.g., https://example.com"
           className={errors.website ? "border-destructive" : ""}
         />
-        {errors.website && (
+        {errors.website ? (
           <p className="text-sm text-destructive mt-1">{errors.website}</p>
+        ) : (
+          <p className="text-xs text-muted-foreground mt-1">
+            Must include http:// or https://
+          </p>
         )}
       </div>
 
@@ -287,6 +295,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({
       {categoryInfo.category === 'Golf' && (
         <div className="space-y-2">
           <Label>Brand Colors</Label>
+          <p className="text-xs text-muted-foreground mb-2">
+            Colors in HSL format (e.g., "38 70% 15%"). Used to theme the brand's pages.
+          </p>
           <div className="grid grid-cols-3 gap-4">
             <ColorPicker
               label="Primary"
