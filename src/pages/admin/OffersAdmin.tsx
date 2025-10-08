@@ -52,7 +52,7 @@ export const OffersAdmin = ({ category }: OffersAdminProps) => {
     state: "",
   });
 
-  const { data: offers, isLoading } = useQuery({
+  const { data: offers, isLoading, error } = useQuery({
     queryKey: ['offers', category],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -61,10 +61,17 @@ export const OffersAdmin = ({ category }: OffersAdminProps) => {
         .eq('category', category)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching offers:', error);
+        throw error;
+      }
       return data;
     },
   });
+
+  if (error) {
+    console.error('Query error:', error);
+  }
 
   const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', isEdit = false) => {
     const reader = new FileReader();
@@ -159,7 +166,25 @@ export const OffersAdmin = ({ category }: OffersAdminProps) => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center">Loading {category} offers...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center text-destructive">
+          Error loading offers. Please refresh the page.
+          <br />
+          <Button onClick={() => window.location.reload()} className="mt-4" variant="orange">
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const getTitle = () => {
