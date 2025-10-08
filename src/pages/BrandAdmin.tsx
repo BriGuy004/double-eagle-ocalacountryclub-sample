@@ -32,17 +32,22 @@ const BrandAdmin = () => {
   // Determine category based on route
   const getCategoryInfo = () => {
     const path = location.pathname;
-    if (path.includes('/golf')) return { title: 'Golf Club', route: '/admin/golf' };
-    if (path.includes('/hotels')) return { title: 'Hotel', route: '/admin/hotels' };
-    if (path.includes('/dining')) return { title: 'Dining', route: '/admin/dining' };
-    if (path.includes('/entertainment')) return { title: 'Entertainment', route: '/admin/entertainment' };
-    if (path.includes('/shopping')) return { title: 'Shopping', route: '/admin/shopping' };
-    if (path.includes('/travel')) return { title: 'Travel', route: '/admin/travel' };
-    if (path.includes('/lifestyle')) return { title: 'Lifestyle', route: '/admin/lifestyle' };
-    return { title: 'Brand', route: '/admin' };
+    if (path.includes('/golf')) return { title: 'Golf Club', route: '/admin/golf', category: 'Golf' };
+    if (path.includes('/hotels')) return { title: 'Hotel', route: '/admin/hotels', category: 'Hotels' };
+    if (path.includes('/dining')) return { title: 'Dining', route: '/admin/dining', category: 'Dining' };
+    if (path.includes('/entertainment')) return { title: 'Entertainment', route: '/admin/entertainment', category: 'Entertainment' };
+    if (path.includes('/shopping')) return { title: 'Shopping', route: '/admin/shopping', category: 'Shopping' };
+    if (path.includes('/travel')) return { title: 'Travel', route: '/admin/travel', category: 'Travel' };
+    if (path.includes('/lifestyle')) return { title: 'Lifestyle', route: '/admin/lifestyle', category: 'Lifestyle' };
+    return { title: 'Brand', route: '/admin', category: 'All' };
   };
 
   const categoryInfo = getCategoryInfo();
+  
+  // Filter brands by category
+  const filteredBrands = allBrands.filter(brand => 
+    categoryInfo.category === 'All' || brand.category === categoryInfo.category
+  );
 
   const handleBrandSwitch = async (clubId: string) => {
     await setActiveBrand(clubId);
@@ -323,7 +328,7 @@ const BrandAdmin = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allBrands.map((brand) => {
+          {filteredBrands.map((brand) => {
             const isEditing = editingBrandId === brand.id;
             if (isEditing) return null; // Skip rendering in grid when editing
 

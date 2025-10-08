@@ -11,6 +11,7 @@ interface Brand {
   primary_glow_color: string;
   accent_color: string;
   is_active: boolean;
+  category?: string;
 }
 
 interface BrandContextType {
@@ -79,7 +80,8 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       primary_color: '38 70% 15%',
       primary_glow_color: '38 70% 25%',
       accent_color: '45 85% 50%',
-      is_active: true
+      is_active: true,
+      category: 'Golf'
     };
     
     setAllBrands([fallbackBrand]);
