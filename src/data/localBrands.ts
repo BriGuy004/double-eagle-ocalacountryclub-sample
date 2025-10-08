@@ -254,5 +254,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.onioncreekclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Jimmy Demaret design (3-time Masters Champion), 27-hole course, Founded 1974, Site of Senior PGA Tour founding, Arcis Golf managed"
+  },
+  {
+    club_id: "gentlecreek",
+    name: "Gentle Creek Country Club",
+    logo_url: "/lovable-uploads/gentlecreek-logo.png",
+    hero_image_url: "/lovable-uploads/gentlecreek-hero.png",
+    offer_card_url: "/lovable-uploads/gentlecreek-hero.png",
+    primary_color: "200 45% 35%",
+    primary_glow_color: "200 45% 45%",
+    accent_color: "140 40% 40%",
+    is_active: false,
+    category: "Golf",
+    state: "TX",
+    city: "Prosper",
+    full_address: "Prosper, TX",
+    website: "https://www.gentlecreek.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "D.A. Weibring design, Top 10 in DFW, Top 50 in Texas, 22-acre lake, Arcis Golf managed"
   }
 ];
