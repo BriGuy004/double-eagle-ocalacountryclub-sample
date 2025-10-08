@@ -344,5 +344,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.shipsticks.com/",
     redemption_info: "Use member code when booking online",
     description: "Golf club and luggage shipping service"
+  },
+  {
+    club_id: "woodlands",
+    name: "The Woodlands Country Club",
+    logo_url: "/lovable-uploads/woodlands-logo.png",
+    hero_image_url: "/lovable-uploads/woodlands-hero.png",
+    offer_card_url: "/lovable-uploads/woodlands-hero.png",
+    primary_color: "145 45% 28%",
+    primary_glow_color: "145 45% 38%",
+    accent_color: "40 65% 50%",
+    is_active: false,
+    category: "Golf",
+    state: "TX",
+    city: "The Woodlands",
+    full_address: "The Woodlands, TX",
+    website: "https://www.thewoodlandscc.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "5 championship courses, Gary Player and Arnold Palmer designs, Arcis Golf managed"
   }
 ];
