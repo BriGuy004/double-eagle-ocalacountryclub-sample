@@ -236,5 +236,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.tennesseenational.com/",
     redemption_info: "Show member card at pro shop",
     description: "Greg Norman Signature design, Top 10 courses in Tennessee, Watts Bar Lake views, Hampton Golf managed"
+  },
+  {
+    club_id: "onioncreek",
+    name: "Onion Creek Club",
+    logo_url: "/lovable-uploads/onioncreek-logo.png",
+    hero_image_url: "/lovable-uploads/onioncreek-hero.png",
+    offer_card_url: "/lovable-uploads/onioncreek-hero.png",
+    primary_color: "145 40% 30%",
+    primary_glow_color: "145 40% 40%",
+    accent_color: "35 60% 45%",
+    is_active: false,
+    category: "Golf",
+    state: "TX",
+    city: "Austin",
+    full_address: "Austin, TX",
+    website: "https://www.onioncreekclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Jimmy Demaret design (3-time Masters Champion), 27-hole course, Founded 1974, Site of Senior PGA Tour founding, Arcis Golf managed"
   }
 ];
