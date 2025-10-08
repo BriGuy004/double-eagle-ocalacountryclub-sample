@@ -24,6 +24,7 @@ export type Database = {
           is_active: boolean | null
           logo_url: string
           name: string
+          offer_card_url: string | null
           primary_color: string
           primary_glow_color: string
           updated_at: string | null
@@ -37,6 +38,7 @@ export type Database = {
           is_active?: boolean | null
           logo_url: string
           name: string
+          offer_card_url?: string | null
           primary_color: string
           primary_glow_color: string
           updated_at?: string | null
@@ -50,6 +52,7 @@ export type Database = {
           is_active?: boolean | null
           logo_url?: string
           name?: string
+          offer_card_url?: string | null
           primary_color?: string
           primary_glow_color?: string
           updated_at?: string | null

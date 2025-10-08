@@ -21,6 +21,7 @@ const BrandAdmin = () => {
     name: "",
     logo_url: "",
     hero_image_url: "",
+    offer_card_url: "",
     primary_color: "38 70% 15%",
     primary_glow_color: "38 70% 25%",
     accent_color: "45 85% 50%"
@@ -32,7 +33,7 @@ const BrandAdmin = () => {
     setTimeout(() => window.location.reload(), 1000);
   };
 
-  const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url', isEdit = false) => {
+  const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', isEdit = false) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const dataUrl = reader.result as string;
@@ -53,7 +54,7 @@ const BrandAdmin = () => {
   };
 
   const handleAddBrand = async () => {
-    if (!newBrand.club_id || !newBrand.name || !newBrand.logo_url || !newBrand.hero_image_url) {
+    if (!newBrand.club_id || !newBrand.name || !newBrand.logo_url || !newBrand.hero_image_url || !newBrand.offer_card_url) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -74,6 +75,7 @@ const BrandAdmin = () => {
       name: "",
       logo_url: "",
       hero_image_url: "",
+      offer_card_url: "",
       primary_color: "38 70% 15%",
       primary_glow_color: "38 70% 25%",
       accent_color: "45 85% 50%"
@@ -95,6 +97,7 @@ const BrandAdmin = () => {
         name: editedBrand.name,
         logo_url: editedBrand.logo_url,
         hero_image_url: editedBrand.hero_image_url,
+        offer_card_url: editedBrand.offer_card_url,
         primary_color: editedBrand.primary_color,
         primary_glow_color: editedBrand.primary_glow_color,
         accent_color: editedBrand.accent_color
@@ -172,7 +175,7 @@ const BrandAdmin = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <ImageUpload
                   label="Logo"
                   currentUrl={newBrand.logo_url}
@@ -183,6 +186,13 @@ const BrandAdmin = () => {
                   label="Hero Image"
                   currentUrl={newBrand.hero_image_url}
                   onImageSelect={(file) => handleImageUpload(file, 'hero_image_url')}
+                  thumbnail
+                />
+                <ImageUpload
+                  label="Offer Card"
+                  currentUrl={newBrand.offer_card_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'offer_card_url')}
+                  thumbnail
                 />
               </div>
 
@@ -255,7 +265,7 @@ const BrandAdmin = () => {
                   <div className="space-y-4">
                     {isEditing ? (
                       <>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-3 gap-4">
                           <ImageUpload
                             label="Logo"
                             currentUrl={displayBrand.logo_url}
@@ -266,6 +276,13 @@ const BrandAdmin = () => {
                             label="Hero Image"
                             currentUrl={displayBrand.hero_image_url}
                             onImageSelect={(file) => handleImageUpload(file, 'hero_image_url', true)}
+                            thumbnail
+                          />
+                          <ImageUpload
+                            label="Offer Card"
+                            currentUrl={displayBrand.offer_card_url}
+                            onImageSelect={(file) => handleImageUpload(file, 'offer_card_url', true)}
+                            thumbnail
                           />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
