@@ -46,21 +46,29 @@ export const BrandForm: React.FC<BrandFormProps> = ({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Club ID (unique, lowercase)</Label>
+          <Label className="flex items-center gap-1">
+            Club ID (unique, lowercase)
+            <span className="text-destructive">*</span>
+          </Label>
           <Input
             value={brand.club_id || ""}
             onChange={(e) => onChange({ club_id: e.target.value })}
             placeholder="e.g., northgate"
             disabled={isEdit}
             className={isEdit ? "bg-muted" : ""}
+            required
           />
         </div>
         <div>
-          <Label>Name</Label>
+          <Label className="flex items-center gap-1">
+            Name
+            <span className="text-destructive">*</span>
+          </Label>
           <Input
             value={brand.name || ""}
             onChange={(e) => onChange({ name: e.target.value })}
             placeholder="e.g., Northgate Country Club"
+            required
           />
         </div>
       </div>
@@ -122,7 +130,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label>Images</Label>
+          <Label className="flex items-center gap-1">
+            Images
+            <span className="text-destructive">*</span>
+          </Label>
           <Button
             type="button"
             variant="ghost"
@@ -164,10 +175,14 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         ) : (
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label>Logo URL</Label>
+              <Label className="flex items-center gap-1">
+                Logo URL
+                <span className="text-destructive">*</span>
+              </Label>
               <Input
                 value={brand.logo_url || ""}
                 onChange={(e) => onChange({ logo_url: e.target.value })}
+                required
                 placeholder="/lovable-uploads/logo.png"
               />
               {brand.logo_url && (
@@ -175,10 +190,14 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               )}
             </div>
             <div>
-              <Label>Hero Image URL</Label>
+              <Label className="flex items-center gap-1">
+                Hero Image URL
+                <span className="text-destructive">*</span>
+              </Label>
               <Input
                 value={brand.hero_image_url || ""}
                 onChange={(e) => onChange({ hero_image_url: e.target.value })}
+                required
                 placeholder="/lovable-uploads/hero.png"
               />
               {brand.hero_image_url && (
