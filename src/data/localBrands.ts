@@ -39,5 +39,22 @@ export const localBrands: LocalBrand[] = [
     redemption_info: "Show member card at pro shop",
     description: "Premier golf club in Ocala"
   },
-  // Add more brands here as needed
+  {
+    club_id: "riverhall",
+    name: "River Hall Country Club",
+    logo_url: "/lovable-uploads/placeholder.png",
+    hero_image_url: "/lovable-uploads/placeholder.png",
+    offer_card_url: "/lovable-uploads/placeholder.png",
+    primary_color: "142 45% 25%",
+    primary_glow_color: "142 45% 35%",
+    accent_color: "142 60% 45%",
+    is_active: false,
+    category: "Golf",
+    state: "FL",
+    city: "Alva",
+    full_address: "Alva, FL",
+    website: "https://www.riverhallcc.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Championship golf course in Alva"
+  }
 ];
