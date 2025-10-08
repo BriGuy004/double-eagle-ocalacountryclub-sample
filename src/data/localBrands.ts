@@ -128,5 +128,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.northlandcountryclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Donald Ross design, Top 5 courses in Minnesota, Top 100 Classic Courses in US, Lake Superior views"
+  },
+  {
+    club_id: "stcloud",
+    name: "St. Cloud Country Club",
+    logo_url: "/lovable-uploads/stcloud-logo.png",
+    hero_image_url: "/lovable-uploads/stcloud-hero.png",
+    offer_card_url: "/lovable-uploads/stcloud-hero.png",
+    primary_color: "205 50% 35%",
+    primary_glow_color: "205 50% 45%",
+    accent_color: "140 40% 40%",
+    is_active: false,
+    category: "Golf",
+    state: "MN",
+    city: "St. Cloud",
+    full_address: "St. Cloud, MN",
+    website: "https://www.stcloudcountryclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Along Mississippi River, rolling hills and woods, family-oriented"
   }
 ];
