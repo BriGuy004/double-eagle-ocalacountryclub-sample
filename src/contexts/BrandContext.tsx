@@ -23,6 +23,26 @@ interface BrandContextType {
 
 const BrandContext = createContext<BrandContextType | undefined>(undefined);
 
+// localStorage helpers
+const STORAGE_KEY = 'double-eagle-active-brand';
+
+const saveActiveBrandToStorage = (clubId: string) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, clubId);
+  } catch (err) {
+    console.warn('Failed to save to localStorage:', err);
+  }
+};
+
+const getActiveBrandFromStorage = (): string | null => {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch (err) {
+    console.warn('Failed to read from localStorage:', err);
+    return null;
+  }
+};
+
 export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentBrand, setCurrentBrand] = useState<Brand | null>(null);
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
@@ -34,6 +54,17 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const fetchBrands = async () => {
     try {
       setError(null);
+      
+      // Load from localStorage first for instant UI
+      const savedBrandId = getActiveBrandFromStorage();
+      if (savedBrandId && allBrands.length > 0) {
+        const cachedBrand = allBrands.find(b => b.club_id === savedBrandId);
+        if (cachedBrand) {
+          setCurrentBrand(cachedBrand);
+          applyBrandStyles(cachedBrand);
+        }
+      }
+
       const { data, error: fetchError } = await supabase
         .from('offers')
         .select('*')
@@ -58,11 +89,12 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       setAllBrands(data || []);
       
-      // Set active brand
+      // Set active brand (prioritize database over localStorage)
       const activeBrand = data?.find((b) => b.is_active) || data?.[0];
       if (activeBrand) {
         setCurrentBrand(activeBrand);
         applyBrandStyles(activeBrand);
+        saveActiveBrandToStorage(activeBrand.club_id);
       }
       
       setIsLoading(false);
@@ -185,8 +217,16 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return;
     }
 
+    // Save to localStorage after successful switch
+    saveActiveBrandToStorage(clubId);
+
     // Fetch updated brands
     await fetchBrands();
+    
+    const targetBrand = allBrands.find(b => b.club_id === clubId);
+    if (targetBrand) {
+      toast.success(`Switched to ${targetBrand.name}`);
+    }
   };
 
   // Get brand by club_id
