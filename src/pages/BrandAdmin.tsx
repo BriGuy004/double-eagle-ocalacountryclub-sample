@@ -457,7 +457,7 @@ const BrandAdmin = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button onClick={handleSaveEdit} className="bg-primary hover:bg-primary/90">
+                <Button onClick={handleSaveEdit} variant="orange">
                   Save Changes
                 </Button>
                 <Button variant="outline" onClick={handleCancelEdit}>

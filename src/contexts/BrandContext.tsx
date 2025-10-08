@@ -7,17 +7,25 @@ interface Brand {
   name: string;
   logo_url: string;
   hero_image_url: string;
+  offer_card_url?: string;
   primary_color: string;
   primary_glow_color: string;
   accent_color: string;
   is_active: boolean;
   category?: string;
+  state?: string;
+  city?: string;
+  full_address?: string;
+  website?: string;
+  redemption_info?: string;
+  description?: string;
 }
 
 interface BrandContextType {
   currentBrand: Brand | null;
   allBrands: Brand[];
   setActiveBrand: (clubId: string) => Promise<void>;
+  getBrandById: (clubId: string) => Brand | null;
   isLoading: boolean;
 }
 
@@ -121,6 +129,11 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await fetchBrands();
   };
 
+  // Get brand by club_id
+  const getBrandById = (clubId: string) => {
+    return allBrands.find(b => b.club_id === clubId) || null;
+  };
+
   useEffect(() => {
     fetchBrands();
 
@@ -146,7 +159,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   return (
-    <BrandContext.Provider value={{ currentBrand, allBrands, setActiveBrand, isLoading }}>
+    <BrandContext.Provider value={{ currentBrand, allBrands, setActiveBrand, getBrandById, isLoading }}>
       {children}
     </BrandContext.Provider>
   );

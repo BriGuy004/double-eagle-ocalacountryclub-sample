@@ -4,13 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
-import wisconsinLogo from "@/assets/wisconsin-country-club-logo.png";
-import northgateLogo from "@/assets/northgate-logo.png";
-import stKateLogo from "@/assets/st-kate-logo.png";
-import tennesseeNationalLogo from "@/assets/tennessee-national-logo.png";
-import northlandLogo from "@/assets/northland-country-club-logo.png";
-import tennesseanHotelLogo from "@/assets/tennessean-hotel-logo.png";
-import misterCarWashLogo from "@/assets/mister-car-wash-logo.png";
+import { useBrand } from "@/contexts/BrandContext";
 
 interface RedemptionModalProps {
   isOpen: boolean;
@@ -20,8 +14,8 @@ interface RedemptionModalProps {
   image: string;
   category: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment";
   offerId?: string;
-  discountAmount?: number; // e.g., 50 for "$50 saved"
-  discountPercent?: number; // e.g., 20 for "20% off"
+  discountAmount?: number;
+  discountPercent?: number;
 }
 
 const generateRedemptionCode = () => {
@@ -64,9 +58,12 @@ export const RedemptionModal = ({
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { redeemOffer } = useUser();
+  const { getBrandById } = useBrand();
+  
+  const brandData = offerId ? getBrandById(offerId) : null;
   
   const instructions = getRedemptionInstructions(category);
-  const terms = getTerms();
+  const terms = brandData?.redemption_info || getTerms();
 
   // Close on Escape key
   useEffect(() => {
@@ -145,7 +142,6 @@ export const RedemptionModal = ({
   const handleRedeem = () => {
     setIsRedeemed(true);
     
-    // Update the dashboard with the redemption
     redeemOffer({
       brand,
       title,
@@ -214,32 +210,51 @@ export const RedemptionModal = ({
           {/* Business Details */}
           <div className="space-y-2">
             <h2 className="text-2xl md:text-[32px] font-bold text-white">{brand}</h2>
+            {brandData?.city && brandData?.state && (
+              <p className="text-base md:text-lg text-[#94a3b8]">
+                {brandData.city}, {brandData.state}, United States
+              </p>
+            )}
             <p className="text-base md:text-lg text-[#94a3b8] line-clamp-4 leading-relaxed">
               {title}
             </p>
           </div>
 
-          {/* Golf Course Details - Wisconsin Country Club */}
-          {category === "Golf" && brand.includes("Wisconsin Country Club") && (
+          {/* Full Address if available */}
+          {brandData?.full_address && (
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white font-semibold mb-2">{brand}</h3>
+              <p className="text-[#94a3b8] text-sm md:text-base whitespace-pre-line">
+                {brandData.full_address}
+              </p>
+            </div>
+          )}
+
+          {/* Description if available */}
+          {brandData?.description && (
             <div className="space-y-4 border-t border-white/10 pt-4">
               <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Located just outside of the city, The Wisconsin Country Club is home to one of the most challenging and beautiful 18-hole golf courses in the area. It's Harry Smead/David Gill design features tree-lined fairways, intricately contoured greens, and well-positioned bunkering.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Tucked in the northwest corner of Milwaukee, this track is ideal for both the casual and serious golfer. The 6,802 yard, 18-hole course was built in 1954 and was considered one of the best in the area.
+                <p className="text-sm md:text-base leading-relaxed whitespace-pre-line">
+                  {brandData.description}
                 </p>
               </div>
-              
-              <div className="space-y-4">
+            </div>
+          )}
+
+          {/* Logo and Website */}
+          {(brandData?.logo_url || brandData?.website) && (
+            <div className="space-y-4 border-t border-white/10 pt-4">
+              {brandData.logo_url && (
                 <img 
-                  src={wisconsinLogo}
-                  alt="Wisconsin Country Club Logo"
+                  src={brandData.logo_url}
+                  alt={`${brand} Logo`}
                   className="h-16 md:h-20 w-auto opacity-60 brightness-150"
                   style={{ filter: "brightness(1.5) grayscale(20%)" }}
                 />
+              )}
+              {brandData.website && (
                 <a 
-                  href="https://links2golf.com" 
+                  href={brandData.website.startsWith('http') ? brandData.website : `https://${brandData.website}`}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
@@ -247,419 +262,115 @@ export const RedemptionModal = ({
                 >
                   Club website
                 </a>
-              </div>
+              )}
             </div>
           )}
 
-          {/* Golf Course Details - Walden Golf Club */}
-          {category === "Golf" && brand.includes("Walden Golf Club") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Walden Golf Club on beautiful Lake Conroe, opened in 1976. Previously, Golf Digest ranked Walden Golf Club as the best course in the Houston area, and the 5th best in the state of Texas. In addition, GOLF Magazine once ranked the par 5, 11th hole as one of the top 500 holes in the world. Due to its prestige, Walden has hosted significant events over the years including the TGA South Amateur Championship, Women's Texas Cup, and PGA Korn Ferry Tour Qualifying School.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Holes 11 – 13, situated on a peninsula, are notoriously challenging and commonly referred to as the "Walden Triangle," a nod to the Bermuda Triangle.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Walden's magnificent course was also designed by von Hagge along with Bruce Develin and has earned a distinguished reputations as being one of the top private golf courses in the state of Texas.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm md:text-base font-semibold text-white">Walden on Lake Conroe</p>
-                  <p className="text-xs md:text-sm text-[#94a3b8]">CAFE ON THE GREEN</p>
-                </div>
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>13101 Walden Rd</li>
-                  <li>Montgomery, TX</li>
-                  <li>United States</li>
-                  <li>77356</li>
-                </ul>
-                <a 
-                  href="https://waldengolfclub.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Golf Course Details - Northgate Country Club */}
-          {category === "Golf" && brand.includes("Northgate Country Club") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Established in 1983, Northgate Country Club is considered North Houston's premier golf club and the centerpiece of the upscale Northgate Forest community. Northgate features 18 holes of Championship Golf designed by Bruce Devlin and Robert von Hagge, an executive 5-hole course aptly named the "Fast-Five".
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Northgate Country Club is a Par 71 measuring 6,827 yards.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>17110 Northgate Forest Drive</li>
-                  <li>Houston, TX</li>
-                  <li>United States</li>
-                  <li>77068</li>
-                </ul>
-                <img 
-                  src={northgateLogo}
-                  alt="Northgate Country Club Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <a 
-                  href="https://northgatecc.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Golf Course Details - Tennessee National Golf Club */}
-          {category === "Golf" && brand.includes("Tennessee National Golf Club") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Tennessee National Golf Club is ranked by Golf Digest as one of the Top 10 golf courses in Tennessee. With five holes playing to or from the water, beautiful views of Watts Bar Lake are not hard to find. This, in addition to 13 water features and stacked sod bunkers reminiscent of Scottish links, make Tennessee National retreat reminiscent different from other courses in the southeast. With five sets of tees, generous landing areas, and a delightfully walkable layout, the Greg Norman Signature course is uniquely playable, yet challenging to accomplished golfers.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <img 
-                  src={tennesseeNationalLogo}
-                  alt="Tennessee National Golf Club Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>8301 Tennessee National Drive</li>
-                  <li>Loudon, TN</li>
-                  <li>United States</li>
-                  <li>37774</li>
-                </ul>
-                <a 
-                  href="https://tennesseenationalgolf.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Golf Course Details - Northland Country Club */}
-          {category === "Golf" && brand.includes("Northland Country Club") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Experience the thrill and nostalgia of playing on a Donald Ross designed championship 18-hole golf course.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Northland Country Club is recognized as one of the top 5 golf courses in Minnesota and one of the top Classic Golf Courses in the United States. The wooded, gently rolling course, with amazing views of Lake Superior, is tough enough for low handicappers, yet is still eminently enjoyable for higher handicappers.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <img 
-                  src={northlandLogo}
-                  alt="Northland Country Club Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>3901 E Superior St</li>
-                  <li>Duluth, MN</li>
-                  <li>United States</li>
-                  <li>55804</li>
-                </ul>
-                <a 
-                  href="#" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Golf Course Details - Golf Club of The Everglades */}
-          {category === "Golf" && brand.includes("Golf Club of The Everglades") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Golf Club of The Everglades has been a distinctive part of Southwest Florida's golf landscape for more than 15 years.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  As a private, Members-only Club that is one of the most exclusive and respected in Naples, FL.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  The Golf Course is an eighteen-hole 7,352 yard, par 72 design by master Golf Course architect Rees Jones. Distinguished as one of the finest walkable designs in the State, it offers one of the top practice facilities anywhere coupled with golf instruction for every level. Golf Club of The Everglades offers a first-class golf experience in a relaxed setting that is in keeping with the rich tradition and ambiance of the Club.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>8835 Vanderbilt Beach Road Extension</li>
-                  <li>Naples, FL</li>
-                  <li>United States</li>
-                  <li>34120</li>
-                </ul>
-                <a 
-                  href="https://www.evergladesclub.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Golf Course Details - Stonegate Golf Club */}
-          {category === "Golf" && brand.includes("Stonegate Golf Club") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Nestled amid 3,300 acres of pristine wetlands and woodlands, Stonegate Golf Club at Solivita is a stunning location for golfers and their guests. Stonegate is proud to be the best golf club in the Kissimmee region and part of Stonegate's uniqueness comes from nature.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  The club property features 100-year old-oak hammocks, a relative rarity in the State of Florida. Then, there's the Florida-famous lush greenery that offers year-round beauty throughout the grounds. Another feature that's distinctly 'Florida' are the peaceful waterways and streams. All this represents the best of what Florida has to offer in terms of natural resources and their wild, untamed beauty.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Stonegate Golf Club is a 36-hole combination that provides a challenging variety of shot-making opportunities for residents and visitors alike.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <ul className="space-y-1 text-sm md:text-base text-[#94a3b8]">
-                  <li>404 Village Drive</li>
-                  <li>Kissimmee, FL</li>
-                  <li>United States</li>
-                  <li>32034</li>
-                </ul>
-                <a 
-                  href="https://www.stonegategolfclub.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Hotel Details - St. Kate - The Arts Hotel */}
-          {category === "Hotels" && brand.includes("St. Kate") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  Set in the lively, artsy East Town neighborhood, this refined, art-filled hotel is a mile from the Milwaukee Art Museum and a 5-minute walk from the nearest tram stop.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Featuring unique artwork, the polished rooms provide free Wi-Fi, flat-screen TVs and minifridges, along with ukuleles, record players and art supplies. Suites add living rooms. Upgraded 2-bedroom suites have dining rooms and additional bathrooms. Room service is available 24/7.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  Amenities include a pizzeria, a cafe and 2 bars, plus art galleries. There's a gym and more than 11,000 sq ft of meeting space. Parking and breakfast are available for a surcharge.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <img 
-                  src={stKateLogo}
-                  alt="St. Kate - The Arts Hotel Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <a 
-                  href="https://www.saintkatearts.com/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Hotel website
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Hotel Details - The Tennessean Hotel */}
-          {category === "Hotels" && brand.includes("The Tennessean Hotel") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  In a building dating from the 1982 World's Fair, this polished, modern hotel is a 7-minute walk from restaurants and shops in Market Square, 1 mile from Interstate 40 and 37 miles from Great Smoky Mountains National Park.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  The unfussy rooms provide flat-screen TVs and free Wi-Fi, in addition to coffeemakers, minifridges and pillow-top mattresses. Some offer city views. Suites add sofabeds; 1-bedroom suites have separate living rooms. An upgraded suite features a fireplace, a piano and butler service. Room service is available 24 hours.
-                </p>
-                <p className="text-sm md:text-base leading-relaxed">
-                  There's an elegant restaurant/bar with an old-world vibe, plus an indoor pool and a gym.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <img 
-                  src={tennesseanHotelLogo}
-                  alt="The Tennessean Hotel Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <a 
-                  href="https://www.thetennesseanhotel.com/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Website: https://www.thetennesseanhotel.com/
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Lifestyle Details - Mister Car Wash */}
-          {category === "Lifestyle" && brand.includes("Mister Car Wash") && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed">
-                  At Mister Car Wash®, we are committed to providing you with a high-quality wash with a personal touch. We use the latest technology and services to deliver the best car washing experience for your car and the environment. Customers can enjoy self-service vacuums, exterior clean services, Unlimited Wash Club® Membership Plans, locations nationwide, and on-site team members that can assist with questions. Join the Unlimited Wash Club® and experience value and convenience with unlimited car washes at any of our locations.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <img 
-                  src={misterCarWashLogo}
-                  alt="Mister Car Wash Logo"
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
-                <a 
-                  href="https://mistercarwash.com/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Website: https://mistercarwash.com/
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Redemption Code Box */}
-          <div className="bg-[#253447] rounded-xl p-4 md:p-6 border border-white/10 space-y-3 md:space-y-4">
-            <p className="text-center text-xs md:text-sm font-medium text-[#94a3b8]">
+          {/* Redemption Code */}
+          <div className="bg-card/50 rounded-lg p-4 md:p-6">
+            <p className="text-sm md:text-base text-[#94a3b8] text-center mb-2 md:mb-4">
               Your Redemption Code
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-              <div className="bg-[#e67e3c] px-4 md:px-6 py-3 rounded-lg">
-                <code className="text-2xl md:text-[32px] font-mono font-bold text-white tracking-wider block text-center">
-                  {redemptionCode}
-                </code>
-              </div>
+            <div className="flex items-center justify-center gap-3 md:gap-4 mb-4 md:mb-6">
+              <code className="text-2xl md:text-[40px] font-bold text-[#e67e3c] tracking-wider">
+                {redemptionCode}
+              </code>
               <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all text-white touch-active"
                 onClick={handleCopyCode}
-                variant="outline"
-                className="h-12 w-full sm:w-12 border-white/20 bg-white/5 hover:bg-white/10 active:bg-white/20 text-white touch-active"
-                style={{ minHeight: "48px" }}
+                aria-label="Copy code to clipboard"
+                style={{ minWidth: "44px", minHeight: "44px" }}
               >
                 {copied ? (
-                  <Check className="h-5 w-5 text-green-400" />
+                  <Check className="h-5 w-5 md:h-6 md:w-6 text-green-400" />
                 ) : (
-                  <Copy className="h-5 w-5" />
+                  <Copy className="h-5 w-5 md:h-6 md:w-6" />
                 )}
               </Button>
             </div>
-          </div>
 
-          {/* Redemption Instructions */}
-          <div className="bg-[#253447] rounded-xl p-4 md:p-6 border border-white/10">
+            {/* CTA based on category */}
+            {instructions.type === "button" && (
+              <Button
+                size="lg"
+                variant="orange"
+                className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
+                style={{ minHeight: "52px" }}
+                onClick={() => window.open(instructions.url, '_blank')}
+              >
+                {instructions.text}
+              </Button>
+            )}
+            
+            {instructions.type === "link" && (
+              <a
+                href={instructions.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full"
+              >
+                <Button
+                  size="lg"
+                  variant="orange"
+                  className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
+                  style={{ minHeight: "52px" }}
+                >
+                  {instructions.text}
+                </Button>
+              </a>
+            )}
+            
             {instructions.type === "text" && (
-              <p className="text-center text-sm md:text-base text-white font-medium">
+              <p className="text-center text-sm md:text-base text-[#94a3b8] px-2">
                 {instructions.text}
               </p>
-            )}
-            {(instructions.type === "link" || instructions.type === "button") && (
-              <div className="text-center">
-                <a
-                  href={instructions.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block"
-                >
-                  <Button className="bg-[#e67e3c] hover:bg-[#d56d2f] active:bg-[#c55d1f] text-white font-semibold px-6 md:px-8 touch-active" style={{ minHeight: "48px" }}>
-                    {instructions.text}
-                  </Button>
-                </a>
-              </div>
             )}
           </div>
 
           {/* Terms & Conditions */}
-          <div className="border-t border-white/10 pt-4">
+          <div className="space-y-3 md:space-y-4">
             <button
               onClick={() => setShowTerms(!showTerms)}
-              className="text-xs md:text-sm text-[#94a3b8] hover:text-white transition-colors touch-active"
-              style={{ minHeight: "44px" }}
+              className="w-full text-left text-sm md:text-base font-semibold text-[#94a3b8] hover:text-white transition-colors touch-active"
+              style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
             >
-              {showTerms ? "Hide Terms" : "View Terms & Conditions"}
+              {showTerms ? "Hide" : "View"} Terms & Conditions
             </button>
+            
             {showTerms && (
-              <p className="mt-3 text-xs text-[#94a3b8] leading-relaxed">
-                {terms}
-              </p>
+              <div className="bg-card/30 rounded-lg p-4 md:p-6">
+                <p className="text-xs md:text-sm text-[#94a3b8] leading-relaxed whitespace-pre-line">
+                  {terms}
+                </p>
+              </div>
             )}
           </div>
 
-          {/* Redeem Now Button - Hidden for Golf category */}
-          {category !== "Golf" && (
+          {/* Redeem Button */}
+          {!isRedeemed && (
             <Button
+              size="lg"
               onClick={handleRedeem}
-              disabled={isRedeemed}
-              className={`w-full py-6 md:py-7 text-base md:text-lg font-bold transition-all duration-300 touch-active ${
-                isRedeemed
-                  ? "bg-green-600 hover:bg-green-600 active:bg-green-700"
-                  : "bg-[#e67e3c] hover:bg-[#d56d2f] active:bg-[#c55d1f]"
-              }`}
-              style={{ minHeight: "56px" }}
+              className="w-full bg-primary hover:bg-primary/90 text-base md:text-lg py-4 md:py-6 font-semibold transition-all touch-active"
+              style={{ minHeight: "52px" }}
             >
-              {isRedeemed ? (
-                <span className="flex items-center justify-center gap-2 animate-bounce">
-                  <Check className="h-6 w-6" />
-                  Redeemed!
-                </span>
-              ) : (
-                "Redeem Now"
-              )}
+              Redeem This Offer
             </Button>
           )}
           
-          {/* Safe area padding for mobile */}
-          {isMobile && <div style={{ paddingBottom: "env(safe-area-inset-bottom)" }} />}
+          {isRedeemed && (
+            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 md:p-6 text-center">
+              <div className="flex items-center justify-center gap-2 md:gap-3 text-green-400">
+                <Check className="h-5 w-5 md:h-6 md:w-6" />
+                <p className="text-base md:text-lg font-semibold">Offer Redeemed!</p>
+              </div>
+              <p className="text-xs md:text-sm text-green-400/80 mt-2">
+                Check your dashboard for details
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
