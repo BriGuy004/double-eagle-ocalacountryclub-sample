@@ -47,7 +47,7 @@ interface Brand {
 
 const BrandAdmin = () => {
   const location = useLocation();
-  const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase, refreshBrands } = useBrand();
+  const { currentBrand, allBrands, setActiveBrand, isLoading, isSwitchingBrand, isUsingLocalData, syncBrandsToSupabase, refreshBrands } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
   const [editedBrand, setEditedBrand] = useState<Brand | null>(null);
@@ -140,8 +140,7 @@ const BrandAdmin = () => {
 
   const handleBrandSwitch = async (clubId: string) => {
     await setActiveBrand(clubId);
-    toast.success("Brand switched successfully!");
-    // No need to reload - context updates automatically
+    // Toast is shown in context
   };
 
   const handleImageUpload = async (
@@ -579,10 +578,18 @@ const BrandAdmin = () => {
                       {categoryInfo.category === 'Golf' && !brand.is_active && (
                         <Button
                           onClick={() => handleBrandSwitch(brand.club_id)}
+                          disabled={isSwitchingBrand}
                           className="flex-1"
                           variant="orange"
                         >
-                          Switch
+                          {isSwitchingBrand ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Switching...
+                            </>
+                          ) : (
+                            "Switch"
+                          )}
                         </Button>
                       )}
                       <Button 

@@ -16,6 +16,7 @@ interface BrandContextType {
   setActiveBrand: (clubId: string) => Promise<void>;
   getBrandById: (clubId: string) => Brand | null;
   isLoading: boolean;
+  isSwitchingBrand: boolean;
   isUsingLocalData: boolean;
   syncBrandsToSupabase: () => Promise<void>;
   refreshBrands: () => Promise<void>;
@@ -47,6 +48,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentBrand, setCurrentBrand] = useState<Brand | null>(null);
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSwitchingBrand, setIsSwitchingBrand] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isUsingLocalData, setIsUsingLocalData] = useState(false);
 
@@ -234,24 +236,31 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Set active brand using atomic database function
   const setActiveBrand = async (clubId: string) => {
-    const { error } = await supabase
-      .rpc('set_active_brand', { p_club_id: clubId });
-
-    if (error) {
-      console.error('Error setting active brand:', error);
-      toast.error('Failed to switch brand');
-      return;
-    }
-
-    // Save to localStorage after successful switch
-    saveActiveBrandToStorage(clubId);
-
-    // Fetch updated brands
-    await fetchBrands();
+    if (isSwitchingBrand) return; // Prevent double-click
     
-    const targetBrand = allBrands.find(b => b.club_id === clubId);
-    if (targetBrand) {
-      toast.success(`Switched to ${targetBrand.name}`);
+    setIsSwitchingBrand(true);
+    try {
+      const { error } = await supabase
+        .rpc('set_active_brand', { p_club_id: clubId });
+
+      if (error) {
+        console.error('Error setting active brand:', error);
+        toast.error('Failed to switch brand');
+        return;
+      }
+
+      // Save to localStorage after successful switch
+      saveActiveBrandToStorage(clubId);
+
+      // Fetch updated brands
+      await fetchBrands();
+      
+      const targetBrand = allBrands.find(b => b.club_id === clubId);
+      if (targetBrand) {
+        toast.success(`Switched to ${targetBrand.name}`);
+      }
+    } finally {
+      setIsSwitchingBrand(false);
     }
   };
 
@@ -291,6 +300,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setActiveBrand, 
       getBrandById, 
       isLoading,
+      isSwitchingBrand,
       isUsingLocalData,
       syncBrandsToSupabase,
       refreshBrands: fetchBrands
