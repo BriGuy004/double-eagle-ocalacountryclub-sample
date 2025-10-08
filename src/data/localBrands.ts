@@ -362,5 +362,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.thewoodlandscc.com/",
     redemption_info: "Show member card at pro shop",
     description: "5 championship courses, Gary Player and Arnold Palmer designs, Arcis Golf managed"
+  },
+  {
+    club_id: "riverplace",
+    name: "River Place Country Club",
+    logo_url: "/lovable-uploads/riverplace-logo.png",
+    hero_image_url: "/lovable-uploads/riverplace-hero.png",
+    offer_card_url: "/lovable-uploads/riverplace-hero.png",
+    primary_color: "200 50% 30%",
+    primary_glow_color: "200 50% 40%",
+    accent_color: "145 35% 38%",
+    is_active: false,
+    category: "Golf",
+    state: "TX",
+    city: "Austin",
+    full_address: "Austin, TX",
+    website: "https://www.riverplaceclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Hill country setting, family-oriented private club, 6,600+ yards, Arcis Golf managed"
   }
 ];
