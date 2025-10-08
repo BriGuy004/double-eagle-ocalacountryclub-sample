@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SearchBar } from "@/components/SearchBar";
 import { MobileNav } from "@/components/MobileNav";
-import { Menu, LogOut, User as UserIcon } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useBrand } from "@/contexts/BrandContext";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -18,13 +17,7 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { currentBrand } = useBrand();
-  const { user, signOut } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
-  };
   
   return (
     <>
@@ -90,36 +83,14 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
 
               {/* Navigation */}
               <div className="flex items-center space-x-4">
-                {user ? (
-                  <>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate('/member-dashboard')}
-                      className="bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-                    >
-                      <UserIcon className="w-4 h-4 mr-2" />
-                      Member Account
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/auth')}
-                    className="bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-                  >
-                    Login
-                  </Button>
-                )}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/member-dashboard')}
+                  className="bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+                >
+                  Member Account
+                </Button>
               </div>
             </div>
           )}

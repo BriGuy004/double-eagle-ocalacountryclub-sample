@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
 import { BookmarkProvider } from "@/contexts/BookmarkContext";
 import { BrandProvider } from "@/contexts/BrandContext";
-import { AuthProvider } from "@/contexts/AuthContext";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import StateProducts from "./pages/StateProducts";
@@ -20,7 +19,6 @@ import Golf from "./pages/Golf";
 import MemberDashboard from "./pages/MemberDashboard";
 import RedemptionPage from "./pages/RedemptionPage";
 import BrandAdmin from "./pages/BrandAdmin";
-import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,16 +26,14 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <BrandProvider>
-          <UserProvider>
-            <BookmarkProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+      <BrandProvider>
+        <UserProvider>
+          <BookmarkProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/auth" element={<Auth />} />
                 <Route path="/lifestyle" element={<Index />} />
                 <Route path="/state/:state" element={<StateProducts />} />
                 <Route path="/state/:state/city/:city" element={<CityProducts />} />
@@ -62,9 +58,8 @@ const App = () => (
           </BookmarkProvider>
         </UserProvider>
       </BrandProvider>
-    </AuthProvider>
-  </TooltipProvider>
-</QueryClientProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
