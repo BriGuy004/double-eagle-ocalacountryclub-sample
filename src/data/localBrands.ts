@@ -56,5 +56,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.riverhallcc.com/",
     redemption_info: "Show member card at pro shop",
     description: "Championship golf course in Alva"
+  },
+  {
+    club_id: "southernhills",
+    name: "Southern Hills Plantation Club",
+    logo_url: "/lovable-uploads/placeholder.png",
+    hero_image_url: "/lovable-uploads/placeholder.png",
+    offer_card_url: "/lovable-uploads/placeholder.png",
+    primary_color: "25 50% 40%",
+    primary_glow_color: "25 50% 50%",
+    accent_color: "45 65% 55%",
+    is_active: false,
+    category: "Golf",
+    state: "FL",
+    city: "Brooksville",
+    full_address: "Brooksville, FL",
+    website: "https://www.southernhillsplantationclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Pete Dye Signature design, Top 100 Residential Courses in US, dramatic elevation changes"
   }
 ];
