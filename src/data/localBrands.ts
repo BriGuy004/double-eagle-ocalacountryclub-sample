@@ -110,5 +110,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.verandahgolfclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "36 holes - Jack Nicklaus/Jack Nicklaus II (Whispering Oak) and Bob Cupp (Old Orange), along Orange River"
+  },
+  {
+    club_id: "northland",
+    name: "Northland Country Club",
+    logo_url: "/lovable-uploads/northland-logo.png",
+    hero_image_url: "/lovable-uploads/northland-hero.png",
+    offer_card_url: "/lovable-uploads/northland-hero.png",
+    primary_color: "210 60% 30%",
+    primary_glow_color: "210 60% 40%",
+    accent_color: "145 35% 35%",
+    is_active: false,
+    category: "Golf",
+    state: "MN",
+    city: "Duluth",
+    full_address: "Duluth, MN",
+    website: "https://www.northlandcountryclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Donald Ross design, Top 5 courses in Minnesota, Top 100 Classic Courses in US, Lake Superior views"
   }
 ];
