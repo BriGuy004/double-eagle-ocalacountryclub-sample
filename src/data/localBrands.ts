@@ -45,9 +45,9 @@ export const localBrands: LocalBrand[] = [
     logo_url: "/lovable-uploads/riverhall-logo.png",
     hero_image_url: "/lovable-uploads/riverhall-hero.png",
     offer_card_url: "/lovable-uploads/riverhall-hero.png",
-    primary_color: "0 0% 100%",
-    primary_glow_color: "0 0% 95%",
-    accent_color: "203 100% 37%",
+    primary_color: "200 50% 35%",
+    primary_glow_color: "200 50% 45%",
+    accent_color: "145 40% 45%",
     is_active: false,
     category: "Golf",
     state: "FL",
@@ -55,7 +55,7 @@ export const localBrands: LocalBrand[] = [
     full_address: "Alva, FL",
     website: "https://www.riverhallcc.com/",
     redemption_info: "Show member card at pro shop",
-    description: "Championship golf course in Alva"
+    description: "Davis Love III design, opened 2007, semi-private, 7,000+ yards"
   },
   {
     club_id: "southernhills",
