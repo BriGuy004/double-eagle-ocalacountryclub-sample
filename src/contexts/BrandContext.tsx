@@ -34,7 +34,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setError(null);
       const { data, error: fetchError } = await supabase
-        .from('brands')
+        .from('offers' as any)
         .select('*')
         .order('name');
 
@@ -52,10 +52,10 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return;
       }
 
-      setAllBrands(data || []);
+      setAllBrands(data as any || []);
       
       // Set active brand
-      const activeBrand = data?.find(b => b.is_active) || data?.[0];
+      const activeBrand = (data as any)?.find((b: any) => b.is_active) || (data as any)?.[0];
       if (activeBrand) {
         setCurrentBrand(activeBrand);
         applyBrandStyles(activeBrand);
@@ -102,13 +102,13 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setActiveBrand = async (clubId: string) => {
     // Deactivate all brands
     await supabase
-      .from('brands')
+      .from('offers' as any)
       .update({ is_active: false })
       .neq('club_id', '');
 
     // Activate selected brand
     const { error } = await supabase
-      .from('brands')
+      .from('offers' as any)
       .update({ is_active: true })
       .eq('club_id', clubId);
 
@@ -132,7 +132,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {
           event: '*',
           schema: 'public',
-          table: 'brands'
+          table: 'offers'
         },
         () => {
           fetchBrands();

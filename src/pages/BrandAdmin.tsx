@@ -26,7 +26,13 @@ const BrandAdmin = () => {
     offer_card_url: "",
     primary_color: "38 70% 15%",
     primary_glow_color: "38 70% 25%",
-    accent_color: "45 85% 50%"
+    accent_color: "45 85% 50%",
+    state: "",
+    city: "",
+    full_address: "",
+    website: "",
+    redemption_info: "",
+    description: ""
   });
 
   // Determine category based on route
@@ -82,8 +88,11 @@ const BrandAdmin = () => {
     }
 
     const { error } = await supabase
-      .from('brands')
-      .insert([newBrand]);
+      .from('offers' as any)
+      .insert([{ 
+        ...newBrand,
+        category: categoryInfo.category === 'All' ? 'Golf' : categoryInfo.category
+      }]);
 
     if (error) {
       toast.error(`Error adding brand: ${error.message}`);
@@ -100,7 +109,13 @@ const BrandAdmin = () => {
       offer_card_url: "",
       primary_color: "38 70% 15%",
       primary_glow_color: "38 70% 25%",
-      accent_color: "45 85% 50%"
+      accent_color: "45 85% 50%",
+      state: "",
+      city: "",
+      full_address: "",
+      website: "",
+      redemption_info: "",
+      description: ""
     });
     window.location.reload();
   };
@@ -114,7 +129,7 @@ const BrandAdmin = () => {
     if (!editedBrand) return;
 
     const { error } = await supabase
-      .from('brands')
+      .from('offers' as any)
       .update({
         name: editedBrand.name,
         logo_url: editedBrand.logo_url,
@@ -122,7 +137,13 @@ const BrandAdmin = () => {
         offer_card_url: editedBrand.offer_card_url,
         primary_color: editedBrand.primary_color,
         primary_glow_color: editedBrand.primary_glow_color,
-        accent_color: editedBrand.accent_color
+        accent_color: editedBrand.accent_color,
+        state: editedBrand.state,
+        city: editedBrand.city,
+        full_address: editedBrand.full_address,
+        website: editedBrand.website,
+        redemption_info: editedBrand.redemption_info,
+        description: editedBrand.description
       })
       .eq('id', editedBrand.id);
 
@@ -188,13 +209,68 @@ const BrandAdmin = () => {
                   />
                 </div>
                 <div>
-                  <Label>Club Name</Label>
+                  <Label>Name</Label>
                   <Input
                     value={newBrand.name}
                     onChange={(e) => setNewBrand(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Northgate Country Club"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>City</Label>
+                  <Input
+                    value={newBrand.city}
+                    onChange={(e) => setNewBrand(prev => ({ ...prev, city: e.target.value }))}
+                    placeholder="e.g., Houston"
+                  />
+                </div>
+                <div>
+                  <Label>State</Label>
+                  <Input
+                    value={newBrand.state}
+                    onChange={(e) => setNewBrand(prev => ({ ...prev, state: e.target.value }))}
+                    placeholder="e.g., TX"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Full Address</Label>
+                <Input
+                  value={newBrand.full_address}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, full_address: e.target.value }))}
+                  placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
+                />
+              </div>
+
+              <div>
+                <Label>Website URL</Label>
+                <Input
+                  value={newBrand.website}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, website: e.target.value }))}
+                  placeholder="e.g., https://example.com"
+                />
+              </div>
+
+              <div>
+                <Label>Description</Label>
+                <Input
+                  value={newBrand.description}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Brief description"
+                />
+              </div>
+
+              <div>
+                <Label>Redemption Information</Label>
+                <Input
+                  value={newBrand.redemption_info}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, redemption_info: e.target.value }))}
+                  placeholder="Instructions for members"
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -265,12 +341,67 @@ const BrandAdmin = () => {
                   <Input value={editedBrand?.club_id} disabled className="bg-muted" />
                 </div>
                 <div>
-                  <Label>Club Name</Label>
+                  <Label>Name</Label>
                   <Input
                     value={editedBrand?.name}
                     onChange={(e) => setEditedBrand({ ...editedBrand, name: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>City</Label>
+                  <Input
+                    value={editedBrand?.city || ""}
+                    onChange={(e) => setEditedBrand({ ...editedBrand, city: e.target.value })}
+                    placeholder="e.g., Houston"
+                  />
+                </div>
+                <div>
+                  <Label>State</Label>
+                  <Input
+                    value={editedBrand?.state || ""}
+                    onChange={(e) => setEditedBrand({ ...editedBrand, state: e.target.value })}
+                    placeholder="e.g., TX"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Full Address</Label>
+                <Input
+                  value={editedBrand?.full_address || ""}
+                  onChange={(e) => setEditedBrand({ ...editedBrand, full_address: e.target.value })}
+                  placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
+                />
+              </div>
+
+              <div>
+                <Label>Website URL</Label>
+                <Input
+                  value={editedBrand?.website || ""}
+                  onChange={(e) => setEditedBrand({ ...editedBrand, website: e.target.value })}
+                  placeholder="e.g., https://example.com"
+                />
+              </div>
+
+              <div>
+                <Label>Description</Label>
+                <Input
+                  value={editedBrand?.description || ""}
+                  onChange={(e) => setEditedBrand({ ...editedBrand, description: e.target.value })}
+                  placeholder="Brief description"
+                />
+              </div>
+
+              <div>
+                <Label>Redemption Information</Label>
+                <Input
+                  value={editedBrand?.redemption_info || ""}
+                  onChange={(e) => setEditedBrand({ ...editedBrand, redemption_info: e.target.value })}
+                  placeholder="Instructions for members"
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-6">
