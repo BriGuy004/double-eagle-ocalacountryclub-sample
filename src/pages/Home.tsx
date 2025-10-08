@@ -26,8 +26,8 @@ const Home = () => {
             alt="Beautiful golf course with water feature and reflections" 
             className="w-full h-[600px] object-cover rounded-xl shadow-luxury"
           />
-          {/* Welcome text overlay - positioned near top */}
-          <div className="absolute inset-0 flex items-start justify-center pt-16">
+          {/* Welcome text overlay - positioned near bottom */}
+          <div className="absolute inset-0 flex items-end justify-center pb-16">
             <h1 className="text-6xl font-normal text-white drop-shadow-lg">Welcome, Justin!</h1>
           </div>
         </div>
