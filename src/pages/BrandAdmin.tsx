@@ -55,6 +55,7 @@ const BrandAdmin = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [newBrand, setNewBrand] = useState<Omit<Brand, 'id'>>({
     club_id: "",
     name: "",
@@ -104,34 +105,37 @@ const BrandAdmin = () => {
   }, [allBrands, categoryInfo.category, searchTerm]);
 
   // Comprehensive validation function
-  const validateBrand = (brand: Partial<Brand>): string | null => {
-    if (!brand.club_id) return "Club ID is required";
-    if (!/^[a-z0-9-]+$/.test(brand.club_id)) {
-      return "Club ID must be lowercase alphanumeric with hyphens only";
+  const validateBrandDetailed = (brand: Partial<Brand>): Record<string, string> => {
+    const errors: Record<string, string> = {};
+    
+    if (!brand.club_id) {
+      errors.club_id = "Club ID is required";
+    } else if (!/^[a-z0-9-]+$/.test(brand.club_id)) {
+      errors.club_id = "Must be lowercase alphanumeric with hyphens";
     }
+    
     if (!brand.name || brand.name.length < 3) {
-      return "Name must be at least 3 characters";
+      errors.name = "Name must be at least 3 characters";
     }
+    
     if (brand.website && !brand.website.startsWith('http')) {
-      return "Website must start with http:// or https://";
-    }
-    if (!brand.logo_url || !brand.hero_image_url || !brand.offer_card_url) {
-      return "All images (logo, hero, and offer card) are required";
+      errors.website = "Must start with http:// or https://";
     }
     
-    // Validate HSL color format (e.g., "38 70% 15%")
-    const hslRegex = /^\d+\s+\d+%\s+\d+%$/;
-    if (brand.primary_color && !hslRegex.test(brand.primary_color)) {
-      return "Invalid primary color format. Use: 'H S% L%' (e.g., '38 70% 15%')";
-    }
-    if (brand.primary_glow_color && !hslRegex.test(brand.primary_glow_color)) {
-      return "Invalid primary glow color format. Use: 'H S% L%' (e.g., '38 70% 25%')";
-    }
-    if (brand.accent_color && !hslRegex.test(brand.accent_color)) {
-      return "Invalid accent color format. Use: 'H S% L%' (e.g., '45 85% 50%')";
-    }
+    if (!brand.logo_url) errors.logo_url = "Logo is required";
+    if (!brand.hero_image_url) errors.hero_image_url = "Hero image is required";
+    if (!brand.offer_card_url) errors.offer_card_url = "Offer card is required";
     
-    return null; // Valid
+    return errors;
+  };
+
+  // Simple validation function for backward compatibility
+  const validateBrand = (brand: Partial<Brand>): string | null => {
+    const errors = validateBrandDetailed(brand);
+    if (Object.keys(errors).length > 0) {
+      return Object.values(errors)[0];
+    }
+    return null;
   };
 
   const handleBrandSwitch = async (clubId: string) => {
@@ -181,12 +185,15 @@ const BrandAdmin = () => {
   };
 
   const handleAddBrand = async () => {
-    const validationError = validateBrand(newBrand);
-    if (validationError) {
-      toast.error(validationError);
+    const errors = validateBrandDetailed(newBrand);
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast.error("Please fix the errors before saving");
       return;
     }
-
+    
+    setFormErrors({});
     setIsSaving(true);
     try {
       const { data, error } = await supabase
@@ -262,11 +269,14 @@ const BrandAdmin = () => {
     if (!editedBrand) return;
 
     // Validate edited brand
-    const validationError = validateBrand(editedBrand);
-    if (validationError) {
-      toast.error(validationError);
+    const errors = validateBrandDetailed(editedBrand);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast.error("Please fix the errors before saving");
       return;
     }
+    
+    setFormErrors({});
 
     // Don't allow saving local brands
     if (editedBrand.id.includes('local-')) {
@@ -468,9 +478,21 @@ const BrandAdmin = () => {
             <CardContent className="space-y-4">
               <BrandForm
                 brand={newBrand}
-                onChange={(updates) => setNewBrand(prev => ({ ...prev, ...updates }))}
+                onChange={(updates) => {
+                  setNewBrand(prev => ({ ...prev, ...updates }));
+                  // Clear error for field being edited
+                  const fieldKey = Object.keys(updates)[0];
+                  if (fieldKey) {
+                    setFormErrors(prev => {
+                      const next = { ...prev };
+                      delete next[fieldKey];
+                      return next;
+                    });
+                  }
+                }}
                 categoryInfo={categoryInfo}
                 onImageUpload={handleImageUpload}
+                errors={formErrors}
               />
               <div className="flex gap-4">
                 <Button 
@@ -588,10 +610,22 @@ const BrandAdmin = () => {
             <div className="mt-6 space-y-6">
               <BrandForm
                 brand={editedBrand || {}}
-                onChange={(updates) => setEditedBrand({ ...editedBrand, ...updates })}
+                onChange={(updates) => {
+                  setEditedBrand({ ...editedBrand, ...updates });
+                  // Clear error for field being edited
+                  const fieldKey = Object.keys(updates)[0];
+                  if (fieldKey) {
+                    setFormErrors(prev => {
+                      const next = { ...prev };
+                      delete next[fieldKey];
+                      return next;
+                    });
+                  }
+                }}
                 categoryInfo={categoryInfo}
                 isEdit={true}
                 onImageUpload={handleImageUpload}
+                errors={formErrors}
               />
               <div className="flex gap-4">
                 <Button 

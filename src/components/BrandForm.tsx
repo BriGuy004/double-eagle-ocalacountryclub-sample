@@ -31,6 +31,7 @@ interface BrandFormProps {
   categoryInfo: { category: string };
   isEdit?: boolean;
   onImageUpload: (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', clubId: string) => Promise<string | null>;
+  errors?: Record<string, string>;
 }
 
 export const BrandForm: React.FC<BrandFormProps> = ({
@@ -38,7 +39,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({
   onChange,
   categoryInfo,
   isEdit = false,
-  onImageUpload
+  onImageUpload,
+  errors = {}
 }) => {
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url'>('url');
 
@@ -55,9 +57,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             onChange={(e) => onChange({ club_id: e.target.value })}
             placeholder="e.g., northgate"
             disabled={isEdit}
-            className={isEdit ? "bg-muted" : ""}
+            className={isEdit ? "bg-muted" : errors.club_id ? "border-destructive" : ""}
             required
           />
+          {errors.club_id && (
+            <p className="text-sm text-destructive mt-1">{errors.club_id}</p>
+          )}
         </div>
         <div>
           <Label className="flex items-center gap-1">
@@ -68,8 +73,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             value={brand.name || ""}
             onChange={(e) => onChange({ name: e.target.value })}
             placeholder="e.g., Northgate Country Club"
+            className={errors.name ? "border-destructive" : ""}
             required
           />
+          {errors.name && (
+            <p className="text-sm text-destructive mt-1">{errors.name}</p>
+          )}
         </div>
       </div>
 
@@ -80,7 +89,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             value={brand.city || ""}
             onChange={(e) => onChange({ city: e.target.value })}
             placeholder="e.g., Houston"
+            className={errors.city ? "border-destructive" : ""}
           />
+          {errors.city && (
+            <p className="text-sm text-destructive mt-1">{errors.city}</p>
+          )}
         </div>
         <div>
           <Label>State</Label>
@@ -88,7 +101,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             value={brand.state || ""}
             onChange={(e) => onChange({ state: e.target.value })}
             placeholder="e.g., TX"
+            className={errors.state ? "border-destructive" : ""}
           />
+          {errors.state && (
+            <p className="text-sm text-destructive mt-1">{errors.state}</p>
+          )}
         </div>
       </div>
 
@@ -98,7 +115,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           value={brand.full_address || ""}
           onChange={(e) => onChange({ full_address: e.target.value })}
           placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
+          className={errors.full_address ? "border-destructive" : ""}
         />
+        {errors.full_address && (
+          <p className="text-sm text-destructive mt-1">{errors.full_address}</p>
+        )}
       </div>
 
       <div>
@@ -107,25 +128,57 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           value={brand.website || ""}
           onChange={(e) => onChange({ website: e.target.value })}
           placeholder="e.g., https://example.com"
+          className={errors.website ? "border-destructive" : ""}
         />
+        {errors.website && (
+          <p className="text-sm text-destructive mt-1">{errors.website}</p>
+        )}
       </div>
 
       <div>
-        <Label>Description</Label>
+        <div className="flex items-center justify-between">
+          <Label>Description</Label>
+          <span className="text-xs text-muted-foreground">
+            {(brand.description?.length || 0)}/200
+          </span>
+        </div>
         <Input
           value={brand.description || ""}
-          onChange={(e) => onChange({ description: e.target.value })}
+          onChange={(e) => {
+            if (e.target.value.length <= 200) {
+              onChange({ description: e.target.value });
+            }
+          }}
           placeholder="Brief description"
+          maxLength={200}
+          className={errors.description ? "border-destructive" : ""}
         />
+        {errors.description && (
+          <p className="text-sm text-destructive mt-1">{errors.description}</p>
+        )}
       </div>
 
       <div>
-        <Label>Redemption Information</Label>
+        <div className="flex items-center justify-between">
+          <Label>Redemption Information</Label>
+          <span className="text-xs text-muted-foreground">
+            {(brand.redemption_info?.length || 0)}/500
+          </span>
+        </div>
         <Input
           value={brand.redemption_info || ""}
-          onChange={(e) => onChange({ redemption_info: e.target.value })}
+          onChange={(e) => {
+            if (e.target.value.length <= 500) {
+              onChange({ redemption_info: e.target.value });
+            }
+          }}
           placeholder="Instructions for members"
+          maxLength={500}
+          className={errors.redemption_info ? "border-destructive" : ""}
         />
+        {errors.redemption_info && (
+          <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>
+        )}
       </div>
 
       <div>
@@ -184,7 +237,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 onChange={(e) => onChange({ logo_url: e.target.value })}
                 required
                 placeholder="/lovable-uploads/logo.png"
+                className={errors.logo_url ? "border-destructive" : ""}
               />
+              {errors.logo_url && (
+                <p className="text-sm text-destructive mt-1">{errors.logo_url}</p>
+              )}
               {brand.logo_url && (
                 <img src={brand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain bg-muted rounded p-2" />
               )}
@@ -199,7 +256,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 onChange={(e) => onChange({ hero_image_url: e.target.value })}
                 required
                 placeholder="/lovable-uploads/hero.png"
+                className={errors.hero_image_url ? "border-destructive" : ""}
               />
+              {errors.hero_image_url && (
+                <p className="text-sm text-destructive mt-1">{errors.hero_image_url}</p>
+              )}
               {brand.hero_image_url && (
                 <img src={brand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
               )}
@@ -210,7 +271,11 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 value={brand.offer_card_url || ""}
                 onChange={(e) => onChange({ offer_card_url: e.target.value })}
                 placeholder="/lovable-uploads/card.png"
+                className={errors.offer_card_url ? "border-destructive" : ""}
               />
+              {errors.offer_card_url && (
+                <p className="text-sm text-destructive mt-1">{errors.offer_card_url}</p>
+              )}
               {brand.offer_card_url && (
                 <img src={brand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
               )}
