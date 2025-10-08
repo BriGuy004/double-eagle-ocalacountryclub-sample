@@ -103,14 +103,6 @@ export const Header = ({
                 </a>
               </div>
               
-              {/* Desktop Navigation Links */}
-              <nav className="hidden lg:flex items-center space-x-1 flex-shrink-0">
-                <NavLink href="/" label="Home" />
-                <NavLink href="/offers" label="Marketplace" />
-                <NavLink href="/guest-play" label="Guest Play" />
-                <NavLink href="/concierge" label="Concierge" />
-              </nav>
-              
               {/* Search Bar */}
               {onSearchChange && (
                 <div className="flex items-center flex-1 max-w-xl">
@@ -156,37 +148,5 @@ export const Header = ({
         </div>
       </header>
     </>
-  );
-};
-
-// Desktop Navigation Link Component with Brand Color Hover
-const NavLink = ({ href, label }: { href: string; label: string }) => {
-  const navigate = useNavigate();
-  const isActive = window.location.pathname === href;
-  
-  return (
-    <button
-      onClick={() => navigate(href)}
-      className={`
-        px-4 py-2 rounded-lg text-sm font-medium transition-all
-        ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}
-      `}
-      style={isActive ? {
-        backgroundColor: 'var(--color-primary)',
-        opacity: 0.9
-      } : {}}
-      onMouseEnter={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }
-      }}
-    >
-      {label}
-    </button>
   );
 };
