@@ -32,9 +32,10 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const fetchBrands = async () => {
     try {
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('brands')
+      const { data, error: fetchError} = await supabase
+        .from('offers')
         .select('*')
+        .eq('is_active', true)
         .order('name');
 
       if (fetchError) {
@@ -100,13 +101,13 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setActiveBrand = async (clubId: string) => {
     // Deactivate all brands
     await supabase
-      .from('brands')
+      .from('offers')
       .update({ is_active: false })
       .neq('club_id', '');
 
     // Activate selected brand
     const { error } = await supabase
-      .from('brands')
+      .from('offers')
       .update({ is_active: true })
       .eq('club_id', clubId);
 
@@ -130,7 +131,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {
           event: '*',
           schema: 'public',
-          table: 'brands'
+          table: 'offers'
         },
         () => {
           fetchBrands();

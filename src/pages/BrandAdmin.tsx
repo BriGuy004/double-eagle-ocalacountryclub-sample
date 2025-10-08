@@ -60,7 +60,7 @@ const BrandAdmin = () => {
     }
 
     const { error } = await supabase
-      .from('brands')
+      .from('offers')
       .insert([newBrand]);
 
     if (error) {
@@ -92,7 +92,7 @@ const BrandAdmin = () => {
     if (!editedBrand) return;
 
     const { error } = await supabase
-      .from('brands')
+      .from('offers')
       .update({
         name: editedBrand.name,
         logo_url: editedBrand.logo_url,
