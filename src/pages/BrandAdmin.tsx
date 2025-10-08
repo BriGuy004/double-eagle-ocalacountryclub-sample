@@ -1,10 +1,11 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { useBrand } from "@/contexts/BrandContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Plus, Trash2, Loader2, Save } from "lucide-react";
+import { CheckCircle2, Plus, Trash2, Loader2, Save, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +47,7 @@ interface Brand {
 }
 
 const BrandAdmin = () => {
+  const { user, isAdmin, isLoading: authLoading } = useAuth();
   const location = useLocation();
   const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase, refreshBrands } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
@@ -392,13 +394,39 @@ const BrandAdmin = () => {
     }
   };
 
-  if (isLoading) {
+  // Show loading state while checking auth
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white text-xl mb-2">Loading brands...</p>
-          <p className="text-muted-foreground text-sm">If this takes too long, refresh the page</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-white text-xl mb-2">Loading...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Protect route - require authentication and admin role
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardHeader className="text-center">
+            <Lock className="w-12 h-12 mx-auto mb-4 text-destructive" />
+            <CardTitle className="text-2xl">Access Denied</CardTitle>
+            <CardDescription>
+              You need admin permissions to access this page.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              {!user ? "Please log in to continue." : "Your account does not have admin privileges."}
+            </p>
+            <Button onClick={() => window.location.href = user ? "/" : "/auth"}>
+              {user ? "Return Home" : "Go to Login"}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
