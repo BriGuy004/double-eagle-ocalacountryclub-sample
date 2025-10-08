@@ -73,7 +73,10 @@ const BrandAdmin = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-white">Loading brands...</p>
+        <div className="text-center">
+          <p className="text-white text-xl mb-2">Loading brands...</p>
+          <p className="text-muted-foreground text-sm">If this takes too long, refresh the page</p>
+        </div>
       </div>
     );
   }

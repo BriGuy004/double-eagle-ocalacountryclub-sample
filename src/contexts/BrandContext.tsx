@@ -26,28 +26,65 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentBrand, setCurrentBrand] = useState<Brand | null>(null);
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch all brands
   const fetchBrands = async () => {
-    const { data, error } = await supabase
-      .from('brands')
-      .select('*')
-      .order('name');
+    try {
+      setError(null);
+      const { data, error: fetchError } = await supabase
+        .from('brands')
+        .select('*')
+        .order('name');
 
-    if (error) {
-      console.error('Error fetching brands:', error);
-      return;
-    }
+      if (fetchError) {
+        console.error('Error fetching brands:', fetchError);
+        setError(fetchError.message);
+        // Use fallback data on error
+        useFallbackData();
+        return;
+      }
 
-    setAllBrands(data || []);
-    
-    // Set active brand
-    const activeBrand = data?.find(b => b.is_active) || data?.[0];
-    if (activeBrand) {
-      setCurrentBrand(activeBrand);
-      applyBrandStyles(activeBrand);
+      if (!data || data.length === 0) {
+        console.warn('No brands found in database, using fallback');
+        useFallbackData();
+        return;
+      }
+
+      setAllBrands(data || []);
+      
+      // Set active brand
+      const activeBrand = data?.find(b => b.is_active) || data?.[0];
+      if (activeBrand) {
+        setCurrentBrand(activeBrand);
+        applyBrandStyles(activeBrand);
+      }
+      
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Exception fetching brands:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      useFallbackData();
     }
+  };
+
+  // Fallback to default Ocala brand if fetch fails
+  const useFallbackData = () => {
+    const fallbackBrand: Brand = {
+      id: 'fallback-ocala',
+      club_id: 'ocala',
+      name: 'The Country Club of Ocala',
+      logo_url: '/lovable-uploads/ocala-logo.png',
+      hero_image_url: '/lovable-uploads/ocala-golf-course.png',
+      primary_color: '38 70% 15%',
+      primary_glow_color: '38 70% 25%',
+      accent_color: '45 85% 50%',
+      is_active: true
+    };
     
+    setAllBrands([fallbackBrand]);
+    setCurrentBrand(fallbackBrand);
+    applyBrandStyles(fallbackBrand);
     setIsLoading(false);
   };
 
