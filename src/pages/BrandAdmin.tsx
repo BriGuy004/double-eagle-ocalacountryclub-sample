@@ -4,10 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Upload, Plus } from "lucide-react";
+import { CheckCircle2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ImageUpload } from "@/components/ImageUpload";
+import { ColorPicker } from "@/components/ColorPicker";
 
 const BrandAdmin = () => {
   const { currentBrand, allBrands, setActiveBrand, isLoading } = useBrand();
@@ -30,18 +32,24 @@ const BrandAdmin = () => {
     setTimeout(() => window.location.reload(), 1000);
   };
 
-  const handleFileUpload = async (file: File, field: 'logo_url' | 'hero_image_url') => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${newBrand.club_id}-${field}-${Date.now()}.${fileExt}`;
-    const filePath = `lovable-uploads/${fileName}`;
-
-    // For now, just set the path - in production, you'd upload to Supabase Storage
-    setNewBrand(prev => ({
-      ...prev,
-      [field]: `/lovable-uploads/${fileName}`
-    }));
-    
-    toast.info(`File ready: ${fileName}. Upload to /public/lovable-uploads/ manually.`);
+  const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url', isEdit = false) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result as string;
+      if (isEdit && editedBrand) {
+        setEditedBrand(prev => ({
+          ...prev,
+          [field]: dataUrl
+        }));
+      } else {
+        setNewBrand(prev => ({
+          ...prev,
+          [field]: dataUrl
+        }));
+      }
+      toast.success("Image loaded! Save to apply changes.");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAddBrand = async () => {
@@ -165,73 +173,37 @@ const BrandAdmin = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Logo URL</Label>
-                  <Input
-                    value={newBrand.logo_url}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, logo_url: e.target.value }))}
-                    placeholder="/lovable-uploads/logo.png"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Upload to /public/lovable-uploads/ folder
-                  </p>
-                </div>
-                <div>
-                  <Label>Hero Image URL</Label>
-                  <Input
-                    value={newBrand.hero_image_url}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, hero_image_url: e.target.value }))}
-                    placeholder="/lovable-uploads/hero.png"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Upload to /public/lovable-uploads/ folder
-                  </p>
-                </div>
+                <ImageUpload
+                  label="Logo"
+                  currentUrl={newBrand.logo_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'logo_url')}
+                />
+                <ImageUpload
+                  label="Hero Image"
+                  currentUrl={newBrand.hero_image_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'hero_image_url')}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label>Brand Colors (HSL format)</Label>
+                <Label>Brand Colors</Label>
                 <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label className="text-xs">Primary</Label>
-                    <Input
-                      value={newBrand.primary_color}
-                      onChange={(e) => setNewBrand(prev => ({ ...prev, primary_color: e.target.value }))}
-                      placeholder="38 70% 15%"
-                    />
-                    <div 
-                      className="h-8 rounded mt-1" 
-                      style={{ backgroundColor: `hsl(${newBrand.primary_color})` }}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Primary Glow</Label>
-                    <Input
-                      value={newBrand.primary_glow_color}
-                      onChange={(e) => setNewBrand(prev => ({ ...prev, primary_glow_color: e.target.value }))}
-                      placeholder="38 70% 25%"
-                    />
-                    <div 
-                      className="h-8 rounded mt-1" 
-                      style={{ backgroundColor: `hsl(${newBrand.primary_glow_color})` }}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Accent</Label>
-                    <Input
-                      value={newBrand.accent_color}
-                      onChange={(e) => setNewBrand(prev => ({ ...prev, accent_color: e.target.value }))}
-                      placeholder="45 85% 50%"
-                    />
-                    <div 
-                      className="h-8 rounded mt-1" 
-                      style={{ backgroundColor: `hsl(${newBrand.accent_color})` }}
-                    />
-                  </div>
+                  <ColorPicker
+                    label="Primary"
+                    value={newBrand.primary_color}
+                    onChange={(val) => setNewBrand(prev => ({ ...prev, primary_color: val }))}
+                  />
+                  <ColorPicker
+                    label="Primary Glow"
+                    value={newBrand.primary_glow_color}
+                    onChange={(val) => setNewBrand(prev => ({ ...prev, primary_glow_color: val }))}
+                  />
+                  <ColorPicker
+                    label="Accent"
+                    value={newBrand.accent_color}
+                    onChange={(val) => setNewBrand(prev => ({ ...prev, accent_color: val }))}
+                  />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Format: Hue Saturation% Lightness% (e.g., "38 70% 15%")
-                </p>
               </div>
 
               <div className="flex gap-4">
@@ -282,45 +254,34 @@ const BrandAdmin = () => {
                   <div className="space-y-4">
                     {isEditing ? (
                       <>
-                        <div>
-                          <Label className="text-xs">Logo URL</Label>
-                          <Input
-                            value={displayBrand.logo_url}
-                            onChange={(e) => setEditedBrand({ ...editedBrand, logo_url: e.target.value })}
+                        <div className="grid grid-cols-2 gap-4">
+                          <ImageUpload
+                            label="Logo"
+                            currentUrl={displayBrand.logo_url}
+                            onImageSelect={(file) => handleImageUpload(file, 'logo_url', true)}
                           />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Hero Image URL</Label>
-                          <Input
-                            value={displayBrand.hero_image_url}
-                            onChange={(e) => setEditedBrand({ ...editedBrand, hero_image_url: e.target.value })}
+                          <ImageUpload
+                            label="Hero Image"
+                            currentUrl={displayBrand.hero_image_url}
+                            onImageSelect={(file) => handleImageUpload(file, 'hero_image_url', true)}
                           />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
-                          <div>
-                            <Label className="text-xs">Primary</Label>
-                            <Input
-                              value={displayBrand.primary_color}
-                              onChange={(e) => setEditedBrand({ ...editedBrand, primary_color: e.target.value })}
-                            />
-                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.primary_color})` }}></div>
-                          </div>
-                          <div>
-                            <Label className="text-xs">Glow</Label>
-                            <Input
-                              value={displayBrand.primary_glow_color}
-                              onChange={(e) => setEditedBrand({ ...editedBrand, primary_glow_color: e.target.value })}
-                            />
-                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.primary_glow_color})` }}></div>
-                          </div>
-                          <div>
-                            <Label className="text-xs">Accent</Label>
-                            <Input
-                              value={displayBrand.accent_color}
-                              onChange={(e) => setEditedBrand({ ...editedBrand, accent_color: e.target.value })}
-                            />
-                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.accent_color})` }}></div>
-                          </div>
+                          <ColorPicker
+                            label="Primary"
+                            value={displayBrand.primary_color}
+                            onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
+                          />
+                          <ColorPicker
+                            label="Glow"
+                            value={displayBrand.primary_glow_color}
+                            onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
+                          />
+                          <ColorPicker
+                            label="Accent"
+                            value={displayBrand.accent_color}
+                            onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
+                          />
                         </div>
                       </>
                     ) : (
