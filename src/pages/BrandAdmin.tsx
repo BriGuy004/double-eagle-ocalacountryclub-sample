@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Plus, Trash2, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +51,8 @@ const BrandAdmin = () => {
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
   const [editedBrand, setEditedBrand] = useState<Brand | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newBrand, setNewBrand] = useState<Omit<Brand, 'id'>>({
     club_id: "",
     name: "",
@@ -173,42 +175,47 @@ const BrandAdmin = () => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('offers')
-      .insert([{ 
-        ...newBrand,
-        category: categoryInfo.category === 'All' ? 'Golf' : categoryInfo.category
-      }])
-      .select()
-      .single();
+    setIsSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .insert([{ 
+          ...newBrand,
+          category: categoryInfo.category === 'All' ? 'Golf' : categoryInfo.category
+        }])
+        .select()
+        .single();
 
-    if (error) {
-      toast.error(`Error adding brand: ${error.message}`);
-      return;
+      if (error) {
+        toast.error(`Error adding brand: ${error.message}`);
+        return;
+      }
+
+      toast.success("Brand added successfully!");
+      setIsAddingBrand(false);
+      setNewBrand({
+        club_id: "",
+        name: "",
+        logo_url: "",
+        hero_image_url: "",
+        offer_card_url: "",
+        primary_color: "38 70% 15%",
+        primary_glow_color: "38 70% 25%",
+        accent_color: "45 85% 50%",
+        category: "Golf",
+        state: "",
+        city: "",
+        full_address: "",
+        website: "",
+        redemption_info: "",
+        description: ""
+      });
+      
+      // Refresh brands from database
+      await refreshBrands();
+    } finally {
+      setIsSaving(false);
     }
-
-    toast.success("Brand added successfully!");
-    setIsAddingBrand(false);
-    setNewBrand({
-      club_id: "",
-      name: "",
-      logo_url: "",
-      hero_image_url: "",
-      offer_card_url: "",
-      primary_color: "38 70% 15%",
-      primary_glow_color: "38 70% 25%",
-      accent_color: "45 85% 50%",
-      category: "Golf",
-      state: "",
-      city: "",
-      full_address: "",
-      website: "",
-      redemption_info: "",
-      description: ""
-    });
-    
-    // Refresh brands from database (or rely on real-time subscription)
-    await refreshBrands();
   };
 
   const handleEditBrand = (brand: Brand) => {
@@ -237,6 +244,7 @@ const BrandAdmin = () => {
       return;
     }
 
+    setIsSaving(true);
     try {
       // Prepare clean data object
       const updateData = {
@@ -255,9 +263,6 @@ const BrandAdmin = () => {
         description: editedBrand.description || ''
       };
 
-      console.log('Updating brand:', editedBrand.id);
-      console.log('Update data:', updateData);
-
       const { data, error } = await supabase
         .from('offers')
         .update(updateData)
@@ -275,16 +280,17 @@ const BrandAdmin = () => {
         return;
       }
 
-      console.log('Update successful:', data);
       toast.success("Brand updated successfully!");
       setEditingBrandId(null);
       setEditedBrand(null);
       
-      // Refresh brands from database (or rely on real-time subscription)
+      // Refresh brands from database
       await refreshBrands();
     } catch (err: any) {
       console.error('Update error:', err);
       toast.error(`Network error: ${err.message || 'Failed to connect'}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -294,6 +300,7 @@ const BrandAdmin = () => {
   };
 
   const handleDeleteBrand = async (brandId: string) => {
+    setIsDeleting(true);
     try {
       // Don't allow deleting local brands
       if (brandId.includes('local-')) {
@@ -320,6 +327,8 @@ const BrandAdmin = () => {
     } catch (err: any) {
       console.error('Delete error:', err);
       toast.error(`Network error: ${err.message || 'Failed to delete'}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -389,10 +398,24 @@ const BrandAdmin = () => {
                 onImageUpload={handleImageUpload}
               />
               <div className="flex gap-4">
-                <Button onClick={handleAddBrand} className="bg-primary hover:bg-primary/90">
-                  Save Brand
+                <Button 
+                  onClick={handleAddBrand} 
+                  className="bg-primary hover:bg-primary/90"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Brand
+                    </>
+                  )}
                 </Button>
-                <Button variant="outline" onClick={() => setIsAddingBrand(false)}>
+                <Button variant="outline" onClick={() => setIsAddingBrand(false)} disabled={isSaving}>
                   Cancel
                 </Button>
               </div>
@@ -416,10 +439,24 @@ const BrandAdmin = () => {
                 onImageUpload={handleImageUpload}
               />
               <div className="flex gap-4">
-                <Button onClick={handleSaveEdit} variant="orange">
-                  Save Changes
+                <Button 
+                  onClick={handleSaveEdit} 
+                  variant="orange"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
                 </Button>
-                <Button variant="outline" onClick={handleCancelEdit}>
+                <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>
                   Cancel
                 </Button>
               </div>
@@ -520,12 +557,20 @@ const BrandAdmin = () => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
               <AlertDialogAction 
                 onClick={() => deleteConfirm && handleDeleteBrand(deleteConfirm)}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={isDeleting}
               >
-                Delete
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
