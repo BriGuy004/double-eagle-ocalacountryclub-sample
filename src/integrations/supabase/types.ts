@@ -20,7 +20,7 @@ export type Database = {
           category: string
           city: string
           club_id: string
-          created_at: string | null
+          created_at: string
           description: string | null
           full_address: string | null
           hero_image_url: string
@@ -33,7 +33,7 @@ export type Database = {
           primary_glow_color: string
           redemption_info: string | null
           state: string
-          updated_at: string | null
+          updated_at: string
           website: string | null
         }
         Insert: {
@@ -41,7 +41,7 @@ export type Database = {
           category?: string
           city?: string
           club_id: string
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           full_address?: string | null
           hero_image_url: string
@@ -54,7 +54,7 @@ export type Database = {
           primary_glow_color: string
           redemption_info?: string | null
           state?: string
-          updated_at?: string | null
+          updated_at?: string
           website?: string | null
         }
         Update: {
@@ -62,7 +62,7 @@ export type Database = {
           category?: string
           city?: string
           club_id?: string
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           full_address?: string | null
           hero_image_url?: string
@@ -75,7 +75,7 @@ export type Database = {
           primary_glow_color?: string
           redemption_info?: string | null
           state?: string
-          updated_at?: string | null
+          updated_at?: string
           website?: string | null
         }
         Relationships: []
