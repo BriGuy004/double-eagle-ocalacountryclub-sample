@@ -1,27 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 import { localBrands } from '@/data/localBrands';
 import { toast } from 'sonner';
 
-interface Brand {
-  id: string;
-  club_id: string;
-  name: string;
-  logo_url: string;
-  hero_image_url: string;
-  offer_card_url?: string;
-  primary_color: string;
-  primary_glow_color: string;
-  accent_color: string;
-  is_active: boolean;
-  category?: string;
-  state?: string;
-  city?: string;
-  full_address?: string;
-  website?: string;
-  redemption_info?: string;
-  description?: string;
-}
+type OfferRow = Database['public']['Tables']['offers']['Row'];
+type OfferInsert = Database['public']['Tables']['offers']['Insert'];
+type OfferUpdate = Database['public']['Tables']['offers']['Update'];
+
+interface Brand extends OfferRow {}
 
 interface BrandContextType {
   currentBrand: Brand | null;
@@ -48,9 +35,10 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setError(null);
       const { data, error: fetchError } = await supabase
-        .from('offers' as any)
+        .from('offers')
         .select('*')
-        .order('name');
+        .order('name')
+        .returns<Brand[]>();
 
       if (fetchError) {
         console.error('Error fetching brands:', fetchError);
@@ -68,10 +56,10 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       setIsUsingLocalData(false);
 
-      setAllBrands(data as any || []);
+      setAllBrands(data || []);
       
       // Set active brand
-      const activeBrand = (data as any)?.find((b: any) => b.is_active) || (data as any)?.[0];
+      const activeBrand = data?.find((b) => b.is_active) || data?.[0];
       if (activeBrand) {
         setCurrentBrand(activeBrand);
         applyBrandStyles(activeBrand);
@@ -93,11 +81,11 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       id: `local-${brand.club_id}-${index}`
     }));
     
-    setAllBrands(brandsWithIds as any);
+    setAllBrands(brandsWithIds as Brand[]);
     const activeBrand = brandsWithIds.find(b => b.is_active) || brandsWithIds[0];
     if (activeBrand) {
-      setCurrentBrand(activeBrand as any);
-      applyBrandStyles(activeBrand as any);
+      setCurrentBrand(activeBrand as Brand);
+      applyBrandStyles(activeBrand as Brand);
     }
     setIsUsingLocalData(true);
     setIsLoading(false);
@@ -111,12 +99,12 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       for (const brand of localBrands) {
         // Check if brand already exists
         const { data: existing } = await supabase
-          .from('offers' as any)
+          .from('offers')
           .select('id')
           .eq('club_id', brand.club_id)
-          .single();
+          .maybeSingle();
 
-        const brandData = {
+        const brandData: OfferInsert = {
           club_id: brand.club_id,
           name: brand.name,
           logo_url: brand.logo_url,
@@ -139,13 +127,13 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (existing) {
           // Update existing brand
           ({ error } = await supabase
-            .from('offers' as any)
+            .from('offers')
             .update(brandData)
             .eq('club_id', brand.club_id));
         } else {
           // Insert new brand
           ({ error } = await supabase
-            .from('offers' as any)
+            .from('offers')
             .insert(brandData));
         }
 
