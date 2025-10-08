@@ -60,7 +60,7 @@ export const localBrands: LocalBrand[] = [
   {
     club_id: "southernhills",
     name: "Southern Hills Plantation Club",
-    logo_url: "/lovable-uploads/placeholder.png",
+    logo_url: "/lovable-uploads/southernhills-logo.png",
     hero_image_url: "/lovable-uploads/southernhills-hero.png",
     offer_card_url: "/lovable-uploads/southernhills-hero.png",
     primary_color: "25 50% 40%",
@@ -78,7 +78,7 @@ export const localBrands: LocalBrand[] = [
   {
     club_id: "palencia",
     name: "The Palencia Club",
-    logo_url: "/lovable-uploads/placeholder.png",
+    logo_url: "/lovable-uploads/palencia-logo.png",
     hero_image_url: "/lovable-uploads/palencia-hero.png",
     offer_card_url: "/lovable-uploads/palencia-hero.png",
     primary_color: "210 45% 35%",
