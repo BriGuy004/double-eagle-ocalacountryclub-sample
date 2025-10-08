@@ -290,5 +290,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://calibercarwash.com/location/fl-ocala-815-s-pine-ave-34471/",
     redemption_info: "Show member card at service counter",
     description: "Premium car wash services in Ocala"
+  },
+  {
+    club_id: "tennessean",
+    name: "The Tennessean",
+    logo_url: "/lovable-uploads/tennessean-logo.png",
+    hero_image_url: "/lovable-uploads/tennessean-hero.png",
+    offer_card_url: "/lovable-uploads/tennessean-hero.png",
+    primary_color: "210 15% 35%",
+    primary_glow_color: "210 15% 45%",
+    accent_color: "40 75% 55%",
+    is_active: false,
+    category: "Hotels",
+    state: "TN",
+    city: "Knoxville",
+    full_address: "531 Henley St, Knoxville, TN 37902",
+    website: "https://www.thetennesseanhotel.com/",
+    redemption_info: "Present member card at check-in",
+    description: "Personal luxury hotel in downtown Knoxville"
   }
 ];
