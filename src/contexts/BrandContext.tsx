@@ -186,22 +186,14 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   };
 
-  // Set active brand
+  // Set active brand using atomic database function
   const setActiveBrand = async (clubId: string) => {
-    // Deactivate all brands
-    await supabase
-      .from('offers' as any)
-      .update({ is_active: false })
-      .neq('club_id', '');
-
-    // Activate selected brand
     const { error } = await supabase
-      .from('offers' as any)
-      .update({ is_active: true })
-      .eq('club_id', clubId);
+      .rpc('set_active_brand', { p_club_id: clubId });
 
     if (error) {
       console.error('Error setting active brand:', error);
+      toast.error('Failed to switch brand');
       return;
     }
 
