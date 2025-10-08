@@ -83,18 +83,43 @@ const BrandAdmin = () => {
     setTimeout(() => window.location.reload(), 1000);
   };
 
-  const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', isEdit = false) => {
+  const handleImageUpload = async (
+    file: File, 
+    field: 'logo_url' | 'hero_image_url' | 'offer_card_url',
+    clubId: string
+  ): Promise<string | null> => {
     try {
-      // For now, just show a message that they need to use the path
-      // In production, you would upload to Supabase Storage here
-      toast.info("Please use the image path from public/lovable-uploads/ folder instead of uploading");
-      
-      // Example: /lovable-uploads/your-image.png
-      console.log("File selected:", file.name);
-      console.log("Use path like: /lovable-uploads/" + file.name);
-    } catch (error) {
-      console.error('Error with image:', error);
-      toast.error("Please enter the image path manually");
+      if (!clubId) {
+        toast.error("Please enter a Club ID first");
+        return null;
+      }
+
+      // Create unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${clubId}-${field}-${Date.now()}.${fileExt}`;
+      const filePath = `brand-assets/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from('brand-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('brand-images')
+        .getPublicUrl(filePath);
+
+      toast.success(`${field.replace('_', ' ')} uploaded successfully!`);
+      return publicUrl;
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(`Upload failed: ${error.message}`);
+      return null;
     }
   };
 
@@ -347,30 +372,31 @@ const BrandAdmin = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Logo URL</Label>
-                  <Input
-                    value={newBrand.logo_url}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, logo_url: e.target.value }))}
-                    placeholder="/lovable-uploads/logo.png"
-                  />
-                </div>
-                <div>
-                  <Label>Hero Image URL</Label>
-                  <Input
-                    value={newBrand.hero_image_url}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, hero_image_url: e.target.value }))}
-                    placeholder="/lovable-uploads/hero.png"
-                  />
-                </div>
-                <div>
-                  <Label>Offer Card URL</Label>
-                  <Input
-                    value={newBrand.offer_card_url}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, offer_card_url: e.target.value }))}
-                    placeholder="/lovable-uploads/card.png"
-                  />
-                </div>
+                <ImageUpload
+                  label="Logo"
+                  currentUrl={newBrand.logo_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'logo_url', newBrand.club_id);
+                    if (url) setNewBrand(prev => ({ ...prev, logo_url: url }));
+                  }}
+                  thumbnail
+                />
+                <ImageUpload
+                  label="Hero Image"
+                  currentUrl={newBrand.hero_image_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'hero_image_url', newBrand.club_id);
+                    if (url) setNewBrand(prev => ({ ...prev, hero_image_url: url }));
+                  }}
+                />
+                <ImageUpload
+                  label="Offer Card"
+                  currentUrl={newBrand.offer_card_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'offer_card_url', newBrand.club_id);
+                    if (url) setNewBrand(prev => ({ ...prev, offer_card_url: url }));
+                  }}
+                />
               </div>
 
               {categoryInfo.category === 'Golf' && (
@@ -486,39 +512,31 @@ const BrandAdmin = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-6">
-                <div>
-                  <Label>Logo URL</Label>
-                  <Input
-                    value={editedBrand?.logo_url || ""}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, logo_url: e.target.value })}
-                    placeholder="/lovable-uploads/logo.png"
-                  />
-                  {editedBrand?.logo_url && (
-                    <img src={editedBrand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain" />
-                  )}
-                </div>
-                <div>
-                  <Label>Hero Image URL</Label>
-                  <Input
-                    value={editedBrand?.hero_image_url || ""}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, hero_image_url: e.target.value })}
-                    placeholder="/lovable-uploads/hero.png"
-                  />
-                  {editedBrand?.hero_image_url && (
-                    <img src={editedBrand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
-                  )}
-                </div>
-                <div>
-                  <Label>Offer Card URL</Label>
-                  <Input
-                    value={editedBrand?.offer_card_url || ""}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, offer_card_url: e.target.value })}
-                    placeholder="/lovable-uploads/card.png"
-                  />
-                  {editedBrand?.offer_card_url && (
-                    <img src={editedBrand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
-                  )}
-                </div>
+                <ImageUpload
+                  label="Logo"
+                  currentUrl={editedBrand?.logo_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'logo_url', editedBrand.club_id);
+                    if (url) setEditedBrand({ ...editedBrand, logo_url: url });
+                  }}
+                  thumbnail
+                />
+                <ImageUpload
+                  label="Hero Image"
+                  currentUrl={editedBrand?.hero_image_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'hero_image_url', editedBrand.club_id);
+                    if (url) setEditedBrand({ ...editedBrand, hero_image_url: url });
+                  }}
+                />
+                <ImageUpload
+                  label="Offer Card"
+                  currentUrl={editedBrand?.offer_card_url}
+                  onImageSelect={async (file) => {
+                    const url = await handleImageUpload(file, 'offer_card_url', editedBrand.club_id);
+                    if (url) setEditedBrand({ ...editedBrand, offer_card_url: url });
+                  }}
+                />
               </div>
 
               {categoryInfo.category === 'Golf' && (
