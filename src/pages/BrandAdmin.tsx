@@ -35,7 +35,7 @@ interface Brand {
 
 const BrandAdmin = () => {
   const location = useLocation();
-  const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase } = useBrand();
+  const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase, refreshBrands } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
   const [editedBrand, setEditedBrand] = useState<Brand | null>(null);
@@ -79,8 +79,8 @@ const BrandAdmin = () => {
 
   const handleBrandSwitch = async (clubId: string) => {
     await setActiveBrand(clubId);
-    toast.success("Brand switched successfully! Page will reload...");
-    setTimeout(() => window.location.reload(), 1000);
+    toast.success("Brand switched successfully!");
+    // No need to reload - context updates automatically
   };
 
   const handleImageUpload = async (
@@ -129,12 +129,14 @@ const BrandAdmin = () => {
       return;
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('offers')
       .insert([{ 
         ...newBrand,
         category: categoryInfo.category === 'All' ? 'Golf' : categoryInfo.category
-      }]);
+      }])
+      .select()
+      .single();
 
     if (error) {
       toast.error(`Error adding brand: ${error.message}`);
@@ -160,7 +162,9 @@ const BrandAdmin = () => {
       redemption_info: "",
       description: ""
     });
-    window.location.reload();
+    
+    // Refresh brands from database (or rely on real-time subscription)
+    await refreshBrands();
   };
 
   const handleEditBrand = (brand: Brand) => {
@@ -225,8 +229,8 @@ const BrandAdmin = () => {
       setEditingBrandId(null);
       setEditedBrand(null);
       
-      // Refresh the page after a short delay
-      setTimeout(() => window.location.reload(), 500);
+      // Refresh brands from database (or rely on real-time subscription)
+      await refreshBrands();
     } catch (err: any) {
       console.error('Update error:', err);
       toast.error(`Network error: ${err.message || 'Failed to connect'}`);

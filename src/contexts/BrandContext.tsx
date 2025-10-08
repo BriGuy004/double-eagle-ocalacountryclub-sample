@@ -31,6 +31,7 @@ interface BrandContextType {
   isLoading: boolean;
   isUsingLocalData: boolean;
   syncBrandsToSupabase: () => Promise<void>;
+  refreshBrands: () => Promise<void>;
 }
 
 const BrandContext = createContext<BrandContextType | undefined>(undefined);
@@ -231,7 +232,8 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       getBrandById, 
       isLoading,
       isUsingLocalData,
-      syncBrandsToSupabase
+      syncBrandsToSupabase,
+      refreshBrands: fetchBrands
     }}>
       {children}
     </BrandContext.Provider>
