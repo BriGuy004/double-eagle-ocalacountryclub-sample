@@ -124,24 +124,31 @@ const BrandAdmin = () => {
     if (!editedBrand) return;
 
     try {
-      const { error } = await supabase
+      // Prepare clean data object
+      const updateData = {
+        name: editedBrand.name || '',
+        logo_url: editedBrand.logo_url || '',
+        hero_image_url: editedBrand.hero_image_url || '',
+        offer_card_url: editedBrand.offer_card_url || editedBrand.hero_image_url || '',
+        primary_color: editedBrand.primary_color || '38 70% 15%',
+        primary_glow_color: editedBrand.primary_glow_color || '38 70% 25%',
+        accent_color: editedBrand.accent_color || '45 85% 50%',
+        state: editedBrand.state || '',
+        city: editedBrand.city || '',
+        full_address: editedBrand.full_address || '',
+        website: editedBrand.website || '',
+        redemption_info: editedBrand.redemption_info || '',
+        description: editedBrand.description || ''
+      };
+
+      console.log('Updating brand:', editedBrand.id);
+      console.log('Update data:', updateData);
+
+      const { data, error } = await supabase
         .from('offers' as any)
-        .update({
-          name: editedBrand.name,
-          logo_url: editedBrand.logo_url,
-          hero_image_url: editedBrand.hero_image_url,
-          offer_card_url: editedBrand.offer_card_url,
-          primary_color: editedBrand.primary_color,
-          primary_glow_color: editedBrand.primary_glow_color,
-          accent_color: editedBrand.accent_color,
-          state: editedBrand.state || '',
-          city: editedBrand.city || '',
-          full_address: editedBrand.full_address || null,
-          website: editedBrand.website || null,
-          redemption_info: editedBrand.redemption_info || null,
-          description: editedBrand.description || null
-        })
-        .eq('id', editedBrand.id);
+        .update(updateData)
+        .eq('id', editedBrand.id)
+        .select();
 
       if (error) {
         console.error('Supabase error:', error);
@@ -149,13 +156,16 @@ const BrandAdmin = () => {
         return;
       }
 
+      console.log('Update successful:', data);
       toast.success("Brand updated successfully!");
       setEditingBrandId(null);
       setEditedBrand(null);
-      window.location.reload();
+      
+      // Refresh the page after a short delay
+      setTimeout(() => window.location.reload(), 500);
     } catch (err) {
       console.error('Update error:', err);
-      toast.error("Failed to update brand. Please check console for details.");
+      toast.error("Failed to update brand. Check console for details.");
     }
   };
 
