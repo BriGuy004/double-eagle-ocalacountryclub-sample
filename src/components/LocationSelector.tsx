@@ -23,8 +23,8 @@ export const LocationSelector = ({ selectedLocation, onLocationChange }: Locatio
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
-          variant="outline" 
-          className="bg-[#e67e3c] hover:bg-[#d56d2f] text-white border-0 px-8 py-6 text-lg font-semibold rounded-lg min-w-[200px]"
+          variant="default"
+          className="px-8 py-6 text-lg font-semibold rounded-lg min-w-[200px]"
         >
           {selectedLocation}
           <ChevronDown className="ml-2 h-5 w-5" />

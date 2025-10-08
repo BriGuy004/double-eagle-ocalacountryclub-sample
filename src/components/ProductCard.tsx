@@ -90,7 +90,7 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
         >
           <Heart 
             className={`h-5 w-5 transition-all duration-200 ${
-              isCurrentlyBookmarked ? 'fill-[#e67e3c] text-[#e67e3c]' : 'text-white'
+              isCurrentlyBookmarked ? 'fill-primary text-primary' : 'text-white'
             }`}
           />
         </button>
@@ -111,7 +111,8 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
         >
           <Button 
             aria-label={`View offer for ${brand}`}
-            className="w-full bg-[#e67e3c] hover:bg-[#d56d2f] active:bg-[#c55d1f] text-white font-semibold rounded-lg py-5 md:py-6 transition-all duration-200 touch-active"
+            variant="default"
+            className="w-full font-semibold rounded-lg py-5 md:py-6 transition-all duration-200 touch-active"
             style={{ minHeight: "48px" }}
             onClick={handleViewOffer}
           >
