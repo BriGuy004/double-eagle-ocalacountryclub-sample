@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ImageUpload";
 import { ColorPicker } from "@/components/ColorPicker";
@@ -54,7 +55,14 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           </Label>
           <Input
             value={brand.club_id || ""}
-            onChange={(e) => onChange({ club_id: e.target.value })}
+            onChange={(e) => {
+              // Auto-format: lowercase, replace spaces with hyphens, remove invalid chars
+              const formatted = e.target.value
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '');
+              onChange({ club_id: formatted });
+            }}
             placeholder="e.g., northgate"
             disabled={isEdit}
             className={isEdit ? "bg-muted" : errors.club_id ? "border-destructive" : ""}
@@ -150,17 +158,23 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             {(brand.description?.length || 0)}/200
           </span>
         </div>
-        <Input
+        <Textarea
           value={brand.description || ""}
           onChange={(e) => {
             if (e.target.value.length <= 200) {
               onChange({ description: e.target.value });
             }
           }}
-          placeholder="Brief description"
+          placeholder="Brief description of the club and its amenities..."
+          rows={3}
           maxLength={200}
           className={errors.description ? "border-destructive" : ""}
         />
+        <div className="flex justify-between mt-1">
+          <p className="text-xs text-muted-foreground">
+            Describe what makes this club unique
+          </p>
+        </div>
         {errors.description && (
           <p className="text-sm text-destructive mt-1">{errors.description}</p>
         )}
@@ -173,14 +187,15 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             {(brand.redemption_info?.length || 0)}/500
           </span>
         </div>
-        <Input
+        <Textarea
           value={brand.redemption_info || ""}
           onChange={(e) => {
             if (e.target.value.length <= 500) {
               onChange({ redemption_info: e.target.value });
             }
           }}
-          placeholder="Instructions for members"
+          placeholder="Step-by-step instructions for members to redeem this offer..."
+          rows={4}
           maxLength={500}
           className={errors.redemption_info ? "border-destructive" : ""}
         />
