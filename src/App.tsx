@@ -45,7 +45,13 @@ const App = () => (
                 <Route path="/golf" element={<Golf />} />
                 <Route path="/member-dashboard" element={<MemberDashboard />} />
                 <Route path="/redeem/:offerId" element={<RedemptionPage />} />
-                <Route path="/admin/brands" element={<BrandAdmin />} />
+                <Route path="/admin/golf" element={<BrandAdmin />} />
+                <Route path="/admin/lifestyle" element={<BrandAdmin />} />
+                <Route path="/admin/hotels" element={<BrandAdmin />} />
+                <Route path="/admin/dining" element={<BrandAdmin />} />
+                <Route path="/admin/shopping" element={<BrandAdmin />} />
+                <Route path="/admin/travel" element={<BrandAdmin />} />
+                <Route path="/admin/entertainment" element={<BrandAdmin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

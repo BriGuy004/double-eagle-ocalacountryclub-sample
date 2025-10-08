@@ -137,7 +137,7 @@ const BrandAdmin = () => {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">Brand Management</h1>
-            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">/admin/brands</code></p>
+            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">/admin/golf</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/lifestyle</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/hotels</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/dining</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/shopping</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/travel</code>, <code className="bg-white/10 px-2 py-1 rounded">/admin/entertainment</code></p>
           </div>
           <Button
             onClick={() => setIsAddingBrand(!isAddingBrand)}
