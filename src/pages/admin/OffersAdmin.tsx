@@ -162,18 +162,28 @@ export const OffersAdmin = ({ category }: OffersAdminProps) => {
     return <div>Loading...</div>;
   }
 
+  const getTitle = () => {
+    return category === "Golf" ? "Golf Club Management" : `${category} Offers Management`;
+  };
+
+  const getButtonText = () => {
+    return category === "Golf" ? "Add Golf Club" : `Add ${category} Offer`;
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">{category} Offers Management</h1>
-        <Button onClick={() => setIsAddingOffer(!isAddingOffer)}>
-          {isAddingOffer ? "Cancel" : `Add ${category} Offer`}
+        <h1 className="text-3xl font-bold">{getTitle()}</h1>
+        <Button onClick={() => setIsAddingOffer(!isAddingOffer)} variant="orange">
+          {isAddingOffer ? "Cancel" : getButtonText()}
         </Button>
       </div>
 
       {isAddingOffer && (
         <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Add New {category} Offer</h2>
+          <h2 className="text-xl font-semibold">
+            {category === "Golf" ? "Add New Golf Club" : `Add New ${category} Offer`}
+          </h2>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
