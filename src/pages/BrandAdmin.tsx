@@ -210,13 +210,22 @@ const BrandAdmin = () => {
               <h1 className="text-4xl font-bold text-white mb-2">{categoryInfo.title} Management</h1>
               <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">{categoryInfo.route}</code></p>
             </div>
-            <Button
-              onClick={() => setIsAddingBrand(!isAddingBrand)}
-              variant="orange"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add New {categoryInfo.title}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={syncBrandsToSupabase}
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary/10"
+              >
+                Sync Local to Database
+              </Button>
+              <Button
+                onClick={() => setIsAddingBrand(!isAddingBrand)}
+                variant="orange"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add New {categoryInfo.title}
+              </Button>
+            </div>
           </div>
           
           {isUsingLocalData && (
