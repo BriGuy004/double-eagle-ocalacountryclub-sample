@@ -67,36 +67,6 @@ const Golf = () => {
           </div>
         </div>
 
-        {/* Filter Panel */}
-        {isMobile ? (
-          <div className="mb-6">
-            <FilterDrawer
-              selectedCategories={selectedCategories}
-              onToggleCategory={toggleCategory}
-              selectedCity={selectedCity}
-              onCityChange={setSelectedCity}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-              onClearFilters={clearFilters}
-              hasActiveFilters={hasActiveFilters}
-              availableCategories={["All", "Golf"]}
-            />
-          </div>
-        ) : (
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            selectedCity={selectedCity}
-            onCityChange={setSelectedCity}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            onClearFilters={clearFilters}
-            hasActiveFilters={hasActiveFilters}
-            resultsCount={filteredProducts.length}
-            availableCategories={["All", "Golf"]}
-          />
-        )}
-
         {/* Products Grid */}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12 md:py-16">
