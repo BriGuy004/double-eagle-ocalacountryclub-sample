@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { CategorySelector } from "@/components/CategorySelector";
+import { useBrand } from "@/contexts/BrandContext";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("Home");
+  const { currentBrand, isLoading } = useBrand();
+
+  if (isLoading || !currentBrand) {
+    return null;
+  }
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,8 +28,8 @@ const Home = () => {
       <section className="container mx-auto px-6">
         <div className="relative max-w-full mx-auto">
           <img 
-            src="/lovable-uploads/ocala-golf-course.png" 
-            alt="Beautiful golf course with water feature and reflections" 
+            src={currentBrand.hero_image_url} 
+            alt={`${currentBrand.name} - Beautiful golf course`} 
             className="w-full h-[600px] object-cover rounded-xl shadow-luxury"
           />
           {/* Welcome text overlay - positioned near bottom */}

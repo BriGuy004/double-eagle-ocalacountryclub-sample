@@ -7,19 +7,26 @@ import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
+import { useBrand } from "@/contexts/BrandContext";
 import { getAllOffers } from "@/data/allOffers";
 
 const Golf = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
+  const { currentBrand } = useBrand();
   const isMobile = useIsMobile();
 
   // Get all golf offers from the centralized data
   const allGolfOffers = getAllOffers().filter(offer => offer.category === "Golf");
   
+  // Filter out the home club's golf offer
+  const filteredGolfOffers = currentBrand 
+    ? allGolfOffers.filter(offer => offer.clubId !== currentBrand.club_id)
+    : allGolfOffers;
+  
   // Filter by selected location (majorCity)
   const locationProducts = selectedLocation === "All Cities" 
-    ? allGolfOffers 
-    : allGolfOffers.filter(offer => offer.majorCity === selectedLocation);
+    ? filteredGolfOffers 
+    : filteredGolfOffers.filter(offer => offer.majorCity === selectedLocation);
 
   const {
     searchQuery,

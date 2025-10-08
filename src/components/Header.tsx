@@ -5,6 +5,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { MobileNav } from "@/components/MobileNav";
 import { Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useBrand } from "@/contexts/BrandContext";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -15,6 +16,7 @@ interface HeaderProps {
 export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }: HeaderProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { currentBrand } = useBrand();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   
   return (
@@ -37,8 +39,8 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 </button>
                 
                 <img 
-                  src="/lovable-uploads/ocala-logo.png" 
-                  alt="Country Club of Ocala" 
+                  src={currentBrand?.logo_url || "/lovable-uploads/ocala-logo.png"} 
+                  alt={currentBrand?.name || "Country Club"} 
                   className="h-10 w-auto"
                 />
                 
@@ -61,8 +63,8 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
               <div className="flex items-center">
                 <a href="/" className="inline-block">
                   <img 
-                    src="/lovable-uploads/ocala-logo.png" 
-                    alt="Country Club of Ocala" 
+                    src={currentBrand?.logo_url || "/lovable-uploads/ocala-logo.png"} 
+                    alt={currentBrand?.name || "Country Club"} 
                     className="h-24 w-auto cursor-pointer"
                   />
                 </a>
