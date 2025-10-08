@@ -230,129 +230,139 @@ const BrandAdmin = () => {
         )}
 
         {/* Existing Brands Grid */}
+        {editingBrandId && (
+          <Card className="mb-8 border-primary">
+            <CardHeader>
+              <CardTitle>Edit Golf Club</CardTitle>
+              <CardDescription>Update club information and branding</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Club ID</Label>
+                  <Input value={editedBrand?.club_id} disabled className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Club Name</Label>
+                  <Input
+                    value={editedBrand?.name}
+                    onChange={(e) => setEditedBrand({ ...editedBrand, name: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-6">
+                <ImageUpload
+                  label="Logo"
+                  currentUrl={editedBrand?.logo_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'logo_url', true)}
+                  thumbnail
+                />
+                <ImageUpload
+                  label="Hero Image"
+                  currentUrl={editedBrand?.hero_image_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'hero_image_url', true)}
+                  thumbnail
+                />
+                <ImageUpload
+                  label="Offer Card"
+                  currentUrl={editedBrand?.offer_card_url}
+                  onImageSelect={(file) => handleImageUpload(file, 'offer_card_url', true)}
+                  thumbnail
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Brand Colors</Label>
+                <div className="grid grid-cols-3 gap-6">
+                  <ColorPicker
+                    label="Primary"
+                    value={editedBrand?.primary_color}
+                    onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
+                  />
+                  <ColorPicker
+                    label="Primary Glow"
+                    value={editedBrand?.primary_glow_color}
+                    onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
+                  />
+                  <ColorPicker
+                    label="Accent"
+                    value={editedBrand?.accent_color}
+                    onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <Button onClick={handleSaveEdit} className="bg-primary hover:bg-primary/90">
+                  Save Changes
+                </Button>
+                <Button variant="outline" onClick={handleCancelEdit}>
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {allBrands.map((brand) => {
             const isEditing = editingBrandId === brand.id;
-            const displayBrand = isEditing ? editedBrand : brand;
+            if (isEditing) return null; // Skip rendering in grid when editing
 
             return (
               <Card key={brand.id} className={brand.is_active ? "border-primary" : ""}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      {isEditing ? (
-                        <Input
-                          value={displayBrand.name}
-                          onChange={(e) => setEditedBrand({ ...editedBrand, name: e.target.value })}
-                          className="mb-2"
-                        />
-                      ) : (
-                        <CardTitle className="flex items-center gap-2">
-                          {brand.name}
-                          {brand.is_active && (
-                            <Badge variant="orange" className="ml-2">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Active
-                            </Badge>
-                          )}
-                        </CardTitle>
-                      )}
+                      <CardTitle className="flex items-center gap-2">
+                        {brand.name}
+                        {brand.is_active && (
+                          <Badge variant="orange" className="ml-2">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Active
+                          </Badge>
+                        )}
+                      </CardTitle>
                       <CardDescription className="mt-2">ID: {brand.club_id}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {isEditing ? (
-                      <>
-                        <div className="grid grid-cols-3 gap-4">
-                          <ImageUpload
-                            label="Logo"
-                            currentUrl={displayBrand.logo_url}
-                            onImageSelect={(file) => handleImageUpload(file, 'logo_url', true)}
-                            thumbnail
-                          />
-                          <ImageUpload
-                            label="Hero Image"
-                            currentUrl={displayBrand.hero_image_url}
-                            onImageSelect={(file) => handleImageUpload(file, 'hero_image_url', true)}
-                            thumbnail
-                          />
-                          <ImageUpload
-                            label="Offer Card"
-                            currentUrl={displayBrand.offer_card_url}
-                            onImageSelect={(file) => handleImageUpload(file, 'offer_card_url', true)}
-                            thumbnail
-                          />
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          <ColorPicker
-                            label="Primary"
-                            value={displayBrand.primary_color}
-                            onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
-                          />
-                          <ColorPicker
-                            label="Glow"
-                            value={displayBrand.primary_glow_color}
-                            onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
-                          />
-                          <ColorPicker
-                            label="Accent"
-                            value={displayBrand.accent_color}
-                            onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                          <img 
-                            src={brand.hero_image_url} 
-                            alt={brand.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={brand.logo_url} 
-                            alt={`${brand.name} logo`}
-                            className="h-12 object-contain"
-                          />
-                        </div>
-
-                        <div className="flex gap-2">
-                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
-                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
-                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
-                        </div>
-                      </>
-                    )}
+                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                      <img 
+                        src={brand.hero_image_url} 
+                        alt={brand.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <img 
+                        src={brand.logo_url} 
+                        alt={`${brand.name} logo`}
+                        className="h-12 object-contain"
+                      />
+                    </div>
 
                     <div className="flex gap-2">
-                      {isEditing ? (
-                        <>
-                          <Button onClick={handleSaveEdit} className="flex-1">
-                            Save
-                          </Button>
-                          <Button onClick={handleCancelEdit} variant="outline" className="flex-1">
-                            Cancel
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button onClick={() => handleEditBrand(brand)} variant="outline" className="flex-1">
-                            Edit
-                          </Button>
-                          {!brand.is_active && (
-                            <Button
-                              onClick={() => handleBrandSwitch(brand.club_id)}
-                              className="flex-1"
-                            >
-                              Switch
-                            </Button>
-                          )}
-                        </>
+                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
+                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
+                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button onClick={() => handleEditBrand(brand)} variant="outline" className="flex-1">
+                        Edit
+                      </Button>
+                      {!brand.is_active && (
+                        <Button
+                          onClick={() => handleBrandSwitch(brand.club_id)}
+                          className="flex-1"
+                        >
+                          Switch
+                        </Button>
                       )}
                     </div>
                   </div>
