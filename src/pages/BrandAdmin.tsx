@@ -187,7 +187,16 @@ const BrandAdmin = () => {
         .single();
 
       if (error) {
-        toast.error(`Error adding brand: ${error.message}`);
+        // Specific error messages based on error codes
+        if (error.code === '23505') {
+          toast.error("A brand with this Club ID already exists. Please use a unique ID.");
+        } else if (error.code === '23503') {
+          toast.error("Foreign key constraint error. Check related data.");
+        } else if (error.code === '42501') {
+          toast.error("Permission denied. You may need to log in.");
+        } else {
+          toast.error(`Database error: ${error.message}`);
+        }
         return;
       }
 
@@ -213,6 +222,15 @@ const BrandAdmin = () => {
       
       // Refresh brands from database
       await refreshBrands();
+    } catch (err: any) {
+      console.error('Add brand error:', err);
+      
+      // Network error vs other errors
+      if (err.message?.includes('fetch') || err.message?.includes('NetworkError')) {
+        toast.error("Network error. Check your connection and try again.");
+      } else {
+        toast.error(`Unexpected error: ${err.message || 'Failed to add brand'}`);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -267,15 +285,24 @@ const BrandAdmin = () => {
         .from('offers')
         .update(updateData)
         .eq('id', editedBrand.id)
-        .select();
+        .select()
+        .single();
 
       if (error) {
-        console.error('Supabase error:', error);
-        toast.error(`Database error: ${error.message}`);
+        // Specific error messages based on error codes
+        if (error.code === 'PGRST116') {
+          toast.error("Brand not found. It may have been deleted.");
+        } else if (error.code === '23505') {
+          toast.error("A brand with this Club ID already exists.");
+        } else if (error.code === '42501') {
+          toast.error("Permission denied. You may need to log in.");
+        } else {
+          toast.error(`Database error: ${error.message}`);
+        }
         return;
       }
 
-      if (!data || data.length === 0) {
+      if (!data) {
         toast.error("No record was updated. The brand may not exist.");
         return;
       }
@@ -288,7 +315,13 @@ const BrandAdmin = () => {
       await refreshBrands();
     } catch (err: any) {
       console.error('Update error:', err);
-      toast.error(`Network error: ${err.message || 'Failed to connect'}`);
+      
+      // Network error vs other errors
+      if (err.message?.includes('fetch') || err.message?.includes('NetworkError')) {
+        toast.error("Network error. Check your connection and try again.");
+      } else {
+        toast.error(`Unexpected error: ${err.message || 'Failed to update brand'}`);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -315,7 +348,16 @@ const BrandAdmin = () => {
         .eq('id', brandId);
 
       if (error) {
-        toast.error(`Delete failed: ${error.message}`);
+        // Specific error messages based on error codes
+        if (error.code === 'PGRST116') {
+          toast.error("Brand not found. It may have already been deleted.");
+        } else if (error.code === '23503') {
+          toast.error("Cannot delete brand. It is referenced by other records.");
+        } else if (error.code === '42501') {
+          toast.error("Permission denied. You may need to log in.");
+        } else {
+          toast.error(`Delete failed: ${error.message}`);
+        }
         return;
       }
 
@@ -326,7 +368,13 @@ const BrandAdmin = () => {
       await refreshBrands();
     } catch (err: any) {
       console.error('Delete error:', err);
-      toast.error(`Network error: ${err.message || 'Failed to delete'}`);
+      
+      // Network error vs other errors
+      if (err.message?.includes('fetch') || err.message?.includes('NetworkError')) {
+        toast.error("Network error. Check your connection and try again.");
+      } else {
+        toast.error(`Unexpected error: ${err.message || 'Failed to delete brand'}`);
+      }
     } finally {
       setIsDeleting(false);
     }
