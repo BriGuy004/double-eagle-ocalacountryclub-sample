@@ -177,6 +177,7 @@ const BrandAdmin = () => {
                   label="Logo"
                   currentUrl={newBrand.logo_url}
                   onImageSelect={(file) => handleImageUpload(file, 'logo_url')}
+                  thumbnail
                 />
                 <ImageUpload
                   label="Hero Image"
@@ -259,6 +260,7 @@ const BrandAdmin = () => {
                             label="Logo"
                             currentUrl={displayBrand.logo_url}
                             onImageSelect={(file) => handleImageUpload(file, 'logo_url', true)}
+                            thumbnail
                           />
                           <ImageUpload
                             label="Hero Image"

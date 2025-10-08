@@ -7,9 +7,10 @@ interface ImageUploadProps {
   label: string;
   currentUrl?: string;
   onImageSelect: (file: File) => void;
+  thumbnail?: boolean;
 }
 
-export const ImageUpload = ({ label, currentUrl, onImageSelect }: ImageUploadProps) => {
+export const ImageUpload = ({ label, currentUrl, onImageSelect, thumbnail = false }: ImageUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,11 +24,13 @@ export const ImageUpload = ({ label, currentUrl, onImageSelect }: ImageUploadPro
     <div className="space-y-2">
       <Label className="text-xs">{label}</Label>
       {currentUrl && (
-        <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden mb-2">
+        <div className={`relative bg-muted rounded-lg overflow-hidden mb-2 ${
+          thumbnail ? 'w-20 h-20' : 'w-full aspect-video'
+        }`}>
           <img 
             src={currentUrl} 
             alt={label}
-            className="w-full h-full object-cover"
+            className={`w-full h-full ${thumbnail ? 'object-contain' : 'object-cover'}`}
           />
         </div>
       )}
