@@ -116,12 +116,23 @@ const BrandAdmin = () => {
   };
 
   const handleEditBrand = (brand: any) => {
+    // Don't allow editing fallback brands
+    if (brand.id.includes('fallback')) {
+      toast.error("Cannot edit fallback brand. Please refresh the page to load real data.");
+      return;
+    }
     setEditingBrandId(brand.id);
     setEditedBrand({ ...brand });
   };
 
   const handleSaveEdit = async () => {
     if (!editedBrand) return;
+
+    // Don't allow saving fallback brands
+    if (editedBrand.id.includes('fallback')) {
+      toast.error("Cannot save fallback brand. Please refresh the page.");
+      return;
+    }
 
     try {
       // Prepare clean data object
@@ -152,7 +163,12 @@ const BrandAdmin = () => {
 
       if (error) {
         console.error('Supabase error:', error);
-        toast.error(`Error updating: ${error.message}`);
+        toast.error(`Database error: ${error.message}`);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        toast.error("No record was updated. The brand may not exist.");
         return;
       }
 
@@ -163,9 +179,9 @@ const BrandAdmin = () => {
       
       // Refresh the page after a short delay
       setTimeout(() => window.location.reload(), 500);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Update error:', err);
-      toast.error("Failed to update brand. Check console for details.");
+      toast.error(`Network error: ${err.message || 'Failed to connect'}`);
     }
   };
 
@@ -498,17 +514,22 @@ const BrandAdmin = () => {
             return (
               <Card key={brand.id} className={brand.is_active ? "border-primary" : ""}>
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="flex items-center gap-2">
-                        {brand.name}
-                        {brand.is_active && (
-                          <Badge variant="orange" className="ml-2">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Active
-                          </Badge>
-                        )}
-                      </CardTitle>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="flex items-center gap-2">
+                          {brand.name}
+                          {brand.is_active && (
+                            <Badge variant="orange" className="ml-2">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Active
+                            </Badge>
+                          )}
+                          {brand.id.includes('fallback') && (
+                            <Badge variant="destructive" className="ml-2">
+                              Fallback - Refresh Page
+                            </Badge>
+                          )}
+                        </CardTitle>
                       <CardDescription className="mt-2">ID: {brand.club_id}</CardDescription>
                     </div>
                   </div>
