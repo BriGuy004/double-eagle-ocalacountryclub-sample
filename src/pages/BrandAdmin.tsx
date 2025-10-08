@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 const BrandAdmin = () => {
   const { currentBrand, allBrands, setActiveBrand, isLoading } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
+  const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
+  const [editedBrand, setEditedBrand] = useState<any>(null);
   const [newBrand, setNewBrand] = useState({
     club_id: "",
     name: "",
@@ -68,6 +70,43 @@ const BrandAdmin = () => {
       primary_glow_color: "38 70% 25%",
       accent_color: "45 85% 50%"
     });
+    window.location.reload();
+  };
+
+  const handleEditBrand = (brand: any) => {
+    setEditingBrandId(brand.id);
+    setEditedBrand({ ...brand });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editedBrand) return;
+
+    const { error } = await supabase
+      .from('brands')
+      .update({
+        name: editedBrand.name,
+        logo_url: editedBrand.logo_url,
+        hero_image_url: editedBrand.hero_image_url,
+        primary_color: editedBrand.primary_color,
+        primary_glow_color: editedBrand.primary_glow_color,
+        accent_color: editedBrand.accent_color
+      })
+      .eq('id', editedBrand.id);
+
+    if (error) {
+      toast.error(`Error updating brand: ${error.message}`);
+      return;
+    }
+
+    toast.success("Brand updated successfully!");
+    setEditingBrandId(null);
+    setEditedBrand(null);
+    window.location.reload();
+  };
+
+  const handleCancelEdit = () => {
+    setEditingBrandId(null);
+    setEditedBrand(null);
   };
 
   if (isLoading) {
@@ -91,7 +130,7 @@ const BrandAdmin = () => {
           </div>
           <Button
             onClick={() => setIsAddingBrand(!isAddingBrand)}
-            className="bg-primary hover:bg-primary/90"
+            variant="orange"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add New Brand
@@ -209,60 +248,138 @@ const BrandAdmin = () => {
 
         {/* Existing Brands Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allBrands.map((brand) => (
-            <Card key={brand.id} className={brand.is_active ? "border-primary" : ""}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
-                      {brand.name}
-                      {brand.is_active && (
-                        <Badge variant="default" className="ml-2">
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Active
-                        </Badge>
+          {allBrands.map((brand) => {
+            const isEditing = editingBrandId === brand.id;
+            const displayBrand = isEditing ? editedBrand : brand;
+
+            return (
+              <Card key={brand.id} className={brand.is_active ? "border-primary" : ""}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      {isEditing ? (
+                        <Input
+                          value={displayBrand.name}
+                          onChange={(e) => setEditedBrand({ ...editedBrand, name: e.target.value })}
+                          className="mb-2"
+                        />
+                      ) : (
+                        <CardTitle className="flex items-center gap-2">
+                          {brand.name}
+                          {brand.is_active && (
+                            <Badge variant="default" className="ml-2">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Active
+                            </Badge>
+                          )}
+                        </CardTitle>
                       )}
-                    </CardTitle>
-                    <CardDescription className="mt-2">ID: {brand.club_id}</CardDescription>
+                      <CardDescription className="mt-2">ID: {brand.club_id}</CardDescription>
+                    </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                    <img 
-                      src={brand.hero_image_url} 
-                      alt={brand.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={brand.logo_url} 
-                      alt={`${brand.name} logo`}
-                      className="h-12 object-contain"
-                    />
-                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {isEditing ? (
+                      <>
+                        <div>
+                          <Label className="text-xs">Logo URL</Label>
+                          <Input
+                            value={displayBrand.logo_url}
+                            onChange={(e) => setEditedBrand({ ...editedBrand, logo_url: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Hero Image URL</Label>
+                          <Input
+                            value={displayBrand.hero_image_url}
+                            onChange={(e) => setEditedBrand({ ...editedBrand, hero_image_url: e.target.value })}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <Label className="text-xs">Primary</Label>
+                            <Input
+                              value={displayBrand.primary_color}
+                              onChange={(e) => setEditedBrand({ ...editedBrand, primary_color: e.target.value })}
+                            />
+                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.primary_color})` }}></div>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Glow</Label>
+                            <Input
+                              value={displayBrand.primary_glow_color}
+                              onChange={(e) => setEditedBrand({ ...editedBrand, primary_glow_color: e.target.value })}
+                            />
+                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.primary_glow_color})` }}></div>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Accent</Label>
+                            <Input
+                              value={displayBrand.accent_color}
+                              onChange={(e) => setEditedBrand({ ...editedBrand, accent_color: e.target.value })}
+                            />
+                            <div className="h-6 rounded mt-1" style={{ backgroundColor: `hsl(${displayBrand.accent_color})` }}></div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                          <img 
+                            src={brand.hero_image_url} 
+                            alt={brand.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={brand.logo_url} 
+                            alt={`${brand.name} logo`}
+                            className="h-12 object-contain"
+                          />
+                        </div>
 
-                  <div className="flex gap-2">
-                    <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
-                    <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
-                    <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
-                  </div>
+                        <div className="flex gap-2">
+                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
+                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
+                          <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
+                        </div>
+                      </>
+                    )}
 
-                  {!brand.is_active && (
-                    <Button
-                      onClick={() => handleBrandSwitch(brand.club_id)}
-                      className="w-full"
-                    >
-                      Switch to this brand
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    <div className="flex gap-2">
+                      {isEditing ? (
+                        <>
+                          <Button onClick={handleSaveEdit} className="flex-1">
+                            Save
+                          </Button>
+                          <Button onClick={handleCancelEdit} variant="outline" className="flex-1">
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button onClick={() => handleEditBrand(brand)} variant="outline" className="flex-1">
+                            Edit
+                          </Button>
+                          {!brand.is_active && (
+                            <Button
+                              onClick={() => handleBrandSwitch(brand.club_id)}
+                              className="flex-1"
+                            >
+                              Switch
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
