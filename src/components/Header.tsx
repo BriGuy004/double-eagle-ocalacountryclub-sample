@@ -37,8 +37,8 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 </button>
                 
                 <img 
-                  src="/lovable-uploads/lantana-logo.png" 
-                  alt="Lantana Golf Club" 
+                  src="/lovable-uploads/ocala-logo.png" 
+                  alt="Country Club of Ocala" 
                   className="h-10 w-auto"
                 />
                 
@@ -61,8 +61,8 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
               <div className="flex items-center">
                 <a href="/" className="inline-block">
                   <img 
-                    src="/lovable-uploads/lantana-logo.png" 
-                    alt="Lantana Golf Club" 
+                    src="/lovable-uploads/ocala-logo.png" 
+                    alt="Country Club of Ocala" 
                     className="h-24 w-auto cursor-pointer"
                   />
                 </a>

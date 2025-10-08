@@ -23,7 +23,7 @@ const MemberDashboard = () => {
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         {/* Header Section */}
         <div className="mb-8 md:mb-12">
-          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Lindsay Foster</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-4">Justin Kuehn</h1>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
             <Badge className="bg-accent text-accent-foreground px-4 py-2 text-base md:text-lg">
               {userData.currentTier} Member
