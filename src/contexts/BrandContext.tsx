@@ -167,9 +167,23 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Apply brand colors to CSS variables
   const applyBrandStyles = (brand: Brand) => {
     const root = document.documentElement;
+    
+    // Set HSL values (space-separated format for use with hsl())
     root.style.setProperty('--primary', brand.primary_color);
     root.style.setProperty('--primary-glow', brand.primary_glow_color);
     root.style.setProperty('--accent', brand.accent_color);
+    
+    // Also set complete HSL strings for direct use
+    root.style.setProperty('--color-primary', `hsl(${brand.primary_color})`);
+    root.style.setProperty('--color-primary-glow', `hsl(${brand.primary_glow_color})`);
+    root.style.setProperty('--color-accent', `hsl(${brand.accent_color})`);
+    
+    // Log for debugging
+    console.log('Brand styles applied:', {
+      primary: brand.primary_color,
+      glow: brand.primary_glow_color,
+      accent: brand.accent_color
+    });
   };
 
   // Set active brand
