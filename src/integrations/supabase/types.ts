@@ -14,11 +14,15 @@ export type Database = {
   }
   public: {
     Tables: {
-      brands: {
+      offers: {
         Row: {
           accent_color: string
+          category: string
+          city: string
           club_id: string
-          created_at: string | null
+          created_at: string
+          description: string | null
+          full_address: string | null
           hero_image_url: string
           id: string
           is_active: boolean | null
@@ -27,12 +31,19 @@ export type Database = {
           offer_card_url: string | null
           primary_color: string
           primary_glow_color: string
-          updated_at: string | null
+          redemption_info: string | null
+          state: string
+          updated_at: string
+          website: string | null
         }
         Insert: {
           accent_color: string
+          category?: string
+          city?: string
           club_id: string
-          created_at?: string | null
+          created_at?: string
+          description?: string | null
+          full_address?: string | null
           hero_image_url: string
           id?: string
           is_active?: boolean | null
@@ -41,12 +52,19 @@ export type Database = {
           offer_card_url?: string | null
           primary_color: string
           primary_glow_color: string
-          updated_at?: string | null
+          redemption_info?: string | null
+          state?: string
+          updated_at?: string
+          website?: string | null
         }
         Update: {
           accent_color?: string
+          category?: string
+          city?: string
           club_id?: string
-          created_at?: string | null
+          created_at?: string
+          description?: string | null
+          full_address?: string | null
           hero_image_url?: string
           id?: string
           is_active?: boolean | null
@@ -55,7 +73,10 @@ export type Database = {
           offer_card_url?: string | null
           primary_color?: string
           primary_glow_color?: string
-          updated_at?: string | null
+          redemption_info?: string | null
+          state?: string
+          updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
