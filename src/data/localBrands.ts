@@ -146,5 +146,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.stcloudcountryclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Along Mississippi River, rolling hills and woods, family-oriented"
+  },
+  {
+    club_id: "equestrian",
+    name: "The Equestrian Hotel",
+    logo_url: "/lovable-uploads/equestrian-logo.png",
+    hero_image_url: "/lovable-uploads/equestrian-hero.png",
+    offer_card_url: "/lovable-uploads/equestrian-hero.png",
+    primary_color: "220 25% 20%",
+    primary_glow_color: "220 25% 30%",
+    accent_color: "35 75% 55%",
+    is_active: false,
+    category: "Hotels",
+    state: "FL",
+    city: "Ocala",
+    full_address: "8510 NW 17th Lane Ocala, FL 34482",
+    website: "https://equestrianhotel.com/",
+    redemption_info: "Present member card at check-in",
+    description: "Premier equestrian resort in the heart of horse country"
   }
 ];
