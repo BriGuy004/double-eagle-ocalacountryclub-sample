@@ -62,9 +62,10 @@ const BrandAdmin = () => {
   };
 
   const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', isEdit = false) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const dataUrl = reader.result as string;
+    try {
+      // Create a URL for the uploaded file (temporary, for preview)
+      const dataUrl = URL.createObjectURL(file);
+      
       if (isEdit && editedBrand) {
         setEditedBrand(prev => ({
           ...prev,
@@ -76,9 +77,12 @@ const BrandAdmin = () => {
           [field]: dataUrl
         }));
       }
-      toast.success("Image loaded! Save to apply changes.");
-    };
-    reader.readAsDataURL(file);
+      
+      toast.success("Image loaded! Note: You'll need to save the image to your public/lovable-uploads folder manually.");
+    } catch (error) {
+      console.error('Error loading image:', error);
+      toast.error("Failed to load image");
+    }
   };
 
   const handleAddBrand = async () => {
@@ -128,34 +132,40 @@ const BrandAdmin = () => {
   const handleSaveEdit = async () => {
     if (!editedBrand) return;
 
-    const { error } = await supabase
-      .from('offers' as any)
-      .update({
-        name: editedBrand.name,
-        logo_url: editedBrand.logo_url,
-        hero_image_url: editedBrand.hero_image_url,
-        offer_card_url: editedBrand.offer_card_url,
-        primary_color: editedBrand.primary_color,
-        primary_glow_color: editedBrand.primary_glow_color,
-        accent_color: editedBrand.accent_color,
-        state: editedBrand.state,
-        city: editedBrand.city,
-        full_address: editedBrand.full_address,
-        website: editedBrand.website,
-        redemption_info: editedBrand.redemption_info,
-        description: editedBrand.description
-      })
-      .eq('id', editedBrand.id);
+    try {
+      const { error } = await supabase
+        .from('offers' as any)
+        .update({
+          name: editedBrand.name,
+          logo_url: editedBrand.logo_url,
+          hero_image_url: editedBrand.hero_image_url,
+          offer_card_url: editedBrand.offer_card_url,
+          primary_color: editedBrand.primary_color,
+          primary_glow_color: editedBrand.primary_glow_color,
+          accent_color: editedBrand.accent_color,
+          state: editedBrand.state || '',
+          city: editedBrand.city || '',
+          full_address: editedBrand.full_address || null,
+          website: editedBrand.website || null,
+          redemption_info: editedBrand.redemption_info || null,
+          description: editedBrand.description || null
+        })
+        .eq('id', editedBrand.id);
 
-    if (error) {
-      toast.error(`Error updating brand: ${error.message}`);
-      return;
+      if (error) {
+        console.error('Supabase error:', error);
+        toast.error(`Error updating: ${error.message}`);
+        return;
+      }
+
+      toast.success("Brand updated successfully!");
+      setEditingBrandId(null);
+      setEditedBrand(null);
+      window.location.reload();
+    } catch (err) {
+      console.error('Update error:', err);
+      toast.error("Failed to update brand. Please check console for details.");
     }
-
-    toast.success("Brand updated successfully!");
-    setEditingBrandId(null);
-    setEditedBrand(null);
-    window.location.reload();
   };
 
   const handleCancelEdit = () => {
