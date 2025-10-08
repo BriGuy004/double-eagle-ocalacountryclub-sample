@@ -22,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 // Type-safe Brand interface matching database schema
 interface Brand {
@@ -495,52 +496,9 @@ const BrandAdmin = () => {
           </Card>
         )}
 
-        {/* Existing Brands Grid */}
-        {editingBrandId && (
-          <Card className="mb-8 border-primary">
-            <CardHeader>
-              <CardTitle>Edit {categoryInfo.title}</CardTitle>
-              <CardDescription>Update information and branding</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <BrandForm
-                brand={editedBrand || {}}
-                onChange={(updates) => setEditedBrand({ ...editedBrand, ...updates })}
-                categoryInfo={categoryInfo}
-                isEdit={true}
-                onImageUpload={handleImageUpload}
-              />
-              <div className="flex gap-4">
-                <Button 
-                  onClick={handleSaveEdit} 
-                  variant="orange"
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
-                <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>
-                  Cancel
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
+        {/* Brands Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBrands.map((brand) => {
-            const isEditing = editingBrandId === brand.id;
-            if (isEditing) return null; // Skip rendering in grid when editing
-
             return (
               <Card key={brand.id} className={brand.is_active ? "border-primary" : ""}>
                 <CardHeader>
@@ -618,6 +576,46 @@ const BrandAdmin = () => {
             );
           })}
         </div>
+
+        {/* Edit Brand Sheet (Slide-over) */}
+        <Sheet open={!!editingBrandId} onOpenChange={() => setEditingBrandId(null)}>
+          <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Edit {categoryInfo.title}</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-6">
+              <BrandForm
+                brand={editedBrand || {}}
+                onChange={(updates) => setEditedBrand({ ...editedBrand, ...updates })}
+                categoryInfo={categoryInfo}
+                isEdit={true}
+                onImageUpload={handleImageUpload}
+              />
+              <div className="flex gap-4">
+                <Button 
+                  onClick={handleSaveEdit} 
+                  variant="orange"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
