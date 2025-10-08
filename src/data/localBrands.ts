@@ -218,5 +218,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.hampshireclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Devereaux Emmet design, Long Island Sound views, 18-hole private club, Hampton Golf managed"
+  },
+  {
+    club_id: "tennesseenational",
+    name: "Tennessee National Golf Club",
+    logo_url: "/lovable-uploads/tennesseenational-logo.png",
+    hero_image_url: "/lovable-uploads/tennesseenational-hero.png",
+    offer_card_url: "/lovable-uploads/tennesseenational-hero.png",
+    primary_color: "200 55% 35%",
+    primary_glow_color: "200 55% 45%",
+    accent_color: "145 40% 40%",
+    is_active: false,
+    category: "Golf",
+    state: "TN",
+    city: "Loudon",
+    full_address: "Loudon, TN",
+    website: "https://www.tennesseenational.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "Greg Norman Signature design, Top 10 courses in Tennessee, Watts Bar Lake views, Hampton Golf managed"
   }
 ];
