@@ -350,26 +350,28 @@ const BrandAdmin = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Brand Colors</Label>
-                <div className="grid grid-cols-3 gap-4">
-                  <ColorPicker
-                    label="Primary"
-                    value={newBrand.primary_color}
-                    onChange={(val) => setNewBrand(prev => ({ ...prev, primary_color: val }))}
-                  />
-                  <ColorPicker
-                    label="Primary Glow"
-                    value={newBrand.primary_glow_color}
-                    onChange={(val) => setNewBrand(prev => ({ ...prev, primary_glow_color: val }))}
-                  />
-                  <ColorPicker
-                    label="Accent"
-                    value={newBrand.accent_color}
-                    onChange={(val) => setNewBrand(prev => ({ ...prev, accent_color: val }))}
-                  />
+              {categoryInfo.category === 'Golf' && (
+                <div className="space-y-2">
+                  <Label>Brand Colors</Label>
+                  <div className="grid grid-cols-3 gap-4">
+                    <ColorPicker
+                      label="Primary"
+                      value={newBrand.primary_color}
+                      onChange={(val) => setNewBrand(prev => ({ ...prev, primary_color: val }))}
+                    />
+                    <ColorPicker
+                      label="Primary Glow"
+                      value={newBrand.primary_glow_color}
+                      onChange={(val) => setNewBrand(prev => ({ ...prev, primary_glow_color: val }))}
+                    />
+                    <ColorPicker
+                      label="Accent"
+                      value={newBrand.accent_color}
+                      onChange={(val) => setNewBrand(prev => ({ ...prev, accent_color: val }))}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex gap-4">
                 <Button onClick={handleAddBrand} className="bg-primary hover:bg-primary/90">
@@ -496,26 +498,28 @@ const BrandAdmin = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Brand Colors</Label>
-                <div className="grid grid-cols-3 gap-6">
-                  <ColorPicker
-                    label="Primary"
-                    value={editedBrand?.primary_color}
-                    onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
-                  />
-                  <ColorPicker
-                    label="Primary Glow"
-                    value={editedBrand?.primary_glow_color}
-                    onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
-                  />
-                  <ColorPicker
-                    label="Accent"
-                    value={editedBrand?.accent_color}
-                    onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
-                  />
+              {categoryInfo.category === 'Golf' && (
+                <div className="space-y-2">
+                  <Label>Brand Colors</Label>
+                  <div className="grid grid-cols-3 gap-6">
+                    <ColorPicker
+                      label="Primary"
+                      value={editedBrand?.primary_color}
+                      onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
+                    />
+                    <ColorPicker
+                      label="Primary Glow"
+                      value={editedBrand?.primary_glow_color}
+                      onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
+                    />
+                    <ColorPicker
+                      label="Accent"
+                      value={editedBrand?.accent_color}
+                      onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex gap-4">
                 <Button onClick={handleSaveEdit} variant="orange">
@@ -575,17 +579,19 @@ const BrandAdmin = () => {
                       />
                     </div>
 
-                    <div className="flex gap-2">
-                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
-                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
-                      <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
-                    </div>
+                    {categoryInfo.category === 'Golf' && (
+                      <div className="flex gap-2">
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_color})` }}></div>
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.primary_glow_color})` }}></div>
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: `hsl(${brand.accent_color})` }}></div>
+                      </div>
+                    )}
 
                     <div className="flex gap-2">
                       <Button onClick={() => handleEditBrand(brand)} variant="outline" className="flex-1">
                         Edit
                       </Button>
-                      {!brand.is_active && (
+                      {categoryInfo.category === 'Golf' && !brand.is_active && (
                         <Button
                           onClick={() => handleBrandSwitch(brand.club_id)}
                           className="flex-1"
