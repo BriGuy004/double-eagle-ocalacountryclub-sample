@@ -77,6 +77,37 @@ const BrandAdmin = () => {
     categoryInfo.category === 'All' || brand.category === categoryInfo.category
   );
 
+  // Comprehensive validation function
+  const validateBrand = (brand: Partial<Brand>): string | null => {
+    if (!brand.club_id) return "Club ID is required";
+    if (!/^[a-z0-9-]+$/.test(brand.club_id)) {
+      return "Club ID must be lowercase alphanumeric with hyphens only";
+    }
+    if (!brand.name || brand.name.length < 3) {
+      return "Name must be at least 3 characters";
+    }
+    if (brand.website && !brand.website.startsWith('http')) {
+      return "Website must start with http:// or https://";
+    }
+    if (!brand.logo_url || !brand.hero_image_url || !brand.offer_card_url) {
+      return "All images (logo, hero, and offer card) are required";
+    }
+    
+    // Validate HSL color format (e.g., "38 70% 15%")
+    const hslRegex = /^\d+\s+\d+%\s+\d+%$/;
+    if (brand.primary_color && !hslRegex.test(brand.primary_color)) {
+      return "Invalid primary color format. Use: 'H S% L%' (e.g., '38 70% 15%')";
+    }
+    if (brand.primary_glow_color && !hslRegex.test(brand.primary_glow_color)) {
+      return "Invalid primary glow color format. Use: 'H S% L%' (e.g., '38 70% 25%')";
+    }
+    if (brand.accent_color && !hslRegex.test(brand.accent_color)) {
+      return "Invalid accent color format. Use: 'H S% L%' (e.g., '45 85% 50%')";
+    }
+    
+    return null; // Valid
+  };
+
   const handleBrandSwitch = async (clubId: string) => {
     await setActiveBrand(clubId);
     toast.success("Brand switched successfully!");
@@ -124,8 +155,9 @@ const BrandAdmin = () => {
   };
 
   const handleAddBrand = async () => {
-    if (!newBrand.club_id || !newBrand.name || !newBrand.logo_url || !newBrand.hero_image_url || !newBrand.offer_card_url) {
-      toast.error("Please fill in all required fields");
+    const validationError = validateBrand(newBrand);
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
@@ -179,6 +211,13 @@ const BrandAdmin = () => {
 
   const handleSaveEdit = async () => {
     if (!editedBrand) return;
+
+    // Validate edited brand
+    const validationError = validateBrand(editedBrand);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
 
     // Don't allow saving local brands
     if (editedBrand.id.includes('local-')) {
