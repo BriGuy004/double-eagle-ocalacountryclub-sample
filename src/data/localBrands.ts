@@ -92,5 +92,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.palenciaclub.com/",
     redemption_info: "Show member card at pro shop",
     description: "Arthur Hills design, opened 2002, along Intracoastal Waterway, 7,071 yards"
+  },
+  {
+    club_id: "verandah",
+    name: "Verandah Club",
+    logo_url: "/lovable-uploads/verandah-logo.png",
+    hero_image_url: "/lovable-uploads/verandah-hero.png",
+    offer_card_url: "/lovable-uploads/verandah-hero.png",
+    primary_color: "25 55% 45%",
+    primary_glow_color: "25 55% 55%",
+    accent_color: "140 40% 40%",
+    is_active: false,
+    category: "Golf",
+    state: "FL",
+    city: "Fort Myers",
+    full_address: "Fort Myers, FL",
+    website: "https://www.verandahgolfclub.com/",
+    redemption_info: "Show member card at pro shop",
+    description: "36 holes - Jack Nicklaus/Jack Nicklaus II (Whispering Oak) and Bob Cupp (Old Orange), along Orange River"
   }
 ];
