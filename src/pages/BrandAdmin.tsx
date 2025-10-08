@@ -4,13 +4,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Plus } from "lucide-react";
+import { CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { ColorPicker } from "@/components/ColorPicker";
 import { useLocation } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Type-safe Brand interface matching database schema
 interface Brand {
@@ -39,6 +49,7 @@ const BrandAdmin = () => {
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
   const [editedBrand, setEditedBrand] = useState<Brand | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [newBrand, setNewBrand] = useState<Omit<Brand, 'id'>>({
     club_id: "",
     name: "",
@@ -279,6 +290,36 @@ const BrandAdmin = () => {
   const handleCancelEdit = () => {
     setEditingBrandId(null);
     setEditedBrand(null);
+  };
+
+  const handleDeleteBrand = async (brandId: string) => {
+    try {
+      // Don't allow deleting local brands
+      if (brandId.includes('local-')) {
+        toast.error("Cannot delete local brand. Remove it from src/data/localBrands.ts instead.");
+        setDeleteConfirm(null);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('offers')
+        .delete()
+        .eq('id', brandId);
+
+      if (error) {
+        toast.error(`Delete failed: ${error.message}`);
+        return;
+      }
+
+      toast.success("Brand deleted successfully!");
+      setDeleteConfirm(null);
+      
+      // Refresh brands from database
+      await refreshBrands();
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      toast.error(`Network error: ${err.message || 'Failed to delete'}`);
+    }
   };
 
   if (isLoading) {
@@ -684,6 +725,14 @@ const BrandAdmin = () => {
                           Switch
                         </Button>
                       )}
+                      <Button 
+                        variant="destructive" 
+                        size="icon"
+                        onClick={() => setDeleteConfirm(brand.id)}
+                        title="Delete brand"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -691,6 +740,27 @@ const BrandAdmin = () => {
             );
           })}
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Brand?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete this brand from the database. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => deleteConfirm && handleDeleteBrand(deleteConfirm)}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
