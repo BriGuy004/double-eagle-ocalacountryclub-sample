@@ -53,6 +53,7 @@ const BrandAdmin = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newBrand, setNewBrand] = useState<Omit<Brand, 'id'>>({
     club_id: "",
     name: "",
@@ -86,10 +87,18 @@ const BrandAdmin = () => {
 
   const categoryInfo = getCategoryInfo();
   
-  // Filter brands by category
-  const filteredBrands = allBrands.filter(brand => 
-    categoryInfo.category === 'All' || brand.category === categoryInfo.category
-  );
+  // Filter brands by category and search term
+  const filteredBrands = allBrands
+    .filter(brand => 
+      categoryInfo.category === 'All' || brand.category === categoryInfo.category
+    )
+    .filter(brand =>
+      searchTerm === "" ||
+      brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      brand.club_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      brand.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      brand.state?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // Comprehensive validation function
   const validateBrand = (brand: Partial<Brand>): string | null => {
@@ -429,6 +438,21 @@ const BrandAdmin = () => {
               </Button>
             </div>
           )}
+
+          {/* Search Bar */}
+          <div className="mb-4">
+            <Input
+              placeholder="Search by name, ID, city, or state..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-md"
+            />
+            {searchTerm && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Found {filteredBrands.length} {filteredBrands.length === 1 ? 'brand' : 'brands'}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Add New Brand Form */}
