@@ -3,8 +3,7 @@ import { Header } from "@/components/Header";
 import { CategorySelector } from "@/components/CategorySelector";
 import { useBrand } from "@/contexts/BrandContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("Home");
@@ -96,114 +95,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      
-      {/* Featured Benefits Section with Brand Colors */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Your Exclusive Member Benefits
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Discover premium lifestyle experiences curated for {currentBrand.name} members.
-          </p>
-        </div>
-        
-        {/* Quick Stats Cards with Brand Colors */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card 
-            className="border-2 hover:shadow-xl transition-all cursor-pointer"
-            style={{
-              borderColor: 'var(--color-primary)'
-            }}
-          >
-            <CardContent className="p-6 text-center">
-              <div 
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{
-                  backgroundColor: 'var(--color-primary)',
-                  opacity: 0.9
-                }}
-              >
-                <Sparkles className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">50+</h3>
-              <p className="text-muted-foreground">Premium Partners</p>
-            </CardContent>
-          </Card>
-          
-          <Card 
-            className="border-2 hover:shadow-xl transition-all cursor-pointer"
-            style={{
-              borderColor: 'var(--color-primary-glow)'
-            }}
-          >
-            <CardContent className="p-6 text-center">
-              <div 
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{
-                  backgroundColor: 'var(--color-primary-glow)',
-                  opacity: 0.9
-                }}
-              >
-                <Sparkles className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">$2,500</h3>
-              <p className="text-muted-foreground">Average Annual Savings</p>
-            </CardContent>
-          </Card>
-          
-          <Card 
-            className="border-2 hover:shadow-xl transition-all cursor-pointer"
-            style={{
-              borderColor: 'var(--color-accent)'
-            }}
-          >
-            <CardContent className="p-6 text-center">
-              <div 
-                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  opacity: 0.9
-                }}
-              >
-                <Sparkles className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">24/7</h3>
-              <p className="text-muted-foreground">Concierge Support</p>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* CTA Section with Brand Colors */}
-        <div 
-          className="rounded-xl p-12 text-center"
-          style={{
-            background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-glow) 100%)`
-          }}
-        >
-          <h3 className="text-3xl font-bold text-white mb-4">
-            Ready to Experience the Benefits?
-          </h3>
-          <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Browse our exclusive marketplace of premium offers, or start by exploring guest play opportunities at our reciprocal network.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="outline"
-              className="bg-white text-primary font-semibold hover:bg-white/90"
-            >
-              Browse Marketplace
-            </Button>
-            <Button 
-              size="lg"
-              className="bg-white/20 text-white font-semibold border-2 border-white hover:bg-white/30"
-            >
-              View Guest Play
-            </Button>
-          </div>
-        </div>
-      </main>
     </div>
   );
 };
