@@ -128,15 +128,14 @@ export const Header = ({
                   />
                 </button>
                 
-                {/* Member Account Button with Brand Color */}
+                {/* Member Account Button */}
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={() => navigate('/member-dashboard')}
-                  className="text-white font-semibold border-2 hover:opacity-90 transition-opacity"
+                  className="text-white font-semibold border-0 hover:opacity-90 transition-opacity"
                   style={{
-                    backgroundColor: 'var(--color-primary)',
-                    borderColor: 'var(--color-primary-glow)'
+                    backgroundColor: 'hsl(50, 35%, 40%)'
                   }}
                 >
                   <User className="h-4 w-4 mr-2" />
