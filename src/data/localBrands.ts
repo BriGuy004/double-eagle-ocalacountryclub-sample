@@ -272,5 +272,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://www.gentlecreek.com/",
     redemption_info: "Show member card at pro shop",
     description: "D.A. Weibring design, Top 10 in DFW, Top 50 in Texas, 22-acre lake, Arcis Golf managed"
+  },
+  {
+    club_id: "calibercarwash",
+    name: "Caliber Car Wash",
+    logo_url: "/lovable-uploads/calibercarwash-logo.png",
+    hero_image_url: "/lovable-uploads/calibercarwash-hero.png",
+    offer_card_url: "/lovable-uploads/calibercarwash-hero.png",
+    primary_color: "220 60% 35%",
+    primary_glow_color: "220 60% 45%",
+    accent_color: "25 95% 55%",
+    is_active: false,
+    category: "Lifestyle",
+    state: "FL",
+    city: "Ocala",
+    full_address: "815 S Pine Avenue Ocala, FL 34471",
+    website: "https://calibercarwash.com/location/fl-ocala-815-s-pine-ave-34471/",
+    redemption_info: "Show member card at service counter",
+    description: "Premium car wash services in Ocala"
   }
 ];
