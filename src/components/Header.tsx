@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SearchBar } from "@/components/SearchBar";
 import { MobileNav } from "@/components/MobileNav";
-import { Menu } from "lucide-react";
+import { Menu, User, Bell } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useBrand } from "@/contexts/BrandContext";
 
@@ -13,11 +13,28 @@ interface HeaderProps {
   isSearching?: boolean;
 }
 
-export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }: HeaderProps) => {
+export const Header = ({ 
+  searchQuery = "", 
+  onSearchChange, 
+  isSearching = false 
+}: HeaderProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { currentBrand } = useBrand();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  
+  // Fallback if brand isn't loaded yet
+  if (!currentBrand) {
+    return (
+      <header className="w-full border-b border-border/50 backdrop-blur-md bg-background/80 sticky top-0 z-30">
+        <div className="container mx-auto px-4 md:px-6 py-4">
+          <div className="flex items-center justify-center">
+            <div className="animate-pulse text-muted-foreground">Loading...</div>
+          </div>
+        </div>
+      </header>
+    );
+  }
   
   return (
     <>
@@ -28,23 +45,39 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
           {isMobile ? (
             /* Mobile Layout */
             <div className="space-y-3">
-              {/* Top Row: Hamburger + Logo */}
+              {/* Top Row: Hamburger + Logo + Notification */}
               <div className="flex items-center justify-between">
+                {/* Hamburger Menu with Brand Color on Hover */}
                 <button
                   onClick={() => setIsMobileNavOpen(true)}
-                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all"
+                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative"
                   style={{ minWidth: "44px", minHeight: "44px" }}
                 >
                   <Menu className="h-6 w-6 text-white" />
                 </button>
                 
-                <img 
-                  src={currentBrand?.logo_url || "/lovable-uploads/ocala-logo.png"} 
-                  alt={currentBrand?.name || "Country Club"} 
-                  className="h-10 w-auto"
-                />
+                {/* Brand Logo */}
+                <a href="/" className="inline-block">
+                  <img 
+                    src={currentBrand.logo_url} 
+                    alt={currentBrand.name} 
+                    className="h-10 w-auto cursor-pointer"
+                  />
+                </a>
                 
-                <div style={{ width: "44px" }} /> {/* Spacer for centering */}
+                {/* Quick Actions */}
+                <button
+                  onClick={() => navigate('/notifications')}
+                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative"
+                  style={{ minWidth: "44px", minHeight: "44px" }}
+                >
+                  <Bell className="h-5 w-5 text-white" />
+                  {/* Notification Badge with Brand Color */}
+                  <span 
+                    className="absolute top-1 right-1 w-2 h-2 rounded-full"
+                    style={{ backgroundColor: 'var(--color-accent)' }}
+                  />
+                </button>
               </div>
               
               {/* Search Bar - Full Width */}
@@ -58,21 +91,29 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
             </div>
           ) : (
             /* Desktop Layout */
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-8">
               {/* Logo */}
-              <div className="flex items-center">
+              <div className="flex items-center flex-shrink-0">
                 <a href="/" className="inline-block">
                   <img 
-                    src={currentBrand?.logo_url || "/lovable-uploads/ocala-logo.png"} 
-                    alt={currentBrand?.name || "Country Club"} 
-                    className="h-24 w-auto cursor-pointer"
+                    src={currentBrand.logo_url} 
+                    alt={currentBrand.name} 
+                    className="h-20 w-auto cursor-pointer hover:opacity-90 transition-opacity"
                   />
                 </a>
               </div>
-
+              
+              {/* Desktop Navigation Links */}
+              <nav className="hidden lg:flex items-center space-x-1 flex-shrink-0">
+                <NavLink href="/" label="Home" />
+                <NavLink href="/offers" label="Marketplace" />
+                <NavLink href="/guest-play" label="Guest Play" />
+                <NavLink href="/concierge" label="Concierge" />
+              </nav>
+              
               {/* Search Bar */}
               {onSearchChange && (
-                <div className="flex items-center flex-1 mx-8">
+                <div className="flex items-center flex-1 max-w-xl">
                   <SearchBar 
                     value={searchQuery}
                     onChange={onSearchChange}
@@ -80,21 +121,34 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                   />
                 </div>
               )}
-
-              {/* Navigation */}
-              <div className="flex items-center space-x-4">
+              
+              {/* Right Side Actions */}
+              <div className="flex items-center space-x-3 flex-shrink-0">
+                {/* Notifications */}
+                <button
+                  onClick={() => navigate('/notifications')}
+                  className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <Bell className="h-5 w-5 text-white" />
+                  <span 
+                    className="absolute top-1 right-1 w-2 h-2 rounded-full"
+                    style={{ backgroundColor: 'var(--color-accent)' }}
+                  />
+                </button>
+                
+                {/* Member Account Button with Brand Color */}
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={() => navigate('/member-dashboard')}
-                  className="font-semibold"
+                  className="text-white font-semibold border-2 hover:opacity-90 transition-opacity"
                   style={{
                     backgroundColor: 'var(--color-primary)',
-                    color: 'white',
-                    borderColor: 'var(--color-primary)'
+                    borderColor: 'var(--color-primary-glow)'
                   }}
                 >
-                  Member Account
+                  <User className="h-4 w-4 mr-2" />
+                  Account
                 </Button>
               </div>
             </div>
@@ -102,5 +156,37 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
         </div>
       </header>
     </>
+  );
+};
+
+// Desktop Navigation Link Component with Brand Color Hover
+const NavLink = ({ href, label }: { href: string; label: string }) => {
+  const navigate = useNavigate();
+  const isActive = window.location.pathname === href;
+  
+  return (
+    <button
+      onClick={() => navigate(href)}
+      className={`
+        px-4 py-2 rounded-lg text-sm font-medium transition-all
+        ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}
+      `}
+      style={isActive ? {
+        backgroundColor: 'var(--color-primary)',
+        opacity: 0.9
+      } : {}}
+      onMouseEnter={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive) {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }
+      }}
+    >
+      {label}
+    </button>
   );
 };
