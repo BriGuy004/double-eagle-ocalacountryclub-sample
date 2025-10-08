@@ -1,9 +1,6 @@
 import { useState, useMemo } from "react";
 import { Header } from "@/components/Header";
-import { LocationSelector } from "@/components/LocationSelector";
-import { SortFilter } from "@/components/SortFilter";
 import { ProductCard } from "@/components/ProductCard";
-import { CategorySelector } from "@/components/CategorySelector";
 
 const travelProductsByCity = {
   "Rochester": [
@@ -185,28 +182,6 @@ const Travel = () => {
       <Header />
       
       <main className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <CategorySelector 
-              selectedCategory="Travel"
-              onCategoryChange={() => {}}
-            />
-          </div>
-          <div className="flex justify-center mb-8">
-            <LocationSelector 
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-start mb-8">
-          <SortFilter 
-            selectedSort={selectedSort}
-            onSortChange={setSelectedSort}
-          />
-        </div>
-
         {currentProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-xl text-muted-foreground">No travel offers found for {selectedLocation}</p>

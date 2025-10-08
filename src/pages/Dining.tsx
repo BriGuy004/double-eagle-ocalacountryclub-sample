@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
-import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
-import { CategorySelector } from "@/components/CategorySelector";
 import { FilterPanel } from "@/components/FilterPanel";
 import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
@@ -254,21 +252,6 @@ const Dining = () => {
       />
       
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <CategorySelector 
-              selectedCategory="Dining"
-              onCategoryChange={() => {}}
-            />
-          </div>
-          <div className="flex justify-center mb-8">
-            <LocationSelector 
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-            />
-          </div>
-        </div>
-
         {/* Filter Panel */}
         {isMobile ? (
           <div className="mb-6">

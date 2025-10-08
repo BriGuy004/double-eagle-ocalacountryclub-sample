@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { LocationSelector } from "@/components/LocationSelector";
-import { SortFilter } from "@/components/SortFilter";
 import { ProductCard } from "@/components/ProductCard";
-import { CategorySelector } from "@/components/CategorySelector";
 
 // Sample state-specific products - you can expand this
 const stateProducts = {
@@ -108,31 +105,7 @@ const StateProducts = () => {
       
       {/* Main Content */}
       <main className="container mx-auto px-6 py-12">
-        {/* Title Section */}
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <CategorySelector 
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-            />
-          </div>
-          <div className="flex justify-center mb-8">
-            <LocationSelector 
-              selectedLocation={stateName}
-              onLocationChange={setSelectedLocation}
-            />
-          </div>
-        </div>
-
-        {/* Sort Filter */}
-        <div className="flex justify-start mb-8">
-          <SortFilter 
-            selectedSort={selectedSort}
-            onSortChange={setSelectedSort}
-          />
-        </div>
-
-        {/* State Products Grid */}        
+        {/* State Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product, index) => (
             <ProductCard
