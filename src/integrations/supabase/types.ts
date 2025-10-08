@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      brands: {
+        Row: {
+          accent_color: string
+          club_id: string
+          created_at: string | null
+          hero_image_url: string
+          id: string
+          is_active: boolean | null
+          logo_url: string
+          name: string
+          primary_color: string
+          primary_glow_color: string
+          updated_at: string | null
+        }
+        Insert: {
+          accent_color: string
+          club_id: string
+          created_at?: string | null
+          hero_image_url: string
+          id?: string
+          is_active?: boolean | null
+          logo_url: string
+          name: string
+          primary_color: string
+          primary_glow_color: string
+          updated_at?: string | null
+        }
+        Update: {
+          accent_color?: string
+          club_id?: string
+          created_at?: string | null
+          hero_image_url?: string
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string
+          name?: string
+          primary_color?: string
+          primary_glow_color?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
