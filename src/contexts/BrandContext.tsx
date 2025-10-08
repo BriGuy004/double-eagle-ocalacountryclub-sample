@@ -44,6 +44,31 @@ const getActiveBrandFromStorage = (): string | null => {
   }
 };
 
+// Validate brand data integrity
+const validateBrand = (brand: Partial<Brand>): boolean => {
+  if (!brand.club_id || !brand.name) {
+    console.error('Brand missing required fields:', brand);
+    return false;
+  }
+  
+  // Validate HSL format (space-separated: "38 70% 15%")
+  const hslRegex = /^\d+\s+\d+%\s+\d+%$/;
+  if (!hslRegex.test(brand.primary_color || '')) {
+    console.error('Invalid primary color format:', brand.primary_color);
+    return false;
+  }
+  if (!hslRegex.test(brand.primary_glow_color || '')) {
+    console.error('Invalid primary glow color format:', brand.primary_glow_color);
+    return false;
+  }
+  if (!hslRegex.test(brand.accent_color || '')) {
+    console.error('Invalid accent color format:', brand.accent_color);
+    return false;
+  }
+  
+  return true;
+};
+
 export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentBrand, setCurrentBrand] = useState<Brand | null>(null);
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
@@ -89,10 +114,16 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       setIsUsingLocalData(false);
 
-      setAllBrands(data || []);
+      // Validate and filter brands
+      const validBrands = (data || []).filter(validateBrand);
+      if (validBrands.length < (data?.length || 0)) {
+        console.warn(`Filtered out ${(data?.length || 0) - validBrands.length} invalid brands`);
+      }
+      
+      setAllBrands(validBrands);
       
       // Set active brand (prioritize database over localStorage)
-      const activeBrand = data?.find((b) => b.is_active) || data?.[0];
+      const activeBrand = validBrands?.find((b) => b.is_active) || validBrands?.[0];
       if (activeBrand) {
         setCurrentBrand(activeBrand);
         applyBrandStyles(activeBrand);
