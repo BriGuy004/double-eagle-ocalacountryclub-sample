@@ -164,5 +164,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://equestrianhotel.com/",
     redemption_info: "Present member card at check-in",
     description: "Premier equestrian resort in the heart of horse country"
+  },
+  {
+    club_id: "marksprime",
+    name: "Mark's Prime Steakhouse",
+    logo_url: "/lovable-uploads/marksprime-logo.png",
+    hero_image_url: "/lovable-uploads/marksprime-hero.png",
+    offer_card_url: "/lovable-uploads/marksprime-hero.png",
+    primary_color: "0 60% 35%",
+    primary_glow_color: "0 60% 45%",
+    accent_color: "35 65% 50%",
+    is_active: false,
+    category: "Dining",
+    state: "FL",
+    city: "Ocala",
+    full_address: "30 S Magnolia Avenue Ocala, FL 34471",
+    website: "https://marksprimesteakhouse.com",
+    redemption_info: "Show member card to server",
+    description: "Premium steakhouse in downtown Ocala"
   }
 ];
