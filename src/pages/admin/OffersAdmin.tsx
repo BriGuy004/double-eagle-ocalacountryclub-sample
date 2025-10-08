@@ -52,26 +52,31 @@ export const OffersAdmin = ({ category }: OffersAdminProps) => {
     state: "",
   });
 
-  const { data: offers, isLoading, error } = useQuery({
+  const { data: offers, isLoading, error, refetch } = useQuery({
     queryKey: ['offers', category],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('offers')
-        .select('*')
-        .eq('category', category)
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching offers:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('offers')
+          .select('*')
+          .eq('category', category)
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+        
+        console.log('Fetched offers:', data);
+        return data || [];
+      } catch (err) {
+        console.error('Fetch error:', err);
+        throw err;
       }
-      return data;
     },
+    retry: 3,
+    retryDelay: 1000,
   });
-
-  if (error) {
-    console.error('Query error:', error);
-  }
 
   const handleImageUpload = async (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', isEdit = false) => {
     const reader = new FileReader();
