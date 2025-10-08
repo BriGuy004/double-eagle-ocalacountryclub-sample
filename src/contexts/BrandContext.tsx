@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { localBrands } from '@/data/localBrands';
+import { toast } from 'sonner';
 
 interface Brand {
   id: string;
@@ -27,6 +29,8 @@ interface BrandContextType {
   setActiveBrand: (clubId: string) => Promise<void>;
   getBrandById: (clubId: string) => Brand | null;
   isLoading: boolean;
+  isUsingLocalData: boolean;
+  syncBrandsToSupabase: () => Promise<void>;
 }
 
 const BrandContext = createContext<BrandContextType | undefined>(undefined);
@@ -36,6 +40,7 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [allBrands, setAllBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUsingLocalData, setIsUsingLocalData] = useState(false);
 
   // Fetch all brands
   const fetchBrands = async () => {
@@ -49,16 +54,18 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (fetchError) {
         console.error('Error fetching brands:', fetchError);
         setError(fetchError.message);
-        // Use fallback data on error
-        useFallbackData();
+        // Use local data on error
+        useLocalData();
         return;
       }
 
       if (!data || data.length === 0) {
-        console.warn('No brands found in database, using fallback');
-        useFallbackData();
+        console.warn('No brands found in database, using local data');
+        useLocalData();
         return;
       }
+
+      setIsUsingLocalData(false);
 
       setAllBrands(data as any || []);
       
@@ -73,29 +80,70 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (err) {
       console.error('Exception fetching brands:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
-      useFallbackData();
+      useLocalData();
     }
   };
 
-  // Fallback to default Ocala brand if fetch fails
-  const useFallbackData = () => {
-    const fallbackBrand: Brand = {
-      id: 'fallback-ocala',
-      club_id: 'ocala',
-      name: 'The Country Club of Ocala',
-      logo_url: '/lovable-uploads/ocala-logo.png',
-      hero_image_url: '/lovable-uploads/ocala-golf-course.png',
-      primary_color: '38 70% 15%',
-      primary_glow_color: '38 70% 25%',
-      accent_color: '45 85% 50%',
-      is_active: true,
-      category: 'Golf'
-    };
+  // Use local data if Supabase fetch fails
+  const useLocalData = () => {
+    console.log('Using local brand data');
+    const brandsWithIds = localBrands.map((brand, index) => ({
+      ...brand,
+      id: `local-${brand.club_id}-${index}`
+    }));
     
-    setAllBrands([fallbackBrand]);
-    setCurrentBrand(fallbackBrand);
-    applyBrandStyles(fallbackBrand);
+    setAllBrands(brandsWithIds as any);
+    const activeBrand = brandsWithIds.find(b => b.is_active) || brandsWithIds[0];
+    if (activeBrand) {
+      setCurrentBrand(activeBrand as any);
+      applyBrandStyles(activeBrand as any);
+    }
+    setIsUsingLocalData(true);
     setIsLoading(false);
+  };
+
+  // Sync local brands to Supabase
+  const syncBrandsToSupabase = async () => {
+    try {
+      toast.info('Syncing brands to database...');
+      
+      for (const brand of localBrands) {
+        const { error } = await supabase
+          .from('offers' as any)
+          .upsert({
+            club_id: brand.club_id,
+            name: brand.name,
+            logo_url: brand.logo_url,
+            hero_image_url: brand.hero_image_url,
+            offer_card_url: brand.offer_card_url || brand.hero_image_url,
+            primary_color: brand.primary_color,
+            primary_glow_color: brand.primary_glow_color,
+            accent_color: brand.accent_color,
+            is_active: brand.is_active,
+            category: brand.category,
+            state: brand.state,
+            city: brand.city,
+            full_address: brand.full_address || '',
+            website: brand.website || '',
+            redemption_info: brand.redemption_info || '',
+            description: brand.description || ''
+          }, {
+            onConflict: 'club_id'
+          });
+
+        if (error) {
+          console.error('Error syncing brand:', brand.club_id, error);
+          toast.error(`Failed to sync ${brand.name}: ${error.message}`);
+          return;
+        }
+      }
+
+      toast.success('All brands synced successfully!');
+      await fetchBrands();
+    } catch (err) {
+      console.error('Sync error:', err);
+      toast.error('Failed to sync brands. Check console for details.');
+    }
   };
 
   // Apply brand colors to CSS variables
@@ -159,7 +207,15 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   return (
-    <BrandContext.Provider value={{ currentBrand, allBrands, setActiveBrand, getBrandById, isLoading }}>
+    <BrandContext.Provider value={{ 
+      currentBrand, 
+      allBrands, 
+      setActiveBrand, 
+      getBrandById, 
+      isLoading,
+      isUsingLocalData,
+      syncBrandsToSupabase
+    }}>
       {children}
     </BrandContext.Provider>
   );

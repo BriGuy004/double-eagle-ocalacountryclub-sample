@@ -14,7 +14,7 @@ import { useLocation } from "react-router-dom";
 
 const BrandAdmin = () => {
   const location = useLocation();
-  const { currentBrand, allBrands, setActiveBrand, isLoading } = useBrand();
+  const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
   const [editedBrand, setEditedBrand] = useState<any>(null);
@@ -116,9 +116,9 @@ const BrandAdmin = () => {
   };
 
   const handleEditBrand = (brand: any) => {
-    // Don't allow editing fallback brands
-    if (brand.id.includes('fallback')) {
-      toast.error("Cannot edit fallback brand. Please refresh the page to load real data.");
+    // Don't allow editing local brands - they must edit the file directly
+    if (brand.id.includes('local-')) {
+      toast.error("To edit local brands, please edit src/data/localBrands.ts directly, then sync to database.");
       return;
     }
     setEditingBrandId(brand.id);
@@ -128,9 +128,9 @@ const BrandAdmin = () => {
   const handleSaveEdit = async () => {
     if (!editedBrand) return;
 
-    // Don't allow saving fallback brands
-    if (editedBrand.id.includes('fallback')) {
-      toast.error("Cannot save fallback brand. Please refresh the page.");
+    // Don't allow saving local brands
+    if (editedBrand.id.includes('local-')) {
+      toast.error("Cannot save local brand. Edit src/data/localBrands.ts instead.");
       return;
     }
 
@@ -204,18 +204,32 @@ const BrandAdmin = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">{categoryInfo.title} Management</h1>
-            <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">{categoryInfo.route}</code></p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">{categoryInfo.title} Management</h1>
+              <p className="text-[#94a3b8]">Access at: <code className="bg-white/10 px-2 py-1 rounded">{categoryInfo.route}</code></p>
+            </div>
+            <Button
+              onClick={() => setIsAddingBrand(!isAddingBrand)}
+              variant="orange"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New {categoryInfo.title}
+            </Button>
           </div>
-          <Button
-            onClick={() => setIsAddingBrand(!isAddingBrand)}
-            variant="orange"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New {categoryInfo.title}
-          </Button>
+          
+          {isUsingLocalData && (
+            <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-4 flex items-center justify-between">
+              <div>
+                <p className="text-yellow-200 font-medium">Using Local Data</p>
+                <p className="text-yellow-300/70 text-sm">Database connection failed. Edit src/data/localBrands.ts to manage brands.</p>
+              </div>
+              <Button onClick={syncBrandsToSupabase} variant="outline" className="border-yellow-600 text-yellow-200 hover:bg-yellow-900/30">
+                Sync to Database
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Add New Brand Form */}
@@ -524,9 +538,9 @@ const BrandAdmin = () => {
                               Active
                             </Badge>
                           )}
-                          {brand.id.includes('fallback') && (
+                          {brand.id.includes('local-') && (
                             <Badge variant="destructive" className="ml-2">
-                              Fallback - Refresh Page
+                              Local Data
                             </Badge>
                           )}
                         </CardTitle>
