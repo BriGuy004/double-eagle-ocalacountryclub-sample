@@ -19,11 +19,6 @@ import Golf from "./pages/Golf";
 import MemberDashboard from "./pages/MemberDashboard";
 import RedemptionPage from "./pages/RedemptionPage";
 import BrandAdmin from "./pages/BrandAdmin";
-import GolfAdmin from "./pages/admin/GolfAdmin";
-import HotelsAdmin from "./pages/admin/HotelsAdmin";
-import DiningAdmin from "./pages/admin/DiningAdmin";
-import EntertainmentAdmin from "./pages/admin/EntertainmentAdmin";
-import LifestyleAdmin from "./pages/admin/LifestyleAdmin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,11 +46,6 @@ const App = () => (
                 <Route path="/member-dashboard" element={<MemberDashboard />} />
                 <Route path="/redeem/:offerId" element={<RedemptionPage />} />
                 <Route path="/admin/brands" element={<BrandAdmin />} />
-                <Route path="/admin/golf" element={<GolfAdmin />} />
-                <Route path="/admin/hotels" element={<HotelsAdmin />} />
-                <Route path="/admin/dining" element={<DiningAdmin />} />
-                <Route path="/admin/entertainment" element={<EntertainmentAdmin />} />
-                <Route path="/admin/lifestyle" element={<LifestyleAdmin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
