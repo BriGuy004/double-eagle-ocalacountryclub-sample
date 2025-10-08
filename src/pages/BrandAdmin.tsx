@@ -12,13 +12,34 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { ColorPicker } from "@/components/ColorPicker";
 import { useLocation } from "react-router-dom";
 
+// Type-safe Brand interface matching database schema
+interface Brand {
+  id?: string;
+  club_id: string;
+  name: string;
+  logo_url: string;
+  hero_image_url: string;
+  offer_card_url?: string;
+  primary_color: string;
+  primary_glow_color: string;
+  accent_color: string;
+  category?: string;
+  state?: string;
+  city?: string;
+  full_address?: string;
+  website?: string;
+  redemption_info?: string;
+  description?: string;
+  is_active?: boolean;
+}
+
 const BrandAdmin = () => {
   const location = useLocation();
   const { currentBrand, allBrands, setActiveBrand, isLoading, isUsingLocalData, syncBrandsToSupabase } = useBrand();
   const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [editingBrandId, setEditingBrandId] = useState<string | null>(null);
-  const [editedBrand, setEditedBrand] = useState<any>(null);
-  const [newBrand, setNewBrand] = useState({
+  const [editedBrand, setEditedBrand] = useState<Brand | null>(null);
+  const [newBrand, setNewBrand] = useState<Omit<Brand, 'id'>>({
     club_id: "",
     name: "",
     logo_url: "",
@@ -27,6 +48,7 @@ const BrandAdmin = () => {
     primary_color: "38 70% 15%",
     primary_glow_color: "38 70% 25%",
     accent_color: "45 85% 50%",
+    category: "Golf",
     state: "",
     city: "",
     full_address: "",
@@ -83,7 +105,7 @@ const BrandAdmin = () => {
     }
 
     const { error } = await supabase
-      .from('offers' as any)
+      .from('offers')
       .insert([{ 
         ...newBrand,
         category: categoryInfo.category === 'All' ? 'Golf' : categoryInfo.category
@@ -105,6 +127,7 @@ const BrandAdmin = () => {
       primary_color: "38 70% 15%",
       primary_glow_color: "38 70% 25%",
       accent_color: "45 85% 50%",
+      category: "Golf",
       state: "",
       city: "",
       full_address: "",
@@ -115,7 +138,7 @@ const BrandAdmin = () => {
     window.location.reload();
   };
 
-  const handleEditBrand = (brand: any) => {
+  const handleEditBrand = (brand: Brand) => {
     // Don't allow editing local brands - they must edit the file directly
     if (brand.id.includes('local-')) {
       toast.error("To edit local brands, please edit src/data/localBrands.ts directly, then sync to database.");
@@ -156,7 +179,7 @@ const BrandAdmin = () => {
       console.log('Update data:', updateData);
 
       const { data, error } = await supabase
-        .from('offers' as any)
+        .from('offers')
         .update(updateData)
         .eq('id', editedBrand.id)
         .select();
