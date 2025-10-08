@@ -326,5 +326,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://karishmaboutique.com/",
     redemption_info: "Show member card at checkout",
     description: "Boutique fashion in downtown Ocala"
+  },
+  {
+    club_id: "shipsticks",
+    name: "Ship Sticks",
+    logo_url: "/lovable-uploads/shipsticks-logo.png",
+    hero_image_url: "/lovable-uploads/shipsticks-hero.png",
+    offer_card_url: "/lovable-uploads/shipsticks-hero.png",
+    primary_color: "145 60% 45%",
+    primary_glow_color: "145 60% 55%",
+    accent_color: "210 70% 50%",
+    is_active: false,
+    category: "Travel",
+    state: "Nationwide",
+    city: "Nationwide",
+    full_address: "Nationwide service",
+    website: "https://www.shipsticks.com/",
+    redemption_info: "Use member code when booking online",
+    description: "Golf club and luggage shipping service"
   }
 ];
