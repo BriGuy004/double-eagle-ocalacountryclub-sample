@@ -108,28 +108,45 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       toast.info('Syncing brands to database...');
       
       for (const brand of localBrands) {
-        const { error } = await supabase
+        // Check if brand already exists
+        const { data: existing } = await supabase
           .from('offers' as any)
-          .upsert({
-            club_id: brand.club_id,
-            name: brand.name,
-            logo_url: brand.logo_url,
-            hero_image_url: brand.hero_image_url,
-            offer_card_url: brand.offer_card_url || brand.hero_image_url,
-            primary_color: brand.primary_color,
-            primary_glow_color: brand.primary_glow_color,
-            accent_color: brand.accent_color,
-            is_active: brand.is_active,
-            category: brand.category,
-            state: brand.state,
-            city: brand.city,
-            full_address: brand.full_address || '',
-            website: brand.website || '',
-            redemption_info: brand.redemption_info || '',
-            description: brand.description || ''
-          }, {
-            onConflict: 'club_id'
-          });
+          .select('id')
+          .eq('club_id', brand.club_id)
+          .single();
+
+        const brandData = {
+          club_id: brand.club_id,
+          name: brand.name,
+          logo_url: brand.logo_url,
+          hero_image_url: brand.hero_image_url,
+          offer_card_url: brand.offer_card_url || brand.hero_image_url,
+          primary_color: brand.primary_color,
+          primary_glow_color: brand.primary_glow_color,
+          accent_color: brand.accent_color,
+          is_active: brand.is_active,
+          category: brand.category,
+          state: brand.state,
+          city: brand.city,
+          full_address: brand.full_address || '',
+          website: brand.website || '',
+          redemption_info: brand.redemption_info || '',
+          description: brand.description || ''
+        };
+
+        let error;
+        if (existing) {
+          // Update existing brand
+          ({ error } = await supabase
+            .from('offers' as any)
+            .update(brandData)
+            .eq('club_id', brand.club_id));
+        } else {
+          // Insert new brand
+          ({ error } = await supabase
+            .from('offers' as any)
+            .insert(brandData));
+        }
 
         if (error) {
           console.error('Error syncing brand:', brand.club_id, error);
