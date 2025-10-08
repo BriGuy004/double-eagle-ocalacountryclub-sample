@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
+import { BrandForm } from "@/components/BrandForm";
 import { ColorPicker } from "@/components/ColorPicker";
 import { useLocation } from "react-router-dom";
 import {
@@ -381,131 +382,12 @@ const BrandAdmin = () => {
               <CardDescription>Upload logos and configure brand colors</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Club ID (unique, lowercase)</Label>
-                  <Input
-                    value={newBrand.club_id}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, club_id: e.target.value }))}
-                    placeholder="e.g., northgate"
-                  />
-                </div>
-                <div>
-                  <Label>Name</Label>
-                  <Input
-                    value={newBrand.name}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="e.g., Northgate Country Club"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>City</Label>
-                  <Input
-                    value={newBrand.city}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, city: e.target.value }))}
-                    placeholder="e.g., Houston"
-                  />
-                </div>
-                <div>
-                  <Label>State</Label>
-                  <Input
-                    value={newBrand.state}
-                    onChange={(e) => setNewBrand(prev => ({ ...prev, state: e.target.value }))}
-                    placeholder="e.g., TX"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Full Address</Label>
-                <Input
-                  value={newBrand.full_address}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, full_address: e.target.value }))}
-                  placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
-                />
-              </div>
-
-              <div>
-                <Label>Website URL</Label>
-                <Input
-                  value={newBrand.website}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, website: e.target.value }))}
-                  placeholder="e.g., https://example.com"
-                />
-              </div>
-
-              <div>
-                <Label>Description</Label>
-                <Input
-                  value={newBrand.description}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Brief description"
-                />
-              </div>
-
-              <div>
-                <Label>Redemption Information</Label>
-                <Input
-                  value={newBrand.redemption_info}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, redemption_info: e.target.value }))}
-                  placeholder="Instructions for members"
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <ImageUpload
-                  label="Logo"
-                  currentUrl={newBrand.logo_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'logo_url', newBrand.club_id);
-                    if (url) setNewBrand(prev => ({ ...prev, logo_url: url }));
-                  }}
-                  thumbnail
-                />
-                <ImageUpload
-                  label="Hero Image"
-                  currentUrl={newBrand.hero_image_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'hero_image_url', newBrand.club_id);
-                    if (url) setNewBrand(prev => ({ ...prev, hero_image_url: url }));
-                  }}
-                />
-                <ImageUpload
-                  label="Offer Card"
-                  currentUrl={newBrand.offer_card_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'offer_card_url', newBrand.club_id);
-                    if (url) setNewBrand(prev => ({ ...prev, offer_card_url: url }));
-                  }}
-                />
-              </div>
-
-              {categoryInfo.category === 'Golf' && (
-                <div className="space-y-2">
-                  <Label>Brand Colors</Label>
-                  <div className="grid grid-cols-3 gap-4">
-                    <ColorPicker
-                      label="Primary"
-                      value={newBrand.primary_color}
-                      onChange={(val) => setNewBrand(prev => ({ ...prev, primary_color: val }))}
-                    />
-                    <ColorPicker
-                      label="Primary Glow"
-                      value={newBrand.primary_glow_color}
-                      onChange={(val) => setNewBrand(prev => ({ ...prev, primary_glow_color: val }))}
-                    />
-                    <ColorPicker
-                      label="Accent"
-                      value={newBrand.accent_color}
-                      onChange={(val) => setNewBrand(prev => ({ ...prev, accent_color: val }))}
-                    />
-                  </div>
-                </div>
-              )}
-
+              <BrandForm
+                brand={newBrand}
+                onChange={(updates) => setNewBrand(prev => ({ ...prev, ...updates }))}
+                categoryInfo={categoryInfo}
+                onImageUpload={handleImageUpload}
+              />
               <div className="flex gap-4">
                 <Button onClick={handleAddBrand} className="bg-primary hover:bg-primary/90">
                   Save Brand
@@ -526,126 +408,13 @@ const BrandAdmin = () => {
               <CardDescription>Update information and branding</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Club ID</Label>
-                  <Input value={editedBrand?.club_id} disabled className="bg-muted" />
-                </div>
-                <div>
-                  <Label>Name</Label>
-                  <Input
-                    value={editedBrand?.name}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, name: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>City</Label>
-                  <Input
-                    value={editedBrand?.city || ""}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, city: e.target.value })}
-                    placeholder="e.g., Houston"
-                  />
-                </div>
-                <div>
-                  <Label>State</Label>
-                  <Input
-                    value={editedBrand?.state || ""}
-                    onChange={(e) => setEditedBrand({ ...editedBrand, state: e.target.value })}
-                    placeholder="e.g., TX"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Full Address</Label>
-                <Input
-                  value={editedBrand?.full_address || ""}
-                  onChange={(e) => setEditedBrand({ ...editedBrand, full_address: e.target.value })}
-                  placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
-                />
-              </div>
-
-              <div>
-                <Label>Website URL</Label>
-                <Input
-                  value={editedBrand?.website || ""}
-                  onChange={(e) => setEditedBrand({ ...editedBrand, website: e.target.value })}
-                  placeholder="e.g., https://example.com"
-                />
-              </div>
-
-              <div>
-                <Label>Description</Label>
-                <Input
-                  value={editedBrand?.description || ""}
-                  onChange={(e) => setEditedBrand({ ...editedBrand, description: e.target.value })}
-                  placeholder="Brief description"
-                />
-              </div>
-
-              <div>
-                <Label>Redemption Information</Label>
-                <Input
-                  value={editedBrand?.redemption_info || ""}
-                  onChange={(e) => setEditedBrand({ ...editedBrand, redemption_info: e.target.value })}
-                  placeholder="Instructions for members"
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-6">
-                <ImageUpload
-                  label="Logo"
-                  currentUrl={editedBrand?.logo_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'logo_url', editedBrand.club_id);
-                    if (url) setEditedBrand({ ...editedBrand, logo_url: url });
-                  }}
-                  thumbnail
-                />
-                <ImageUpload
-                  label="Hero Image"
-                  currentUrl={editedBrand?.hero_image_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'hero_image_url', editedBrand.club_id);
-                    if (url) setEditedBrand({ ...editedBrand, hero_image_url: url });
-                  }}
-                />
-                <ImageUpload
-                  label="Offer Card"
-                  currentUrl={editedBrand?.offer_card_url}
-                  onImageSelect={async (file) => {
-                    const url = await handleImageUpload(file, 'offer_card_url', editedBrand.club_id);
-                    if (url) setEditedBrand({ ...editedBrand, offer_card_url: url });
-                  }}
-                />
-              </div>
-
-              {categoryInfo.category === 'Golf' && (
-                <div className="space-y-2">
-                  <Label>Brand Colors</Label>
-                  <div className="grid grid-cols-3 gap-6">
-                    <ColorPicker
-                      label="Primary"
-                      value={editedBrand?.primary_color}
-                      onChange={(val) => setEditedBrand({ ...editedBrand, primary_color: val })}
-                    />
-                    <ColorPicker
-                      label="Primary Glow"
-                      value={editedBrand?.primary_glow_color}
-                      onChange={(val) => setEditedBrand({ ...editedBrand, primary_glow_color: val })}
-                    />
-                    <ColorPicker
-                      label="Accent"
-                      value={editedBrand?.accent_color}
-                      onChange={(val) => setEditedBrand({ ...editedBrand, accent_color: val })}
-                    />
-                  </div>
-                </div>
-              )}
-
+              <BrandForm
+                brand={editedBrand || {}}
+                onChange={(updates) => setEditedBrand({ ...editedBrand, ...updates })}
+                categoryInfo={categoryInfo}
+                isEdit={true}
+                onImageUpload={handleImageUpload}
+              />
               <div className="flex gap-4">
                 <Button onClick={handleSaveEdit} variant="orange">
                   Save Changes
