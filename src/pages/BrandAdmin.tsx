@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, Plus, Trash2, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { BrandForm } from "@/components/BrandForm";
@@ -88,18 +88,20 @@ const BrandAdmin = () => {
 
   const categoryInfo = getCategoryInfo();
   
-  // Filter brands by category and search term
-  const filteredBrands = allBrands
-    .filter(brand => 
-      categoryInfo.category === 'All' || brand.category === categoryInfo.category
-    )
-    .filter(brand =>
-      searchTerm === "" ||
-      brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      brand.club_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      brand.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      brand.state?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // Filter brands by category and search term (memoized for performance)
+  const filteredBrands = useMemo(() => {
+    return allBrands
+      .filter(brand => 
+        categoryInfo.category === 'All' || brand.category === categoryInfo.category
+      )
+      .filter(brand =>
+        searchTerm === "" ||
+        brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.club_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.state?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [allBrands, categoryInfo.category, searchTerm]);
 
   // Comprehensive validation function
   const validateBrand = (brand: Partial<Brand>): string | null => {
