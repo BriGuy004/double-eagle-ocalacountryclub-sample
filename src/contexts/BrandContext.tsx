@@ -123,60 +123,86 @@ export const BrandProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsLoading(false);
   };
 
-  // Sync local brands to Supabase
+  // Sync local brands to Supabase with better error handling
   const syncBrandsToSupabase = async () => {
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: [] as Array<{ brand: string; error: string }>
+    };
+
     try {
       toast.info('Syncing brands to database...');
       
-      for (const brand of localBrands) {
-        // Check if brand already exists
-        const { data: existing } = await supabase
-          .from('offers')
-          .select('id')
-          .eq('club_id', brand.club_id)
-          .maybeSingle();
-
-        const brandData: OfferInsert = {
-          club_id: brand.club_id,
-          name: brand.name,
-          logo_url: brand.logo_url,
-          hero_image_url: brand.hero_image_url,
-          offer_card_url: brand.offer_card_url || brand.hero_image_url,
-          primary_color: brand.primary_color,
-          primary_glow_color: brand.primary_glow_color,
-          accent_color: brand.accent_color,
-          is_active: brand.is_active,
-          category: brand.category,
-          state: brand.state,
-          city: brand.city,
-          full_address: brand.full_address || '',
-          website: brand.website || '',
-          redemption_info: brand.redemption_info || '',
-          description: brand.description || ''
-        };
-
-        let error;
-        if (existing) {
-          // Update existing brand
-          ({ error } = await supabase
+      // Use Promise.allSettled for better error handling
+      const syncPromises = localBrands.map(async (brand) => {
+        try {
+          // Check if brand already exists
+          const { data: existing } = await supabase
             .from('offers')
-            .update(brandData)
-            .eq('club_id', brand.club_id));
-        } else {
-          // Insert new brand
-          ({ error } = await supabase
-            .from('offers')
-            .insert(brandData));
-        }
+            .select('id')
+            .eq('club_id', brand.club_id)
+            .maybeSingle();
 
-        if (error) {
-          console.error('Error syncing brand:', brand.club_id, error);
-          toast.error(`Failed to sync ${brand.name}: ${error.message}`);
-          return;
+          const brandData: OfferInsert = {
+            club_id: brand.club_id,
+            name: brand.name,
+            logo_url: brand.logo_url,
+            hero_image_url: brand.hero_image_url,
+            offer_card_url: brand.offer_card_url || brand.hero_image_url,
+            primary_color: brand.primary_color,
+            primary_glow_color: brand.primary_glow_color,
+            accent_color: brand.accent_color,
+            is_active: brand.is_active,
+            category: brand.category,
+            state: brand.state,
+            city: brand.city,
+            full_address: brand.full_address || '',
+            website: brand.website || '',
+            redemption_info: brand.redemption_info || '',
+            description: brand.description || ''
+          };
+
+          let error;
+          if (existing) {
+            ({ error } = await supabase
+              .from('offers')
+              .update(brandData)
+              .eq('club_id', brand.club_id));
+          } else {
+            ({ error } = await supabase
+              .from('offers')
+              .insert(brandData));
+          }
+
+          if (error) throw error;
+          
+          results.success++;
+          return { success: true, brand: brand.name };
+        } catch (err: any) {
+          results.failed++;
+          results.errors.push({ 
+            brand: brand.name, 
+            error: err.message 
+          });
+          return { success: false, brand: brand.name, error: err.message };
         }
+      });
+
+      await Promise.allSettled(syncPromises);
+
+      // Show results
+      if (results.failed === 0) {
+        toast.success(`All ${results.success} brands synced successfully!`);
+      } else if (results.success > 0) {
+        toast.warning(`Synced ${results.success} brands. ${results.failed} failed.`);
+        console.error('Failed syncs:', results.errors);
+      } else {
+        toast.error('Failed to sync any brands. Check console for details.');
+        console.error('Sync errors:', results.errors);
       }
 
-      toast.success('All brands synced successfully!');
+      // Refresh brands even if some failed
       await fetchBrands();
     } catch (err) {
       console.error('Sync error:', err);
