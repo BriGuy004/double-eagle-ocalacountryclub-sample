@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
@@ -8,6 +8,7 @@ import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 // Premium lifestyle brands data organized by city
 const lifestyleProductsByCity = {
@@ -92,13 +93,46 @@ const Index = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const [selectedCategory, setSelectedCategory] = useState("Lifestyle");
   const isMobile = useIsMobile();
+  const [lifestyleOffers, setLifestyleOffers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get products for the selected location only
-  const locationProducts = (lifestyleProductsByCity[selectedLocation as keyof typeof lifestyleProductsByCity] || []).map(p => ({
-    ...p,
-    category: "Lifestyle" as const,
-    city: selectedLocation
-  }));
+  // Fetch lifestyle offers from database
+  useEffect(() => {
+    const fetchLifestyleOffers = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('category', 'Lifestyle');
+
+      if (error) {
+        console.error('Error fetching lifestyle offers:', error);
+        setLifestyleOffers([]);
+      } else {
+        setLifestyleOffers(data || []);
+      }
+      setIsLoading(false);
+    };
+
+    fetchLifestyleOffers();
+  }, []);
+
+  // Filter offers by selected location and convert to product format
+  const locationProducts = lifestyleOffers
+    .filter(offer => offer.city === selectedLocation)
+    .map(offer => ({
+      brand: offer.name,
+      title: offer.description || `Exclusive offer at ${offer.name}`,
+      images: [
+        offer.offer_card_url || offer.hero_image_url,
+        offer.hero_image_url,
+        offer.logo_url
+      ].filter(Boolean),
+      tags: [offer.city, offer.state].filter(Boolean),
+      category: "Lifestyle" as const,
+      city: offer.city,
+      offerId: offer.club_id
+    }));
 
   const {
     searchQuery,
@@ -172,7 +206,11 @@ const Index = () => {
         )}
 
         {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12 md:py-16">
+            <p className="text-xl md:text-2xl text-white mb-2">Loading offers...</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12 md:py-16">
             <p className="text-xl md:text-2xl text-white mb-2">No results found</p>
             <p className="text-sm md:text-base text-[#94a3b8]">Try different keywords or adjust filters</p>

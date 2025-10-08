@@ -182,5 +182,23 @@ export const localBrands: LocalBrand[] = [
     website: "https://marksprimesteakhouse.com",
     redemption_info: "Show member card to server",
     description: "Premium steakhouse in downtown Ocala"
+  },
+  {
+    club_id: "aesthetichouse",
+    name: "The Aesthetic House",
+    logo_url: "/lovable-uploads/aesthetichouse-logo.png",
+    hero_image_url: "/lovable-uploads/aesthetichouse-hero.png",
+    offer_card_url: "/lovable-uploads/aesthetichouse-hero.png",
+    primary_color: "0 0% 20%",
+    primary_glow_color: "0 0% 30%",
+    accent_color: "0 0% 50%",
+    is_active: false,
+    category: "Lifestyle",
+    state: "FL",
+    city: "Ocala",
+    full_address: "6001 W Nordling Loop, Crystal River, FL 34429",
+    website: "https://www.aesthetichouse.com",
+    redemption_info: "Show member card when booking services",
+    description: "Premier aesthetic and wellness services"
   }
 ];
