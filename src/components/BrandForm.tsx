@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ImageUpload";
 import { ColorPicker } from "@/components/ColorPicker";
 
@@ -38,6 +40,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({
   isEdit = false,
   onImageUpload
 }) => {
+  const [uploadMethod, setUploadMethod] = useState<'upload' | 'url'>('url');
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -116,32 +120,84 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <ImageUpload
-          label="Logo"
-          currentUrl={brand.logo_url}
-          onImageSelect={async (file) => {
-            const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
-            if (url) onChange({ logo_url: url });
-          }}
-          thumbnail
-        />
-        <ImageUpload
-          label="Hero Image"
-          currentUrl={brand.hero_image_url}
-          onImageSelect={async (file) => {
-            const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
-            if (url) onChange({ hero_image_url: url });
-          }}
-        />
-        <ImageUpload
-          label="Offer Card"
-          currentUrl={brand.offer_card_url}
-          onImageSelect={async (file) => {
-            const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
-            if (url) onChange({ offer_card_url: url });
-          }}
-        />
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label>Images</Label>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setUploadMethod(prev => prev === 'upload' ? 'url' : 'upload')}
+          >
+            {uploadMethod === 'upload' ? 'Use URL instead' : 'Upload files instead'}
+          </Button>
+        </div>
+
+        {uploadMethod === 'upload' ? (
+          <div className="grid grid-cols-3 gap-4">
+            <ImageUpload
+              label="Logo"
+              currentUrl={brand.logo_url}
+              onImageSelect={async (file) => {
+                const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
+                if (url) onChange({ logo_url: url });
+              }}
+              thumbnail
+            />
+            <ImageUpload
+              label="Hero Image"
+              currentUrl={brand.hero_image_url}
+              onImageSelect={async (file) => {
+                const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
+                if (url) onChange({ hero_image_url: url });
+              }}
+            />
+            <ImageUpload
+              label="Offer Card"
+              currentUrl={brand.offer_card_url}
+              onImageSelect={async (file) => {
+                const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
+                if (url) onChange({ offer_card_url: url });
+              }}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label>Logo URL</Label>
+              <Input
+                value={brand.logo_url || ""}
+                onChange={(e) => onChange({ logo_url: e.target.value })}
+                placeholder="/lovable-uploads/logo.png"
+              />
+              {brand.logo_url && (
+                <img src={brand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain bg-muted rounded p-2" />
+              )}
+            </div>
+            <div>
+              <Label>Hero Image URL</Label>
+              <Input
+                value={brand.hero_image_url || ""}
+                onChange={(e) => onChange({ hero_image_url: e.target.value })}
+                placeholder="/lovable-uploads/hero.png"
+              />
+              {brand.hero_image_url && (
+                <img src={brand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
+              )}
+            </div>
+            <div>
+              <Label>Offer Card URL</Label>
+              <Input
+                value={brand.offer_card_url || ""}
+                onChange={(e) => onChange({ offer_card_url: e.target.value })}
+                placeholder="/lovable-uploads/card.png"
+              />
+              {brand.offer_card_url && (
+                <img src={brand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {categoryInfo.category === 'Golf' && (
