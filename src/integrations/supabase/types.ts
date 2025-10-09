@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      club_offer_visibility: {
+        Row: {
+          club_id: string
+          created_at: string
+          id: string
+          is_visible: boolean
+          max_reciprocal_access: number | null
+          notes: string | null
+          offer_id: string
+          updated_at: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          max_reciprocal_access?: number | null
+          notes?: string | null
+          offer_id: string
+          updated_at?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          max_reciprocal_access?: number | null
+          notes?: string | null
+          offer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_offer_visibility_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["club_id"]
+          },
+          {
+            foreignKeyName: "club_offer_visibility_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           accent_color: string
@@ -82,24 +130,35 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          club_id: string | null
           created_at: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          club_id?: string | null
           created_at?: string | null
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          club_id?: string | null
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["club_id"]
+          },
+        ]
       }
     }
     Views: {
@@ -115,6 +174,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_club_admin: {
+        Args: { _club_id: string; _user_id: string }
         Returns: boolean
       }
       set_active_brand: {

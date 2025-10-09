@@ -19,6 +19,7 @@ import Golf from "./pages/Golf";
 import MemberDashboard from "./pages/MemberDashboard";
 import RedemptionPage from "./pages/RedemptionPage";
 import BrandAdmin from "./pages/BrandAdmin";
+import ClubAdmin from "./pages/ClubAdmin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
                 <Route path="/admin/shopping" element={<BrandAdmin />} />
                 <Route path="/admin/travel" element={<BrandAdmin />} />
                 <Route path="/admin/entertainment" element={<BrandAdmin />} />
+                <Route path="/clubadmin" element={<ClubAdmin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
