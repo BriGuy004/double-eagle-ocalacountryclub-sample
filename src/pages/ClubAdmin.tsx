@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Eye, EyeOff, Save } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface OfferVisibility {
   id: string;
@@ -22,12 +23,19 @@ interface OfferVisibility {
   offer_state: string;
 }
 
+interface Club {
+  club_id: string;
+  name: string;
+}
+
 export default function ClubAdmin() {
   const [clubId, setClubId] = useState<string | null>(null);
   const [clubName, setClubName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [visibilitySettings, setVisibilitySettings] = useState<OfferVisibility[]>([]);
   const [saving, setSaving] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -36,49 +44,65 @@ export default function ClubAdmin() {
 
   const checkClubAdminAccess = async () => {
     try {
+      // Allow unauthenticated access for development
       const { data: { user } } = await supabase.auth.getUser();
       
+      // Load all clubs for the dropdown
+      const { data: clubsData } = await supabase
+        .from("offers")
+        .select("club_id, name")
+        .order("name");
+
+      if (clubsData) {
+        setAvailableClubs(clubsData);
+      }
+
       if (!user) {
-        toast({
-          title: "Authentication Required",
-          description: "Please log in to access the club admin panel.",
-          variant: "destructive",
-        });
+        // Development mode - allow access without auth
+        console.log("Development mode: No authentication required");
+        setLoading(false);
         return;
       }
 
-      // Get user's club_id from user_roles
+      // Check if user is an admin
+      const { data: adminRole } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (adminRole) {
+        setIsAdmin(true);
+        setLoading(false);
+        return;
+      }
+
+      // Check if user is a club admin
       const { data: roleData, error: roleError } = await supabase
         .from("user_roles")
         .select("club_id")
         .eq("user_id", user.id)
         .eq("role", "club_admin")
-        .single();
+        .maybeSingle();
 
-      if (roleError || !roleData?.club_id) {
-        toast({
-          title: "Access Denied",
-          description: "You don't have club admin permissions.",
-          variant: "destructive",
-        });
-        return;
+      if (roleData?.club_id) {
+        setClubId(roleData.club_id);
+
+        // Get club name
+        const { data: clubData } = await supabase
+          .from("offers")
+          .select("name")
+          .eq("club_id", roleData.club_id)
+          .single();
+
+        if (clubData) {
+          setClubName(clubData.name);
+        }
+
+        // Load visibility settings for this club
+        await loadVisibilitySettings(roleData.club_id);
       }
-
-      setClubId(roleData.club_id);
-
-      // Get club name
-      const { data: clubData } = await supabase
-        .from("offers")
-        .select("name")
-        .eq("club_id", roleData.club_id)
-        .single();
-
-      if (clubData) {
-        setClubName(clubData.name);
-      }
-
-      // Load all offers and visibility settings
-      await loadVisibilitySettings(roleData.club_id);
     } catch (error) {
       console.error("Error checking club admin access:", error);
       toast({
@@ -230,6 +254,15 @@ export default function ClubAdmin() {
     );
   };
 
+  const handleClubSelect = async (selectedClubId: string) => {
+    setClubId(selectedClubId);
+    const club = availableClubs.find(c => c.club_id === selectedClubId);
+    if (club) {
+      setClubName(club.name);
+      await loadVisibilitySettings(selectedClubId);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -238,123 +271,139 @@ export default function ClubAdmin() {
     );
   }
 
-  if (!clubId) {
-    return (
-      <div className="container mx-auto py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>
-              You don't have permission to access this club admin panel.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Club Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Managing offer visibility for: <span className="font-semibold text-foreground">{clubName}</span>
-        </p>
+        {isAdmin || !clubId ? (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              {isAdmin ? "Admin view: Select a club to manage" : "Select a club to manage its visibility settings"}
+            </p>
+            <Select value={clubId || ""} onValueChange={handleClubSelect}>
+              <SelectTrigger className="w-full max-w-md">
+                <SelectValue placeholder="Select a club..." />
+              </SelectTrigger>
+              <SelectContent>
+                {availableClubs.map((club) => (
+                  <SelectItem key={club.club_id} value={club.club_id}>
+                    {club.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : (
+          <p className="text-muted-foreground">
+            Managing offer visibility for: <span className="font-semibold text-foreground">{clubName}</span>
+          </p>
+        )}
       </div>
 
-      <div className="space-y-4">
-        {visibilitySettings.map((setting) => (
-          <Card key={setting.offer_id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <CardTitle className="text-xl">{setting.offer_name}</CardTitle>
-                    <Badge variant="outline">{setting.offer_category}</Badge>
-                    {setting.is_visible ? (
-                      <Badge variant="default" className="gap-1">
-                        <Eye className="h-3 w-3" />
-                        Visible
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="gap-1">
-                        <EyeOff className="h-3 w-3" />
-                        Hidden
-                      </Badge>
-                    )}
+      {!clubId ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Select a Club</CardTitle>
+            <CardDescription>
+              Choose a club from the dropdown above to manage its offer visibility settings.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {visibilitySettings.map((setting) => (
+            <Card key={setting.offer_id}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <CardTitle className="text-xl">{setting.offer_name}</CardTitle>
+                      <Badge variant="outline">{setting.offer_category}</Badge>
+                      {setting.is_visible ? (
+                        <Badge variant="default" className="gap-1">
+                          <Eye className="h-3 w-3" />
+                          Visible
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="gap-1">
+                          <EyeOff className="h-3 w-3" />
+                          Hidden
+                        </Badge>
+                      )}
+                    </div>
+                    <CardDescription>
+                      {setting.offer_city}, {setting.offer_state}
+                    </CardDescription>
                   </div>
-                  <CardDescription>
-                    {setting.offer_city}, {setting.offer_state}
-                  </CardDescription>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`visible-${setting.offer_id}`} className="text-base">
-                  Show this offer to your members
-                </Label>
-                <Switch
-                  id={`visible-${setting.offer_id}`}
-                  checked={setting.is_visible}
-                  onCheckedChange={() => toggleVisibility(setting.offer_id)}
-                  disabled={saving === setting.offer_id}
-                />
-              </div>
-
-              {setting.offer_category === "Golf" && (
-                <div className="space-y-2">
-                  <Label htmlFor={`access-${setting.offer_id}`}>
-                    Maximum Reciprocal Access (Leave empty for unlimited)
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor={`visible-${setting.offer_id}`} className="text-base">
+                    Show this offer to your members
                   </Label>
-                  <Input
-                    id={`access-${setting.offer_id}`}
-                    type="number"
-                    min="0"
-                    placeholder="Unlimited"
-                    value={setting.max_reciprocal_access ?? ""}
-                    onChange={(e) => updateAccessLimit(setting.offer_id, e.target.value)}
+                  <Switch
+                    id={`visible-${setting.offer_id}`}
+                    checked={setting.is_visible}
+                    onCheckedChange={() => toggleVisibility(setting.offer_id)}
+                    disabled={saving === setting.offer_id}
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Limit how many members from other clubs can access this golf course per month
-                  </p>
                 </div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor={`notes-${setting.offer_id}`}>
-                  Internal Notes
-                </Label>
-                <Textarea
-                  id={`notes-${setting.offer_id}`}
-                  placeholder="Add any notes about this offer visibility..."
-                  value={setting.notes ?? ""}
-                  onChange={(e) => updateNotes(setting.offer_id, e.target.value)}
-                  rows={2}
-                />
-              </div>
-
-              <Button
-                onClick={() => updateVisibilitySetting(setting)}
-                disabled={saving === setting.offer_id || !setting.id}
-                className="w-full sm:w-auto"
-              >
-                {saving === setting.offer_id ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Save Changes
-                  </>
+                {setting.offer_category === "Golf" && (
+                  <div className="space-y-2">
+                    <Label htmlFor={`access-${setting.offer_id}`}>
+                      Maximum Reciprocal Access (Leave empty for unlimited)
+                    </Label>
+                    <Input
+                      id={`access-${setting.offer_id}`}
+                      type="number"
+                      min="0"
+                      placeholder="Unlimited"
+                      value={setting.max_reciprocal_access ?? ""}
+                      onChange={(e) => updateAccessLimit(setting.offer_id, e.target.value)}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Limit how many members from other clubs can access this golf course per month
+                    </p>
+                  </div>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={`notes-${setting.offer_id}`}>
+                    Internal Notes
+                  </Label>
+                  <Textarea
+                    id={`notes-${setting.offer_id}`}
+                    placeholder="Add any notes about this offer visibility..."
+                    value={setting.notes ?? ""}
+                    onChange={(e) => updateNotes(setting.offer_id, e.target.value)}
+                    rows={2}
+                  />
+                </div>
+
+                <Button
+                  onClick={() => updateVisibilitySetting(setting)}
+                  disabled={saving === setting.offer_id || !setting.id}
+                  className="w-full sm:w-auto"
+                >
+                  {saving === setting.offer_id ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
