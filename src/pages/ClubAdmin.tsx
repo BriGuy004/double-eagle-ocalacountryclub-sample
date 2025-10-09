@@ -44,16 +44,24 @@ export default function ClubAdmin() {
 
   const checkClubAdminAccess = async () => {
     try {
-      // Allow unauthenticated access for development
       const { data: { user } } = await supabase.auth.getUser();
       
       // Load all unique clubs for the dropdown
-      const { data: offersData } = await supabase
+      const { data: offersData, error: offersError } = await supabase
         .from("offers")
         .select("club_id, name")
         .order("name");
 
-      if (offersData) {
+      console.log("Offers query result:", { offersData, offersError });
+
+      if (offersError) {
+        console.error("Error loading clubs:", offersError);
+        toast({
+          title: "Error",
+          description: "Failed to load clubs list.",
+          variant: "destructive",
+        });
+      } else if (offersData) {
         // Get unique clubs by club_id
         const uniqueClubs = offersData.reduce((acc: Club[], offer) => {
           if (!acc.find(c => c.club_id === offer.club_id)) {
@@ -61,12 +69,12 @@ export default function ClubAdmin() {
           }
           return acc;
         }, []);
+        console.log("Available clubs:", uniqueClubs);
         setAvailableClubs(uniqueClubs);
       }
 
       if (!user) {
-        // Development mode - allow access without auth
-        console.log("Development mode: No authentication required");
+        console.log("No authenticated user");
         setLoading(false);
         return;
       }
