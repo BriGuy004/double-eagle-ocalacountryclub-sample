@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Check, Copy } from "lucide-react";
+import { X, Check, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -55,6 +55,7 @@ export const RedemptionModal = ({
   const [isRedeemed, setIsRedeemed] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { redeemOffer } = useUser();
@@ -62,8 +63,24 @@ export const RedemptionModal = ({
   
   const brandData = offerId ? getBrandById(offerId) : null;
   
+  // Collect all available images
+  const images = [
+    image,
+    brandData?.image_2_url,
+    brandData?.image_3_url,
+    brandData?.image_4_url
+  ].filter(Boolean) as string[];
+  
   const instructions = getRedemptionInstructions(category);
   const terms = brandData?.redemption_info || getTerms();
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const previousImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   // Close on Escape key
   useEffect(() => {
@@ -193,51 +210,94 @@ export const RedemptionModal = ({
           <X className="h-6 w-6 text-white" />
         </button>
 
-        {/* Business Image Header */}
-        <div className={`w-full overflow-hidden flex-shrink-0 ${isMobile ? "h-[200px]" : "h-[300px]"}`}>
+        {/* Business Image Carousel */}
+        <div className={`w-full overflow-hidden flex-shrink-0 relative ${isMobile ? "h-[200px]" : "h-[300px]"}`}>
           <img
-            src={image}
-            alt={brand}
-            className="w-full h-full object-cover"
+            src={images[currentImageIndex]}
+            alt={`${brand} - Image ${currentImageIndex + 1}`}
+            className="w-full h-full object-cover transition-opacity duration-300"
             loading="lazy"
           />
+          
+          {/* Title overlay on image */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
+            <h2 className="text-2xl md:text-[32px] font-bold text-white">{brand}</h2>
+            {brandData?.city && brandData?.state && (
+              <p className="text-base md:text-lg text-white/90">
+                {brandData.city}, {brandData.state}, United States
+              </p>
+            )}
+          </div>
+
+          {/* Carousel navigation */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={previousImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-sm transition-all"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-sm transition-all"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+              
+              {/* Carousel dots */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`h-2 w-2 rounded-full transition-all ${
+                      index === currentImageIndex 
+                        ? "bg-white w-6" 
+                        : "bg-white/50 hover:bg-white/75"
+                    }`}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Modal Content - Scrollable */}
         <div 
-          className={`${isMobile ? "p-4 pb-8" : "p-6 md:p-8"} space-y-4 md:space-y-6 overflow-y-auto flex-1`}
+          className={`${isMobile ? "p-4 pb-8" : "p-6 md:p-8"} space-y-6 overflow-y-auto flex-1`}
         >
-          {/* Business Details with Logo and Description */}
-          <div className="space-y-6">
-            {/* Two Column Layout: Logo and Description */}
-            {brandData?.description && (
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
-                {/* Logo Column */}
-                {brandData.logo_url && (
-                  <div className="flex justify-center md:justify-start">
-                    <img 
-                      src={brandData.logo_url}
-                      alt={`${brand} Logo`}
-                      className="h-24 md:h-32 w-auto object-contain"
-                    />
-                  </div>
-                )}
-                
-                {/* Description Column */}
-                <div className="space-y-4">
-                  <p className="text-sm md:text-base text-[#94a3b8] leading-relaxed whitespace-pre-line">
-                    {brandData.description}
+          {/* Title and Address */}
+          <div className="space-y-2">
+            <h3 className="text-xl md:text-2xl font-bold text-white">{brand}</h3>
+            {brandData?.full_address && (
+              <p className="text-sm md:text-base text-[#94a3b8]">
+                {brandData.full_address}
+              </p>
+            )}
+          </div>
+
+          {/* Two Column Layout: Logo/Address/Website on left, Description/Buttons on right */}
+          <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 border-t border-white/10 pt-6">
+            {/* Left Column: Logo, Address, Website */}
+            <div className="space-y-4">
+              {brandData?.logo_url && (
+                <img 
+                  src={brandData.logo_url}
+                  alt={`${brand} Logo`}
+                  className="h-20 md:h-24 w-auto object-contain"
+                />
+              )}
+              
+              {brandData?.full_address && (
+                <div className="space-y-1">
+                  <p className="text-xs md:text-sm text-[#94a3b8] whitespace-pre-line leading-relaxed">
+                    {brandData.full_address}
                   </p>
                 </div>
-              </div>
-            )}
-
-            {/* Address and Website Section */}
-            <div className="space-y-3 border-t border-white/10 pt-6">
-              {brandData?.full_address && (
-                <p className="text-[#94a3b8] text-sm md:text-base whitespace-pre-line">
-                  {brandData.full_address}
-                </p>
               )}
               
               {brandData?.website && (
@@ -252,69 +312,78 @@ export const RedemptionModal = ({
                 </a>
               )}
             </div>
-          </div>
 
-          {/* Redemption Code */}
-          <div className="bg-card/50 rounded-lg p-4 md:p-6">
-            <p className="text-sm md:text-base text-[#94a3b8] text-center mb-2 md:mb-4">
-              Your Redemption Code
-            </p>
-            <div className="flex items-center justify-center gap-3 md:gap-4 mb-4 md:mb-6">
-              <code className="text-2xl md:text-[40px] font-bold text-[#e67e3c] tracking-wider">
-                {redemptionCode}
-              </code>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all text-white touch-active"
-                onClick={handleCopyCode}
-                aria-label="Copy code to clipboard"
-                style={{ minWidth: "44px", minHeight: "44px" }}
-              >
-                {copied ? (
-                  <Check className="h-5 w-5 md:h-6 md:w-6 text-green-400" />
-                ) : (
-                  <Copy className="h-5 w-5 md:h-6 md:w-6" />
+            {/* Right Column: Description and Action Buttons */}
+            <div className="space-y-6">
+              {brandData?.description && (
+                <p className="text-sm md:text-base text-[#94a3b8] leading-relaxed whitespace-pre-line">
+                  {brandData.description}
+                </p>
+              )}
+
+              {/* Redemption Code */}
+              <div className="bg-card/50 rounded-lg p-4 md:p-6">
+                <p className="text-sm md:text-base text-[#94a3b8] text-center mb-2 md:mb-4">
+                  Your Redemption Code
+                </p>
+                <div className="flex items-center justify-center gap-3 md:gap-4 mb-4 md:mb-6">
+                  <code className="text-2xl md:text-[40px] font-bold text-[#e67e3c] tracking-wider">
+                    {redemptionCode}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all text-white touch-active"
+                    onClick={handleCopyCode}
+                    aria-label="Copy code to clipboard"
+                    style={{ minWidth: "44px", minHeight: "44px" }}
+                  >
+                    {copied ? (
+                      <Check className="h-5 w-5 md:h-6 md:w-6 text-green-400" />
+                    ) : (
+                      <Copy className="h-5 w-5 md:h-6 md:w-6" />
+                    )}
+                  </Button>
+                </div>
+
+                {/* CTA based on category */}
+                {instructions.type === "button" && (
+                  <Button
+                    size="lg"
+                    variant="orange"
+                    className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
+                    style={{ minHeight: "52px" }}
+                    onClick={() => window.open(instructions.url, '_blank')}
+                  >
+                    {instructions.text}
+                  </Button>
                 )}
-              </Button>
+                
+                {instructions.type === "link" && (
+                  <a
+                    href={instructions.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full"
+                  >
+                    <Button
+                      size="lg"
+                      variant="orange"
+                      className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
+                      style={{ minHeight: "52px" }}
+                    >
+                      {instructions.text}
+                    </Button>
+                  </a>
+                )}
+                
+                {instructions.type === "text" && (
+                  <p className="text-center text-sm md:text-base text-[#94a3b8] px-2">
+                    {instructions.text}
+                  </p>
+                )}
+              </div>
             </div>
-
-            {/* CTA based on category */}
-            {instructions.type === "button" && (
-              <Button
-                size="lg"
-                variant="orange"
-                className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
-                style={{ minHeight: "52px" }}
-                onClick={() => window.open(instructions.url, '_blank')}
-              >
-                {instructions.text}
-              </Button>
-            )}
-            
-            {instructions.type === "link" && (
-              <a
-                href={instructions.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full"
-              >
-                <Button
-                  size="lg"
-                  variant="orange"
-                  className="w-full text-base md:text-lg py-4 md:py-6 font-semibold touch-active"
-                  style={{ minHeight: "52px" }}
-                >
-                  {instructions.text}
-                </Button>
-              </a>
-            )}
-            
-            {instructions.type === "text" && (
-              <p className="text-center text-sm md:text-base text-[#94a3b8] px-2">
-                {instructions.text}
-              </p>
-            )}
           </div>
 
           {/* Terms & Conditions */}

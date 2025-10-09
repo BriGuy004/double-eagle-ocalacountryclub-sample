@@ -73,6 +73,9 @@ export type Database = {
           full_address: string | null
           hero_image_url: string
           id: string
+          image_2_url: string | null
+          image_3_url: string | null
+          image_4_url: string | null
           is_active: boolean | null
           logo_url: string
           name: string
@@ -94,6 +97,9 @@ export type Database = {
           full_address?: string | null
           hero_image_url: string
           id?: string
+          image_2_url?: string | null
+          image_3_url?: string | null
+          image_4_url?: string | null
           is_active?: boolean | null
           logo_url: string
           name: string
@@ -115,6 +121,9 @@ export type Database = {
           full_address?: string | null
           hero_image_url?: string
           id?: string
+          image_2_url?: string | null
+          image_3_url?: string | null
+          image_4_url?: string | null
           is_active?: boolean | null
           logo_url?: string
           name?: string

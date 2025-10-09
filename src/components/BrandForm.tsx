@@ -13,6 +13,9 @@ interface Brand {
   logo_url: string;
   hero_image_url: string;
   offer_card_url?: string;
+  image_2_url?: string;
+  image_3_url?: string;
+  image_4_url?: string;
   primary_color: string;
   primary_glow_color: string;
   accent_color: string;
@@ -31,8 +34,8 @@ interface BrandFormProps {
   onChange: (updates: Partial<Brand>) => void;
   categoryInfo: { category: string };
   isEdit?: boolean;
-  onImageUpload: (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', clubId: string) => Promise<string | null>;
-  onImageRemove?: (imageUrl: string, field: 'logo_url' | 'hero_image_url' | 'offer_card_url') => Promise<void>;
+  onImageUpload: (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url', clubId: string) => Promise<string | null>;
+  onImageRemove?: (imageUrl: string, field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url') => Promise<void>;
   errors?: Record<string, string>;
 }
 
@@ -223,105 +226,196 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         </div>
 
         {uploadMethod === 'upload' ? (
-          <div className="grid grid-cols-3 gap-4">
-            <ImageUpload
-              label="Logo"
-              currentUrl={brand.logo_url}
-              onImageSelect={async (file) => {
-                const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
-                if (url) onChange({ logo_url: url });
-              }}
-              onImageRemove={onImageRemove ? async () => {
-                if (brand.logo_url) {
-                  await onImageRemove(brand.logo_url, 'logo_url');
-                  onChange({ logo_url: '' });
-                }
-              } : undefined}
-              thumbnail
-            />
-            <ImageUpload
-              label="Hero Image"
-              currentUrl={brand.hero_image_url}
-              onImageSelect={async (file) => {
-                const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
-                if (url) onChange({ hero_image_url: url });
-              }}
-              onImageRemove={onImageRemove ? async () => {
-                if (brand.hero_image_url) {
-                  await onImageRemove(brand.hero_image_url, 'hero_image_url');
-                  onChange({ hero_image_url: '' });
-                }
-              } : undefined}
-            />
-            <ImageUpload
-              label="Offer Card"
-              currentUrl={brand.offer_card_url}
-              onImageSelect={async (file) => {
-                const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
-                if (url) onChange({ offer_card_url: url });
-              }}
-              onImageRemove={onImageRemove ? async () => {
-                if (brand.offer_card_url) {
-                  await onImageRemove(brand.offer_card_url, 'offer_card_url');
-                  onChange({ offer_card_url: '' });
-                }
-              } : undefined}
-            />
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <ImageUpload
+                label="Logo"
+                currentUrl={brand.logo_url}
+                onImageSelect={async (file) => {
+                  const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
+                  if (url) onChange({ logo_url: url });
+                }}
+                onImageRemove={onImageRemove ? async () => {
+                  if (brand.logo_url) {
+                    await onImageRemove(brand.logo_url, 'logo_url');
+                    onChange({ logo_url: '' });
+                  }
+                } : undefined}
+                thumbnail
+              />
+              <ImageUpload
+                label="Hero Image"
+                currentUrl={brand.hero_image_url}
+                onImageSelect={async (file) => {
+                  const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
+                  if (url) onChange({ hero_image_url: url });
+                }}
+                onImageRemove={onImageRemove ? async () => {
+                  if (brand.hero_image_url) {
+                    await onImageRemove(brand.hero_image_url, 'hero_image_url');
+                    onChange({ hero_image_url: '' });
+                  }
+                } : undefined}
+              />
+              <ImageUpload
+                label="Offer Card"
+                currentUrl={brand.offer_card_url}
+                onImageSelect={async (file) => {
+                  const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
+                  if (url) onChange({ offer_card_url: url });
+                }}
+                onImageRemove={onImageRemove ? async () => {
+                  if (brand.offer_card_url) {
+                    await onImageRemove(brand.offer_card_url, 'offer_card_url');
+                    onChange({ offer_card_url: '' });
+                  }
+                } : undefined}
+              />
+            </div>
+            
+            <div>
+              <Label className="text-sm text-muted-foreground mb-2 block">Additional Carousel Images (Optional)</Label>
+              <div className="grid grid-cols-3 gap-4">
+                <ImageUpload
+                  label="Image 2"
+                  currentUrl={brand.image_2_url}
+                  onImageSelect={async (file) => {
+                    const url = await onImageUpload(file, 'image_2_url', brand.club_id || '');
+                    if (url) onChange({ image_2_url: url });
+                  }}
+                  onImageRemove={onImageRemove ? async () => {
+                    if (brand.image_2_url) {
+                      await onImageRemove(brand.image_2_url, 'image_2_url');
+                      onChange({ image_2_url: '' });
+                    }
+                  } : undefined}
+                />
+                <ImageUpload
+                  label="Image 3"
+                  currentUrl={brand.image_3_url}
+                  onImageSelect={async (file) => {
+                    const url = await onImageUpload(file, 'image_3_url', brand.club_id || '');
+                    if (url) onChange({ image_3_url: url });
+                  }}
+                  onImageRemove={onImageRemove ? async () => {
+                    if (brand.image_3_url) {
+                      await onImageRemove(brand.image_3_url, 'image_3_url');
+                      onChange({ image_3_url: '' });
+                    }
+                  } : undefined}
+                />
+                <ImageUpload
+                  label="Image 4"
+                  currentUrl={brand.image_4_url}
+                  onImageSelect={async (file) => {
+                    const url = await onImageUpload(file, 'image_4_url', brand.club_id || '');
+                    if (url) onChange({ image_4_url: url });
+                  }}
+                  onImageRemove={onImageRemove ? async () => {
+                    if (brand.image_4_url) {
+                      await onImageRemove(brand.image_4_url, 'image_4_url');
+                      onChange({ image_4_url: '' });
+                    }
+                  } : undefined}
+                />
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label className="flex items-center gap-1">
-                Logo URL
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                value={brand.logo_url || ""}
-                onChange={(e) => onChange({ logo_url: e.target.value })}
-                required
-                placeholder="/lovable-uploads/logo.png"
-                className={errors.logo_url ? "border-destructive" : ""}
-              />
-              {errors.logo_url && (
-                <p className="text-sm text-destructive mt-1">{errors.logo_url}</p>
-              )}
-              {brand.logo_url && (
-                <img src={brand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain bg-muted rounded p-2" />
-              )}
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label className="flex items-center gap-1">
+                  Logo URL
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  value={brand.logo_url || ""}
+                  onChange={(e) => onChange({ logo_url: e.target.value })}
+                  required
+                  placeholder="/lovable-uploads/logo.png"
+                  className={errors.logo_url ? "border-destructive" : ""}
+                />
+                {errors.logo_url && (
+                  <p className="text-sm text-destructive mt-1">{errors.logo_url}</p>
+                )}
+                {brand.logo_url && (
+                  <img src={brand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain bg-muted rounded p-2" />
+                )}
+              </div>
+              <div>
+                <Label className="flex items-center gap-1">
+                  Hero Image URL
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  value={brand.hero_image_url || ""}
+                  onChange={(e) => onChange({ hero_image_url: e.target.value })}
+                  required
+                  placeholder="/lovable-uploads/hero.png"
+                  className={errors.hero_image_url ? "border-destructive" : ""}
+                />
+                {errors.hero_image_url && (
+                  <p className="text-sm text-destructive mt-1">{errors.hero_image_url}</p>
+                )}
+                {brand.hero_image_url && (
+                  <img src={brand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
+                )}
+              </div>
+              <div>
+                <Label>Offer Card URL</Label>
+                <Input
+                  value={brand.offer_card_url || ""}
+                  onChange={(e) => onChange({ offer_card_url: e.target.value })}
+                  placeholder="/lovable-uploads/card.png"
+                  className={errors.offer_card_url ? "border-destructive" : ""}
+                />
+                {errors.offer_card_url && (
+                  <p className="text-sm text-destructive mt-1">{errors.offer_card_url}</p>
+                )}
+                {brand.offer_card_url && (
+                  <img src={brand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
+                )}
+              </div>
             </div>
+            
             <div>
-              <Label className="flex items-center gap-1">
-                Hero Image URL
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                value={brand.hero_image_url || ""}
-                onChange={(e) => onChange({ hero_image_url: e.target.value })}
-                required
-                placeholder="/lovable-uploads/hero.png"
-                className={errors.hero_image_url ? "border-destructive" : ""}
-              />
-              {errors.hero_image_url && (
-                <p className="text-sm text-destructive mt-1">{errors.hero_image_url}</p>
-              )}
-              {brand.hero_image_url && (
-                <img src={brand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
-              )}
-            </div>
-            <div>
-              <Label>Offer Card URL</Label>
-              <Input
-                value={brand.offer_card_url || ""}
-                onChange={(e) => onChange({ offer_card_url: e.target.value })}
-                placeholder="/lovable-uploads/card.png"
-                className={errors.offer_card_url ? "border-destructive" : ""}
-              />
-              {errors.offer_card_url && (
-                <p className="text-sm text-destructive mt-1">{errors.offer_card_url}</p>
-              )}
-              {brand.offer_card_url && (
-                <img src={brand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
-              )}
+              <Label className="text-sm text-muted-foreground mb-2 block">Additional Carousel Images (Optional)</Label>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>Image 2 URL</Label>
+                  <Input
+                    value={brand.image_2_url || ""}
+                    onChange={(e) => onChange({ image_2_url: e.target.value })}
+                    placeholder="/lovable-uploads/image2.png"
+                  />
+                  {brand.image_2_url && (
+                    <img src={brand.image_2_url} alt="Image 2 preview" className="mt-2 h-20 object-cover rounded" />
+                  )}
+                </div>
+                <div>
+                  <Label>Image 3 URL</Label>
+                  <Input
+                    value={brand.image_3_url || ""}
+                    onChange={(e) => onChange({ image_3_url: e.target.value })}
+                    placeholder="/lovable-uploads/image3.png"
+                  />
+                  {brand.image_3_url && (
+                    <img src={brand.image_3_url} alt="Image 3 preview" className="mt-2 h-20 object-cover rounded" />
+                  )}
+                </div>
+                <div>
+                  <Label>Image 4 URL</Label>
+                  <Input
+                    value={brand.image_4_url || ""}
+                    onChange={(e) => onChange({ image_4_url: e.target.value })}
+                    placeholder="/lovable-uploads/image4.png"
+                  />
+                  {brand.image_4_url && (
+                    <img src={brand.image_4_url} alt="Image 4 preview" className="mt-2 h-20 object-cover rounded" />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}

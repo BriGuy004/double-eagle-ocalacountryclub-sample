@@ -32,6 +32,9 @@ interface Brand {
   logo_url: string;
   hero_image_url: string;
   offer_card_url?: string;
+  image_2_url?: string;
+  image_3_url?: string;
+  image_4_url?: string;
   primary_color: string;
   primary_glow_color: string;
   accent_color: string;
@@ -62,6 +65,9 @@ const BrandAdmin = () => {
     logo_url: "",
     hero_image_url: "",
     offer_card_url: "",
+    image_2_url: "",
+    image_3_url: "",
+    image_4_url: "",
     primary_color: "38 70% 15%",
     primary_glow_color: "38 70% 25%",
     accent_color: "45 85% 50%",
@@ -146,7 +152,7 @@ const BrandAdmin = () => {
 
   const handleImageUpload = async (
     file: File, 
-    field: 'logo_url' | 'hero_image_url' | 'offer_card_url',
+    field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url',
     clubId: string
   ): Promise<string | null> => {
     try {
@@ -186,7 +192,7 @@ const BrandAdmin = () => {
 
   const handleImageRemove = async (
     imageUrl: string,
-    field: 'logo_url' | 'hero_image_url' | 'offer_card_url'
+    field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url'
   ) => {
     try {
       // Extract file path from URL
@@ -251,6 +257,9 @@ const BrandAdmin = () => {
         logo_url: "",
         hero_image_url: "",
         offer_card_url: "",
+        image_2_url: "",
+        image_3_url: "",
+        image_4_url: "",
         primary_color: "38 70% 15%",
         primary_glow_color: "38 70% 25%",
         accent_color: "45 85% 50%",
@@ -316,6 +325,9 @@ const BrandAdmin = () => {
         logo_url: editedBrand.logo_url || '',
         hero_image_url: editedBrand.hero_image_url || '',
         offer_card_url: editedBrand.offer_card_url || editedBrand.hero_image_url || '',
+        image_2_url: editedBrand.image_2_url || null,
+        image_3_url: editedBrand.image_3_url || null,
+        image_4_url: editedBrand.image_4_url || null,
         primary_color: editedBrand.primary_color || '38 70% 15%',
         primary_glow_color: editedBrand.primary_glow_color || '38 70% 25%',
         accent_color: editedBrand.accent_color || '45 85% 50%',
