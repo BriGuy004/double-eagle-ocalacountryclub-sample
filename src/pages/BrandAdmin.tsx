@@ -644,7 +644,7 @@ const BrandAdmin = () => {
               <BrandForm
                 brand={editedBrand || {}}
                 onChange={(updates) => {
-                  setEditedBrand({ ...editedBrand, ...updates });
+                  setEditedBrand(prev => ({ ...prev, ...updates }));
                   // Clear error for field being edited
                   const fieldKey = Object.keys(updates)[0];
                   if (fieldKey) {
