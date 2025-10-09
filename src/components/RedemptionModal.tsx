@@ -219,15 +219,8 @@ export const RedemptionModal = ({
             loading="lazy"
           />
           
-          {/* Title overlay on image */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-            <h2 className="text-2xl md:text-[32px] font-bold text-white">{brand}</h2>
-            {brandData?.city && brandData?.state && (
-              <p className="text-base md:text-lg text-white/90">
-                {brandData.city}, {brandData.state}, United States
-              </p>
-            )}
-          </div>
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
           {/* Carousel navigation */}
           {images.length > 1 && (
@@ -270,55 +263,54 @@ export const RedemptionModal = ({
         <div 
           className={`${isMobile ? "p-4 pb-8" : "p-6 md:p-8"} space-y-6 overflow-y-auto flex-1`}
         >
-          {/* Title and Address */}
-          <div className="space-y-2">
-            <h3 className="text-xl md:text-2xl font-bold text-white">{brand}</h3>
-            {brandData?.full_address && (
-              <p className="text-sm md:text-base text-[#94a3b8]">
-                {brandData.full_address}
-              </p>
-            )}
-          </div>
-
           {/* Two Column Layout: Logo/Address/Website on left, Description/Buttons on right */}
-          <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 border-t border-white/10 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6">
             {/* Left Column: Logo, Address, Website */}
             <div className="space-y-4">
               {brandData?.logo_url && (
-                <img 
-                  src={brandData.logo_url}
-                  alt={`${brand} Logo`}
-                  className="h-20 md:h-24 w-auto object-contain"
-                />
+                <div className="w-full">
+                  <img 
+                    src={brandData.logo_url}
+                    alt={`${brand} Logo`}
+                    className="w-full h-auto object-contain max-h-32"
+                  />
+                </div>
               )}
               
               {brandData?.full_address && (
                 <div className="space-y-1">
-                  <p className="text-xs md:text-sm text-[#94a3b8] whitespace-pre-line leading-relaxed">
+                  <p className="text-sm text-white font-semibold">Address</p>
+                  <p className="text-sm text-[#94a3b8] whitespace-pre-line leading-relaxed">
                     {brandData.full_address}
                   </p>
                 </div>
               )}
               
               {brandData?.website && (
-                <a 
-                  href={brandData.website.startsWith('http') ? brandData.website : `https://${brandData.website}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm md:text-base text-[#e67e3c] hover:text-[#d56d2f] underline inline-block touch-active"
-                  style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
-                >
-                  Club website
-                </a>
+                <div className="space-y-1">
+                  <p className="text-sm text-white font-semibold">Website</p>
+                  <a 
+                    href={brandData.website.startsWith('http') ? brandData.website : `https://${brandData.website}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-[#e67e3c] hover:text-[#d56d2f] underline break-all touch-active"
+                    style={{ minHeight: "44px", display: "flex", alignItems: "center" }}
+                  >
+                    {brandData.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
               )}
             </div>
 
             {/* Right Column: Description and Action Buttons */}
             <div className="space-y-6">
               {brandData?.description && (
-                <p className="text-sm md:text-base text-[#94a3b8] leading-relaxed whitespace-pre-line">
-                  {brandData.description}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-sm text-white font-semibold">Description</p>
+                  <p className="text-sm text-[#94a3b8] leading-relaxed whitespace-pre-line">
+                    {brandData.description}
+                  </p>
+                </div>
               )}
 
               {/* Redemption Code */}
