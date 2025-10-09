@@ -47,14 +47,21 @@ export default function ClubAdmin() {
       // Allow unauthenticated access for development
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Load all clubs for the dropdown
-      const { data: clubsData } = await supabase
+      // Load all unique clubs for the dropdown
+      const { data: offersData } = await supabase
         .from("offers")
         .select("club_id, name")
         .order("name");
 
-      if (clubsData) {
-        setAvailableClubs(clubsData);
+      if (offersData) {
+        // Get unique clubs by club_id
+        const uniqueClubs = offersData.reduce((acc: Club[], offer) => {
+          if (!acc.find(c => c.club_id === offer.club_id)) {
+            acc.push({ club_id: offer.club_id, name: offer.name });
+          }
+          return acc;
+        }, []);
+        setAvailableClubs(uniqueClubs);
       }
 
       if (!user) {
