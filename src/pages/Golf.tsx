@@ -8,15 +8,43 @@ import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
 import { useBrand } from "@/contexts/BrandContext";
-import { getAllOffers } from "@/data/allOffers";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Golf = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const { currentBrand } = useBrand();
   const isMobile = useIsMobile();
 
-  // Get all golf offers from the centralized data
-  const allGolfOffers = getAllOffers().filter(offer => offer.category === "Golf");
+  // Fetch offers from Supabase
+  const { data: offers = [] } = useQuery({
+    queryKey: ['offers', 'Golf'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('category', 'Golf');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Transform Supabase data to match expected format
+  const allGolfOffers = offers.map(offer => ({
+    offerId: offer.id,
+    clubId: offer.club_id,
+    brand: offer.name,
+    title: `${offer.name} - Golf Access`,
+    description: offer.description || `Exclusive golf benefits at ${offer.name}`,
+    discount: "Reciprocal Play Access",
+    images: [offer.offer_card_url || offer.hero_image_url],
+    tags: ["Golf", "Private Club", offer.category],
+    category: "Golf" as const,
+    city: offer.city,
+    state: offer.state,
+    majorCity: offer.city
+  }));
   
   // Filter out the home club's golf offer
   const filteredGolfOffers = currentBrand 
