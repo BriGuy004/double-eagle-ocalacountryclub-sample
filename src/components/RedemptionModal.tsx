@@ -207,52 +207,40 @@ export const RedemptionModal = ({
         <div 
           className={`${isMobile ? "p-4 pb-8" : "p-6 md:p-8"} space-y-4 md:space-y-6 overflow-y-auto flex-1`}
         >
-          {/* Business Details */}
-          <div className="space-y-2">
-            <h2 className="text-2xl md:text-[32px] font-bold text-white">{brand}</h2>
-            {brandData?.city && brandData?.state && (
-              <p className="text-base md:text-lg text-[#94a3b8]">
-                {brandData.city}, {brandData.state}, United States
-              </p>
-            )}
-            <p className="text-base md:text-lg text-[#94a3b8] line-clamp-4 leading-relaxed">
-              {title}
-            </p>
-          </div>
-
-          {/* Full Address if available */}
-          {brandData?.full_address && (
-            <div className="border-t border-white/10 pt-4">
-              <h3 className="text-white font-semibold mb-2">{brand}</h3>
-              <p className="text-[#94a3b8] text-sm md:text-base whitespace-pre-line">
-                {brandData.full_address}
-              </p>
-            </div>
-          )}
-
-          {/* Description if available */}
-          {brandData?.description && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              <div className="space-y-4 text-[#94a3b8]">
-                <p className="text-sm md:text-base leading-relaxed whitespace-pre-line">
-                  {brandData.description}
-                </p>
+          {/* Business Details with Logo and Description */}
+          <div className="space-y-6">
+            {/* Two Column Layout: Logo and Description */}
+            {brandData?.description && (
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+                {/* Logo Column */}
+                {brandData.logo_url && (
+                  <div className="flex justify-center md:justify-start">
+                    <img 
+                      src={brandData.logo_url}
+                      alt={`${brand} Logo`}
+                      className="h-24 md:h-32 w-auto object-contain"
+                    />
+                  </div>
+                )}
+                
+                {/* Description Column */}
+                <div className="space-y-4">
+                  <p className="text-sm md:text-base text-[#94a3b8] leading-relaxed whitespace-pre-line">
+                    {brandData.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Logo and Website */}
-          {(brandData?.logo_url || brandData?.website) && (
-            <div className="space-y-4 border-t border-white/10 pt-4">
-              {brandData.logo_url && (
-                <img 
-                  src={brandData.logo_url}
-                  alt={`${brand} Logo`}
-                  className="h-16 md:h-20 w-auto opacity-60 brightness-150"
-                  style={{ filter: "brightness(1.5) grayscale(20%)" }}
-                />
+            {/* Address and Website Section */}
+            <div className="space-y-3 border-t border-white/10 pt-6">
+              {brandData?.full_address && (
+                <p className="text-[#94a3b8] text-sm md:text-base whitespace-pre-line">
+                  {brandData.full_address}
+                </p>
               )}
-              {brandData.website && (
+              
+              {brandData?.website && (
                 <a 
                   href={brandData.website.startsWith('http') ? brandData.website : `https://${brandData.website}`}
                   target="_blank" 
@@ -264,7 +252,7 @@ export const RedemptionModal = ({
                 </a>
               )}
             </div>
-          )}
+          </div>
 
           {/* Redemption Code */}
           <div className="bg-card/50 rounded-lg p-4 md:p-6">
