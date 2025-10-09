@@ -185,7 +185,7 @@ const Entertainment = () => {
   const [entertainmentOffers, setEntertainmentOffers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch entertainment offers from database
+  // Fetch entertainment offers from database with auto-refresh
   useEffect(() => {
     const fetchEntertainmentOffers = async () => {
       setIsLoading(true);
@@ -204,6 +204,10 @@ const Entertainment = () => {
     };
 
     fetchEntertainmentOffers();
+    
+    // Refresh every 5 seconds to catch admin updates
+    const interval = setInterval(fetchEntertainmentOffers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Get products based on selected location

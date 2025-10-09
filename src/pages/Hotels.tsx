@@ -212,7 +212,7 @@ const Hotels = () => {
   const [hotelOffers, setHotelOffers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch hotel offers from database
+  // Fetch hotel offers from database with auto-refresh
   useEffect(() => {
     const fetchHotelOffers = async () => {
       setIsLoading(true);
@@ -231,6 +231,10 @@ const Hotels = () => {
     };
 
     fetchHotelOffers();
+    
+    // Refresh every 5 seconds to catch admin updates
+    const interval = setInterval(fetchHotelOffers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Filter offers by selected location and convert to product format

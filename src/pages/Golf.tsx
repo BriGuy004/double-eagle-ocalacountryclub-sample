@@ -16,7 +16,7 @@ const Golf = () => {
   const { currentBrand } = useBrand();
   const isMobile = useIsMobile();
 
-  // Fetch offers from Supabase
+  // Fetch offers from Supabase with refetch interval to catch updates
   const { data: offers = [] } = useQuery({
     queryKey: ['offers', 'Golf'],
     queryFn: async () => {
@@ -27,7 +27,9 @@ const Golf = () => {
       
       if (error) throw error;
       return data;
-    }
+    },
+    refetchInterval: 5000, // Refetch every 5 seconds to catch admin updates
+    staleTime: 0 // Consider data immediately stale
   });
 
   // Transform Supabase data to match expected format

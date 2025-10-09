@@ -69,19 +69,6 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         
-        {/* Category Tags - top-left */}
-        <div className="absolute top-4 left-4 flex gap-2 z-10">
-          {tags.map((tag, index) => (
-            <Badge 
-              key={index}
-              style={{ backgroundColor: categoryColor }}
-              className="px-3 py-1 text-xs font-semibold text-white border-0"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        
         {/* Bookmark Heart - top-right */}
         <button
           onClick={handleBookmarkClick}

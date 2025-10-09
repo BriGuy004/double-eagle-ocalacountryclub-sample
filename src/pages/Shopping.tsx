@@ -11,7 +11,7 @@ const Shopping = () => {
   const [shoppingOffers, setShoppingOffers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch shopping offers from database
+  // Fetch shopping offers from database with auto-refresh
   useEffect(() => {
     const fetchShoppingOffers = async () => {
       setIsLoading(true);
@@ -30,6 +30,10 @@ const Shopping = () => {
     };
 
     fetchShoppingOffers();
+    
+    // Refresh every 5 seconds to catch admin updates
+    const interval = setInterval(fetchShoppingOffers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Get products based on selected location

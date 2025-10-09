@@ -173,7 +173,7 @@ const Travel = () => {
   const [travelOffers, setTravelOffers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch travel offers from database
+  // Fetch travel offers from database with auto-refresh
   useEffect(() => {
     const fetchTravelOffers = async () => {
       setIsLoading(true);
@@ -192,6 +192,10 @@ const Travel = () => {
     };
 
     fetchTravelOffers();
+    
+    // Refresh every 5 seconds to catch admin updates
+    const interval = setInterval(fetchTravelOffers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Get products based on selected location

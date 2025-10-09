@@ -192,7 +192,7 @@ const Dining = () => {
   const [diningOffers, setDiningOffers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch dining offers from database
+  // Fetch dining offers from database with auto-refresh
   useEffect(() => {
     const fetchDiningOffers = async () => {
       setIsLoading(true);
@@ -211,6 +211,10 @@ const Dining = () => {
     };
 
     fetchDiningOffers();
+    
+    // Refresh every 5 seconds to catch admin updates
+    const interval = setInterval(fetchDiningOffers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Filter offers by selected location and convert to product format
