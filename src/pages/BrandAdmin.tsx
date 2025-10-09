@@ -150,13 +150,6 @@ const BrandAdmin = () => {
     clubId: string
   ): Promise<string | null> => {
     try {
-      // Check authentication
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error("You must be logged in to upload images");
-        return null;
-      }
-
       if (!clubId) {
         toast.error("Please enter a Club ID first");
         return null;
@@ -196,13 +189,6 @@ const BrandAdmin = () => {
     field: 'logo_url' | 'hero_image_url' | 'offer_card_url'
   ) => {
     try {
-      // Check authentication
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error("You must be logged in to delete images");
-        return;
-      }
-
       // Extract file path from URL
       const url = new URL(imageUrl);
       const pathParts = url.pathname.split('/');
