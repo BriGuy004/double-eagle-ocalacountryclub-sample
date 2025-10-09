@@ -89,7 +89,7 @@ const BrandAdmin = () => {
 
   const categoryInfo = getCategoryInfo();
   
-  // Filter brands by category and search term (memoized for performance)
+  // Filter brands by category and search term, then sort alphabetically (memoized for performance)
   const filteredBrands = useMemo(() => {
     return allBrands
       .filter(brand => 
@@ -101,7 +101,8 @@ const BrandAdmin = () => {
         brand.club_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         brand.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         brand.state?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      )
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [allBrands, categoryInfo.category, searchTerm]);
 
   // Comprehensive validation function
