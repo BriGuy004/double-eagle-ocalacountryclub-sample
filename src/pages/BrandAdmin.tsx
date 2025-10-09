@@ -150,6 +150,13 @@ const BrandAdmin = () => {
     clubId: string
   ): Promise<string | null> => {
     try {
+      // Check authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in to upload images");
+        return null;
+      }
+
       if (!clubId) {
         toast.error("Please enter a Club ID first");
         return null;
@@ -181,6 +188,37 @@ const BrandAdmin = () => {
       console.error('Upload error:', error);
       toast.error(`Upload failed: ${error.message}`);
       return null;
+    }
+  };
+
+  const handleImageRemove = async (
+    imageUrl: string,
+    field: 'logo_url' | 'hero_image_url' | 'offer_card_url'
+  ) => {
+    try {
+      // Check authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in to delete images");
+        return;
+      }
+
+      // Extract file path from URL
+      const url = new URL(imageUrl);
+      const pathParts = url.pathname.split('/');
+      const filePath = pathParts.slice(pathParts.indexOf('brand-images') + 1).join('/');
+
+      // Delete from storage
+      const { error } = await supabase.storage
+        .from('brand-images')
+        .remove([filePath]);
+
+      if (error) throw error;
+
+      toast.success(`${field.replace('_', ' ')} removed successfully`);
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      toast.error(`Failed to delete: ${error.message}`);
     }
   };
 
@@ -492,6 +530,7 @@ const BrandAdmin = () => {
                 }}
                 categoryInfo={categoryInfo}
                 onImageUpload={handleImageUpload}
+                onImageRemove={handleImageRemove}
                 errors={formErrors}
               />
               <div className="flex gap-4">
@@ -633,6 +672,7 @@ const BrandAdmin = () => {
                 categoryInfo={categoryInfo}
                 isEdit={true}
                 onImageUpload={handleImageUpload}
+                onImageRemove={handleImageRemove}
                 errors={formErrors}
               />
               <div className="flex gap-4">

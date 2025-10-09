@@ -32,6 +32,7 @@ interface BrandFormProps {
   categoryInfo: { category: string };
   isEdit?: boolean;
   onImageUpload: (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url', clubId: string) => Promise<string | null>;
+  onImageRemove?: (imageUrl: string, field: 'logo_url' | 'hero_image_url' | 'offer_card_url') => Promise<void>;
   errors?: Record<string, string>;
 }
 
@@ -41,6 +42,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
   categoryInfo,
   isEdit = false,
   onImageUpload,
+  onImageRemove,
   errors = {}
 }) => {
   const [uploadMethod, setUploadMethod] = useState<'upload' | 'url'>('url');
@@ -229,6 +231,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
                 if (url) onChange({ logo_url: url });
               }}
+              onImageRemove={onImageRemove ? async () => {
+                if (brand.logo_url) {
+                  await onImageRemove(brand.logo_url, 'logo_url');
+                  onChange({ logo_url: '' });
+                }
+              } : undefined}
               thumbnail
             />
             <ImageUpload
@@ -238,6 +246,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
                 if (url) onChange({ hero_image_url: url });
               }}
+              onImageRemove={onImageRemove ? async () => {
+                if (brand.hero_image_url) {
+                  await onImageRemove(brand.hero_image_url, 'hero_image_url');
+                  onChange({ hero_image_url: '' });
+                }
+              } : undefined}
             />
             <ImageUpload
               label="Offer Card"
@@ -246,6 +260,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
                 if (url) onChange({ offer_card_url: url });
               }}
+              onImageRemove={onImageRemove ? async () => {
+                if (brand.offer_card_url) {
+                  await onImageRemove(brand.offer_card_url, 'offer_card_url');
+                  onChange({ offer_card_url: '' });
+                }
+              } : undefined}
             />
           </div>
         ) : (
