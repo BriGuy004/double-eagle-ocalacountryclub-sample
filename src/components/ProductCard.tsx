@@ -29,7 +29,6 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isBookmarked, toggleBookmark } = useBookmarks();
   
-  const categoryColor = categoryColors[category];
   const isCurrentlyBookmarked = offerId ? isBookmarked(offerId) : false;
 
   const handleCardClick = () => {
@@ -43,10 +42,8 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
     }
   };
 
-  const handleViewOffer = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsModalOpen(true);
-  };
+  // Extract city and state from tags
+  const location = tags.join(", ");
 
   return (
     <>
@@ -54,60 +51,55 @@ export const ProductCard = ({ brand, title, images, tags, offerId, category = "L
         className="group cursor-pointer rounded-2xl overflow-hidden bg-[#1a2332] border border-white/10 transition-all duration-300 ease-in-out md:hover:-translate-y-2 md:hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] touch-active"
         onClick={handleCardClick}
       >
-      {/* Image Container - 16:9 aspect ratio */}
-      <div className="relative aspect-video w-full overflow-hidden">
-        <img
-          src={images[0]}
-          alt={`${brand} - ${title}`}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        
-        {/* Category Badge - top-left */}
-        <div className="absolute top-4 left-4 z-10">
-          <Badge 
-            className="uppercase text-xs font-bold px-3 py-1"
-            style={{ backgroundColor: categoryColor }}
-          >
-            {category}
-          </Badge>
-        </div>
-        
-        {/* Bookmark Heart - top-right */}
-        <button
-          onClick={handleBookmarkClick}
-          aria-label={isCurrentlyBookmarked ? "Remove bookmark" : "Add bookmark"}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
-        >
-          <Heart 
-            className={`h-5 w-5 transition-all duration-200 ${
-              isCurrentlyBookmarked ? 'fill-primary text-primary' : 'text-white'
-            }`}
+        {/* Image Container with text overlay */}
+        <div className="relative aspect-video w-full overflow-hidden">
+          <img
+            src={images[0]}
+            alt={`${brand} - ${title}`}
+            className="w-full h-full object-cover"
+            loading="lazy"
           />
-        </button>
-      </div>
+          
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+          
+          {/* Text overlay on image */}
+          <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              {brand} – {title}
+            </h3>
+            <p className="text-base md:text-lg text-white/90">
+              {location}
+            </p>
+          </div>
+          
+          {/* Bookmark Heart - top-right */}
+          <button
+            onClick={handleBookmarkClick}
+            aria-label={isCurrentlyBookmarked ? "Remove bookmark" : "Add bookmark"}
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
+          >
+            <Heart 
+              className={`h-5 w-5 transition-all duration-200 ${
+                isCurrentlyBookmarked ? 'fill-primary text-primary' : 'text-white'
+              }`}
+            />
+          </button>
+        </div>
 
-      {/* Card Content Area */}
-      <div className="p-6 space-y-3">
-        <h3 className="text-xl font-bold text-white">{brand} – {title}</h3>
-        <p className="text-base text-[#94a3b8]">
-          {tags.join(", ")}
-        </p>
-        
-        <Button 
-          aria-label={`View offer for ${brand}`}
-          variant="default"
-          className="w-full font-semibold rounded-lg py-6 transition-all duration-200 touch-active"
-          style={{ minHeight: "48px" }}
-          onClick={handleViewOffer}
-        >
-          View Offer
-        </Button>
+        {/* Card Content - Just the button */}
+        <div className="p-6">
+          <Button 
+            aria-label={`View offer for ${brand}`}
+            variant="orange"
+            className="w-full font-semibold rounded-lg py-6 text-lg transition-all duration-200 touch-active"
+            style={{ minHeight: "48px" }}
+            onClick={handleCardClick}
+          >
+            View Offer
+          </Button>
+        </div>
       </div>
-    </div>
 
     <RedemptionModal
       isOpen={isModalOpen}
