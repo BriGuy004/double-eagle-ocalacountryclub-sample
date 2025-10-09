@@ -653,26 +653,31 @@ const BrandAdmin = () => {
               <SheetTitle>Edit {categoryInfo.title}</SheetTitle>
             </SheetHeader>
             <div className="mt-6 space-y-6">
-              <BrandForm
-                brand={editedBrand || {}}
-                onChange={(updates) => {
-                  setEditedBrand(prev => ({ ...prev, ...updates }));
-                  // Clear error for field being edited
-                  const fieldKey = Object.keys(updates)[0];
-                  if (fieldKey) {
-                    setFormErrors(prev => {
-                      const next = { ...prev };
-                      delete next[fieldKey];
-                      return next;
+              {editedBrand && (
+                <BrandForm
+                  brand={editedBrand}
+                  onChange={(updates) => {
+                    setEditedBrand(prev => {
+                      if (!prev) return prev;
+                      return { ...prev, ...updates };
                     });
-                  }
-                }}
+                    // Clear error for field being edited
+                    const fieldKey = Object.keys(updates)[0];
+                    if (fieldKey) {
+                      setFormErrors(prev => {
+                        const next = { ...prev };
+                        delete next[fieldKey];
+                        return next;
+                      });
+                    }
+                  }}
                 categoryInfo={categoryInfo}
                 isEdit={true}
-                onImageUpload={handleImageUpload}
-                onImageRemove={handleImageRemove}
-                errors={formErrors}
-              />
+                  onImageUpload={handleImageUpload}
+                  onImageRemove={handleImageRemove}
+                  errors={formErrors}
+                />
+              )}
               <div className="flex gap-4">
                 <Button 
                   onClick={handleSaveEdit} 
