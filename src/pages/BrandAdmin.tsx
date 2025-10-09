@@ -125,7 +125,7 @@ const BrandAdmin = () => {
     
     if (!brand.logo_url) errors.logo_url = "Logo is required";
     if (!brand.hero_image_url) errors.hero_image_url = "Hero image is required";
-    if (!brand.offer_card_url) errors.offer_card_url = "Offer card is required";
+    // offer_card_url is optional, defaults to hero_image_url if not provided
     
     return errors;
   };
