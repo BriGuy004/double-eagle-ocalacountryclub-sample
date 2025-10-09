@@ -214,21 +214,31 @@ const Dining = () => {
   }, []);
 
   // Filter offers by selected location and convert to product format
-  const locationProducts = diningOffers
-    .filter(offer => offer.city === selectedLocation)
-    .map(offer => ({
-      brand: offer.name,
-      title: offer.description || `Exclusive offer at ${offer.name}`,
-      images: [
-        offer.offer_card_url || offer.hero_image_url,
-        offer.hero_image_url,
-        offer.logo_url
-      ].filter(Boolean),
-      tags: [offer.city, offer.state].filter(Boolean),
-      category: "Dining" as const,
-      city: offer.city,
-      offerId: offer.club_id
-    }));
+  const locationProducts = selectedLocation === "All Cities"
+    ? diningOffers.map(offer => ({
+        brand: offer.name,
+        title: offer.description || `Exclusive offer at ${offer.name}`,
+        images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+        tags: ["Dining", offer.city, offer.state].filter(Boolean),
+        category: "Dining" as const,
+        city: offer.city,
+        state: offer.state,
+        majorCity: offer.city,
+        offerId: offer.id
+      }))
+    : diningOffers
+        .filter(offer => offer.city === selectedLocation)
+        .map(offer => ({
+          brand: offer.name,
+          title: offer.description || `Exclusive offer at ${offer.name}`,
+          images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+          tags: ["Dining", offer.city, offer.state].filter(Boolean),
+          category: "Dining" as const,
+          city: offer.city,
+          state: offer.state,
+          majorCity: offer.city,
+          offerId: offer.id
+        }));
 
   const {
     searchQuery,

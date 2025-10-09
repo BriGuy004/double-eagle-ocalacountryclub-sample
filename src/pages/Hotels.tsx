@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
@@ -7,6 +8,7 @@ import { FilterDrawer } from "@/components/FilterDrawer";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export const hotelProductsByCity = {
   "Rochester": [
@@ -207,14 +209,56 @@ export const hotelProductsByCity = {
 const Hotels = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const isMobile = useIsMobile();
+  const [hotelOffers, setHotelOffers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get products for the selected location only
-  const locationProducts = (hotelProductsByCity[selectedLocation as keyof typeof hotelProductsByCity] || []).map(p => ({
-    ...p,
-    category: "Hotels" as const,
-    city: selectedLocation,
-    offerId: p.brand.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
-  }));
+  // Fetch hotel offers from database
+  useEffect(() => {
+    const fetchHotelOffers = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('category', 'Hotels');
+
+      if (error) {
+        console.error('Error fetching hotel offers:', error);
+        setHotelOffers([]);
+      } else {
+        setHotelOffers(data || []);
+      }
+      setIsLoading(false);
+    };
+
+    fetchHotelOffers();
+  }, []);
+
+  // Filter offers by selected location and convert to product format
+  const locationProducts = selectedLocation === "All Cities"
+    ? hotelOffers.map(offer => ({
+        brand: offer.name,
+        title: offer.description || `Exclusive offer at ${offer.name}`,
+        images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+        tags: ["Hotels", offer.city, offer.state].filter(Boolean),
+        category: "Hotels" as const,
+        city: offer.city,
+        state: offer.state,
+        majorCity: offer.city,
+        offerId: offer.id
+      }))
+    : hotelOffers
+        .filter(offer => offer.city === selectedLocation)
+        .map(offer => ({
+          brand: offer.name,
+          title: offer.description || `Exclusive offer at ${offer.name}`,
+          images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+          tags: ["Hotels", offer.city, offer.state].filter(Boolean),
+          category: "Hotels" as const,
+          city: offer.city,
+          state: offer.state,
+          majorCity: offer.city,
+          offerId: offer.id
+        }));
 
   const {
     searchQuery,
@@ -258,7 +302,11 @@ const Hotels = () => {
         {/* Filter Panel - Removed */}
 
         {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12 md:py-16">
+            <p className="text-xl md:text-2xl text-white mb-2">Loading offers...</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12 md:py-16">
             <p className="text-xl md:text-2xl text-white mb-2">No results found</p>
             <p className="text-sm md:text-base text-[#94a3b8]">Try different keywords or adjust filters</p>
@@ -273,7 +321,7 @@ const Hotels = () => {
               images={product.images}
               tags={product.tags}
               description={product.title}
-              offerId={product.brand.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')}
+              offerId={product.offerId}
               category="Hotels"
             />
             ))}

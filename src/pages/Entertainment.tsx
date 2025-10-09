@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
 import { CategorySelector } from "@/components/CategorySelector";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export const entertainmentProductsByCity = {
   "Rochester": [
@@ -181,15 +182,48 @@ export const entertainmentProductsByCity = {
 
 const Entertainment = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
-  const [selectedSort, setSelectedSort] = useState("Popular");
+  const [entertainmentOffers, setEntertainmentOffers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch entertainment offers from database
+  useEffect(() => {
+    const fetchEntertainmentOffers = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('category', 'Entertainment');
+
+      if (error) {
+        console.error('Error fetching entertainment offers:', error);
+        setEntertainmentOffers([]);
+      } else {
+        setEntertainmentOffers(data || []);
+      }
+      setIsLoading(false);
+    };
+
+    fetchEntertainmentOffers();
+  }, []);
 
   // Get products based on selected location
   const currentProducts = useMemo(() => {
-    if (selectedLocation === "All Cities") {
-      return Object.values(entertainmentProductsByCity).flat();
-    }
-    return entertainmentProductsByCity[selectedLocation as keyof typeof entertainmentProductsByCity] || [];
-  }, [selectedLocation]);
+    const products = selectedLocation === "All Cities"
+      ? entertainmentOffers
+      : entertainmentOffers.filter(offer => offer.city === selectedLocation);
+    
+    return products.map(offer => ({
+      brand: offer.name,
+      title: offer.description || `Exclusive offer at ${offer.name}`,
+      images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+      tags: ["Entertainment", offer.city, offer.state].filter(Boolean),
+      category: "Entertainment" as const,
+      city: offer.city,
+      state: offer.state,
+      majorCity: offer.city,
+      offerId: offer.id
+    }));
+  }, [selectedLocation, entertainmentOffers]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -211,7 +245,11 @@ const Entertainment = () => {
           </div>
         </div>
 
-        {currentProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-16">
+            <p className="text-xl text-muted-foreground">Loading offers...</p>
+          </div>
+        ) : currentProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-xl text-muted-foreground">No entertainment offers found for {selectedLocation}</p>
             <p className="text-sm text-muted-foreground mt-2">Check back soon for new offers!</p>
@@ -226,7 +264,7 @@ const Entertainment = () => {
                 images={product.images}
                 tags={product.tags}
                 description={product.title}
-                offerId={product.brand.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')}
+                offerId={product.offerId}
               />
             ))}
           </div>
