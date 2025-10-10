@@ -9,9 +9,10 @@ interface ImageUploadProps {
   onImageSelect: (file: File) => void;
   onImageRemove?: () => void;
   thumbnail?: boolean;
+  disabled?: boolean;
 }
 
-export const ImageUpload = ({ label, currentUrl, onImageSelect, onImageRemove, thumbnail = false }: ImageUploadProps) => {
+export const ImageUpload = ({ label, currentUrl, onImageSelect, onImageRemove, thumbnail = false, disabled = false }: ImageUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +60,7 @@ export const ImageUpload = ({ label, currentUrl, onImageSelect, onImageRemove, t
         size="sm"
         className="w-full"
         onClick={() => fileInputRef.current?.click()}
+        disabled={disabled}
       >
         <Upload className="w-4 h-4 mr-2" />
         Upload {label}

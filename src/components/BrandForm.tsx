@@ -220,10 +220,18 @@ export const BrandForm: React.FC<BrandFormProps> = ({
 
         {uploadMethod === "upload" ? (
           <div className="space-y-4">
+            {!brand.club_id && (
+              <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-3">
+                <p className="text-yellow-200 text-sm">
+                  <strong>Please enter a Club ID first</strong> - It's required to upload images
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-4">
               <ImageUpload
                 label="Logo"
                 currentUrl={brand.logo_url}
+                disabled={!brand.club_id}
                 onImageSelect={async (file) => {
                   const url = await onImageUpload(file, "logo_url", brand.club_id || "");
                   if (url) onChange({ logo_url: url });
@@ -243,6 +251,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               <ImageUpload
                 label="Hero Image"
                 currentUrl={brand.hero_image_url}
+                disabled={!brand.club_id}
                 onImageSelect={async (file) => {
                   const url = await onImageUpload(file, "hero_image_url", brand.club_id || "");
                   if (url) onChange({ hero_image_url: url });
@@ -261,6 +270,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               <ImageUpload
                 label="Offer Card"
                 currentUrl={brand.offer_card_url}
+                disabled={!brand.club_id}
                 onImageSelect={async (file) => {
                   const url = await onImageUpload(file, "offer_card_url", brand.club_id || "");
                   if (url) onChange({ offer_card_url: url });
@@ -284,6 +294,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 <ImageUpload
                   label="Image 2"
                   currentUrl={brand.image_2_url}
+                  disabled={!brand.club_id}
                   onImageSelect={async (file) => {
                     const url = await onImageUpload(file, "image_2_url", brand.club_id || "");
                     if (url) onChange({ image_2_url: url });
@@ -302,6 +313,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 <ImageUpload
                   label="Image 3"
                   currentUrl={brand.image_3_url}
+                  disabled={!brand.club_id}
                   onImageSelect={async (file) => {
                     const url = await onImageUpload(file, "image_3_url", brand.club_id || "");
                     if (url) onChange({ image_3_url: url });
@@ -320,6 +332,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 <ImageUpload
                   label="Image 4"
                   currentUrl={brand.image_4_url}
+                  disabled={!brand.club_id}
                   onImageSelect={async (file) => {
                     const url = await onImageUpload(file, "image_4_url", brand.club_id || "");
                     if (url) onChange({ image_4_url: url });
