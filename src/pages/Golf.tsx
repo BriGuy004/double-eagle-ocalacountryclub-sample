@@ -10,6 +10,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useBrand } from "@/contexts/BrandContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
 
 const Golf = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
@@ -53,6 +54,28 @@ const Golf = () => {
     ? allGolfOffers.filter(offer => offer.clubId !== currentBrand.club_id)
     : allGolfOffers;
   
+  // Calculate available cities dynamically from actual offers
+  const citiesByState = useMemo(() => {
+    const cityStateMap: Record<string, Set<string>> = {};
+    
+    filteredGolfOffers.forEach(offer => {
+      if (offer.city && offer.state) {
+        if (!cityStateMap[offer.state]) {
+          cityStateMap[offer.state] = new Set();
+        }
+        cityStateMap[offer.state].add(offer.city);
+      }
+    });
+    
+    // Convert Sets to sorted arrays
+    const result: Record<string, string[]> = {};
+    Object.entries(cityStateMap).forEach(([state, cities]) => {
+      result[state] = Array.from(cities).sort();
+    });
+    
+    return result;
+  }, [filteredGolfOffers]);
+  
   // Filter by selected location (majorCity)
   const locationProducts = selectedLocation === "All Cities" 
     ? filteredGolfOffers 
@@ -93,6 +116,7 @@ const Golf = () => {
             <LocationSelector 
               selectedLocation={selectedLocation}
               onLocationChange={setSelectedLocation}
+              citiesByState={citiesByState}
             />
           </div>
         </div>
