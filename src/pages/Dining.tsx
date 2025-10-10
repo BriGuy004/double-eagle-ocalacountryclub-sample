@@ -9,12 +9,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
 
-// Helper function to check if offer is new (created within last 7 days)
+// Helper: Check if offer was created in last 14 days
 const isOfferNew = (createdAt: string | null) => {
   if (!createdAt) return false;
-  const offerDate = new Date(createdAt);
-  const daysSinceCreated = (Date.now() - offerDate.getTime()) / (1000 * 60 * 60 * 24);
-  return daysSinceCreated <= 7;
+  const fourteenDaysAgo = new Date();
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  return new Date(createdAt) > fourteenDaysAgo;
 };
 
 const Dining = () => {
