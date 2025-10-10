@@ -65,11 +65,13 @@ export default function RedemptionPage() {
     );
   }
 
-  // Build image carousel from available images
+  // 4-image carousel starting with the same image from the offer card
   const images = [
-    offer.hero_image_url,
-    offer.offer_card_url,
-  ].filter(Boolean);
+    offer.offer_card_url,    // Image 1 - Same as offer card
+    offer.image_2_url,       // Image 2 - Additional carousel image
+    offer.image_3_url,       // Image 3 - Additional carousel image
+    offer.image_4_url,       // Image 4 - Additional carousel image
+  ].filter(Boolean); // Removes any null/undefined images
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
