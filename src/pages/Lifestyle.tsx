@@ -1,0 +1,140 @@
+import { Header } from "@/components/Header";
+import { LocationSelector } from "@/components/LocationSelector";
+import { ProductCard } from "@/components/ProductCard";
+import { CategorySelector } from "@/components/CategorySelector";
+import { useProductFilters } from "@/hooks/useProductFilters";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/UserContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
+
+const Index = () => {
+  const { selectedLocation, setSelectedLocation } = useUser();
+  const isMobile = useIsMobile();
+
+  // Fetch offers from Supabase
+  const { data: offers = [] } = useQuery({
+    queryKey: ['offers', 'Lifestyle'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('category', 'Lifestyle');
+      
+      if (error) throw error;
+      return data;
+    },
+    refetchInterval: 5000,
+    staleTime: 0
+  });
+
+  // Calculate available cities dynamically
+  const citiesByState = useMemo(() => {
+    const cityStateMap: Record<string, Set<string>> = {};
+    
+    offers.forEach(offer => {
+      if (offer.city && offer.state) {
+        if (!cityStateMap[offer.state]) {
+          cityStateMap[offer.state] = new Set();
+        }
+        cityStateMap[offer.state].add(offer.city);
+      }
+    });
+    
+    const result: Record<string, string[]> = {};
+    Object.entries(cityStateMap).forEach(([state, cities]) => {
+      result[state] = Array.from(cities).sort();
+    });
+    
+    return result;
+  }, [offers]);
+
+  // Transform Supabase data
+  const allLifestyleOffers = offers.map(offer => ({
+    offerId: offer.club_id,
+    clubId: offer.club_id,
+    brand: offer.name,
+    title: offer.name,
+    description: offer.description || `Exclusive lifestyle benefits at ${offer.name}`,
+    discount: "Member Pricing",
+    images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
+    tags: ["Lifestyle", offer.city && offer.state ? `${offer.city}, ${offer.state}` : ''].filter(Boolean),
+    category: "Lifestyle" as const,
+    city: offer.city,
+    state: offer.state,
+    majorCity: offer.city
+  }));
+  
+  // Filter by selected location
+  const locationProducts = selectedLocation === "All Cities" 
+    ? allLifestyleOffers 
+    : allLifestyleOffers.filter(offer => offer.majorCity === selectedLocation);
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    isSearching,
+    selectedCategories,
+    toggleCategory,
+    selectedCity,
+    setSelectedCity,
+    sortBy,
+    setSortBy,
+    filteredProducts,
+    clearFilters,
+    hasActiveFilters
+  } = useProductFilters(locationProducts);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        isSearching={isSearching}
+      />
+      
+      <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+        <div className="text-center mb-12">
+          <div className="mb-6">
+            <CategorySelector 
+              selectedCategory="Lifestyle"
+              onCategoryChange={() => {}}
+            />
+          </div>
+          <div className="flex justify-center mb-8">
+            <LocationSelector 
+              selectedLocation={selectedLocation}
+              onLocationChange={setSelectedLocation}
+              citiesByState={citiesByState}
+            />
+          </div>
+        </div>
+
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-12 md:py-16">
+            <p className="text-xl md:text-2xl text-white mb-2">No results found</p>
+            <p className="text-sm md:text-base text-[#94a3b8]">Try different keywords or adjust filters</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade-in">
+            {filteredProducts.map((offer) => (
+              <ProductCard
+                key={offer.offerId}
+                brand={offer.brand}
+                title={offer.title}
+                images={offer.images}
+                tags={offer.tags}
+                description={offer.description}
+                offerId={offer.offerId}
+                category="Lifestyle"
+              />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default Index;

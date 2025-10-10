@@ -7,7 +7,7 @@ import { UserProvider } from "@/contexts/UserContext";
 import { BookmarkProvider } from "@/contexts/BookmarkContext";
 import { BrandProvider } from "@/contexts/BrandContext";
 import Home from "./pages/Home";
-import Index from "./pages/Index";
+import Lifestyle from "./pages/Lifestyle";
 import StateProducts from "./pages/StateProducts";
 import CityProducts from "./pages/CityProducts";
 import Hotels from "./pages/Hotels";
@@ -35,7 +35,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/lifestyle" element={<Index />} />
+                <Route path="/lifestyle" element={<Lifestyle />} />
                 <Route path="/state/:state" element={<StateProducts />} />
                 <Route path="/state/:state/city/:city" element={<CityProducts />} />
                 <Route path="/hotels" element={<Hotels />} />
