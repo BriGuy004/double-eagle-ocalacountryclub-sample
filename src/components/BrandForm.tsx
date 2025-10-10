@@ -156,7 +156,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
       <div>
         <div className="flex items-center justify-between">
           <Label>Description</Label>
-          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/200</span>
+          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/500</span>
         </div>
         <Textarea
           value={brand.description || ""}
