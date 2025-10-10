@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarks } from "@/contexts/BookmarkContext";
@@ -16,14 +15,6 @@ interface ProductCardProps {
   discountPercent?: number;
 }
 
-const categoryColors = {
-  Golf: "#10b981",
-  Hotels: "#3b82f6",
-  Dining: "#ef4444",
-  Lifestyle: "#a855f7",
-  Entertainment: "#f59e0b"
-};
-
 export const ProductCard = ({ 
   brand, 
   title, 
@@ -40,7 +31,6 @@ export const ProductCard = ({
   const isCurrentlyBookmarked = offerId ? isBookmarked(offerId) : false;
 
   const handleCardClick = () => {
-    // Navigate to redemption page using the offerId (which should be club_id)
     if (offerId) {
       navigate(`/redemption/${offerId}`);
     }
@@ -61,29 +51,14 @@ export const ProductCard = ({
       className="group cursor-pointer rounded-2xl overflow-hidden bg-[#1a2332] border border-white/10 transition-all duration-300 ease-in-out md:hover:-translate-y-2 md:hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] touch-active"
       onClick={handleCardClick}
     >
-      {/* Image Container with text overlay */}
+      {/* Image Container - NO TEXT OVERLAY */}
       <div className="relative aspect-video w-full overflow-hidden">
         <img
           src={images[0]}
-          alt={`${brand}`}
+          alt={brand}
           className="w-full h-full object-cover"
           loading="lazy"
         />
-        
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
-        
-        {/* Text overlay on image - SIMPLIFIED */}
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-2">
-            {brand}
-          </h3>
-          {cityState && (
-            <p className="text-base md:text-lg text-white/90">
-              {cityState}
-            </p>
-          )}
-        </div>
         
         {/* Bookmark Heart - top-right */}
         <button
@@ -99,8 +74,21 @@ export const ProductCard = ({
         </button>
       </div>
 
-      {/* Card Content - Just the button */}
-      <div className="p-6">
+      {/* Card Content - Brand name + Location + Button */}
+      <div className="p-6 space-y-4">
+        {/* Brand name below image */}
+        <div>
+          <h4 className="text-xl font-semibold text-white line-clamp-2 mb-1">
+            {brand}
+          </h4>
+          {cityState && (
+            <p className="text-sm text-muted-foreground">
+              {cityState}
+            </p>
+          )}
+        </div>
+        
+        {/* View Offer Button */}
         <Button 
           aria-label={`View offer for ${brand}`}
           variant="orange"
