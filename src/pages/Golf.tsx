@@ -41,7 +41,7 @@ const Golf = () => {
     description: offer.description || `Exclusive golf benefits at ${offer.name}`,
     discount: "Reciprocal Play Access",
     images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
-    tags: ["Golf", "Private Club", offer.category].filter(Boolean),
+    tags: ["Golf", "Private Club", offer.city && offer.state ? `${offer.city}, ${offer.state}` : ''].filter(Boolean),
     category: "Golf" as const,
     city: offer.city,
     state: offer.state,
