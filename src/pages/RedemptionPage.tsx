@@ -113,7 +113,7 @@ export default function RedemptionPage() {
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-foreground"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
                   onClick={prevImage}
                 >
                   <ChevronLeft className="w-6 h-6" />
@@ -121,7 +121,7 @@ export default function RedemptionPage() {
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-foreground"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
                   onClick={nextImage}
                 >
                   <ChevronRight className="w-6 h-6" />
