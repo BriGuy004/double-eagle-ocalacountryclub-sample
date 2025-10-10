@@ -34,7 +34,7 @@ const Golf = () => {
 
   // Transform Supabase data to match expected format
   const allGolfOffers = offers.map(offer => ({
-    offerId: offer.id,
+    offerId: offer.club_id,  // ✅ This matches the redemption page
     clubId: offer.club_id,
     brand: offer.name,
     title: offer.description || `${offer.name} - Golf Access`,
