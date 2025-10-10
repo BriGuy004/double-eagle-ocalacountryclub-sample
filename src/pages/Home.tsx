@@ -19,12 +19,15 @@ export default function Home() {
       {/* Header with Category Navigation */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/95 border-b border-white/10">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Top Row: Logo and Account */}
+          {/* Top Row: Logo, Club Name, and Account */}
           <div className="flex items-center justify-between py-4 border-b border-white/5">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {currentBrand?.logo_url && (
                 <img src={currentBrand.logo_url} alt={currentBrand.name} className="h-12 md:h-14 object-contain" />
               )}
+              <div className="hidden md:block">
+                <p className="text-white/90 font-medium text-sm">{currentBrand?.name || "The Country Club of Ocala"}</p>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -45,9 +48,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Category Navigation - REORDERED with CLUB COLORS */}
-          <nav className="py-3">
-            <div className="flex items-center justify-center gap-2 md:gap-3 flex-wrap">
+          {/* Category Navigation - SMALLER BUTTONS */}
+          <nav className="py-2">
+            <div className="flex items-center justify-center gap-1 md:gap-2">
               <Button
                 size="sm"
                 onClick={() => navigate("/golf")}
@@ -55,7 +58,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Golf
               </Button>
@@ -66,7 +69,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Lifestyle
               </Button>
@@ -77,7 +80,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Dining
               </Button>
@@ -88,7 +91,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Entertainment
               </Button>
@@ -99,7 +102,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Hotels
               </Button>
@@ -110,7 +113,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Travel
               </Button>
@@ -121,7 +124,7 @@ export default function Home() {
                   backgroundColor: `hsl(${primaryColor})`,
                   color: "white",
                 }}
-                className="hover:opacity-90 font-semibold px-5 md:px-7 py-5"
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Shopping
               </Button>
@@ -130,7 +133,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section - NO EXPLORE BUTTON */}
+      {/* Hero Section - NO CLUB NAME ON PHOTO */}
       <section className="relative overflow-hidden">
         {/* Background Image */}
         <div
@@ -143,12 +146,8 @@ export default function Home() {
           }}
         />
 
-        {/* Content */}
+        {/* Content - JUST WELCOME MESSAGE */}
         <div className="relative container mx-auto px-4 md:px-6 py-32 md:py-40 text-center">
-          <p className="text-sm md:text-base text-white/80 font-medium mb-4 tracking-wider uppercase">
-            {currentBrand?.name || "The Country Club of Ocala"}
-          </p>
-
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight">Welcome, {memberName}!</h1>
         </div>
       </section>
