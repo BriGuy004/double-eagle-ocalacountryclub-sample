@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarks } from "@/contexts/BookmarkContext";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 interface ProductCardProps {
   brand: string;
@@ -13,6 +14,7 @@ interface ProductCardProps {
   category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   discountAmount?: number;
   discountPercent?: number;
+  isNew?: boolean; // Optional prop to mark offers as new
 }
 
 export const ProductCard = ({
@@ -24,14 +26,34 @@ export const ProductCard = ({
   category = "Lifestyle",
   discountAmount,
   discountPercent,
+  isNew = false,
 }: ProductCardProps) => {
   const navigate = useNavigate();
   const { isBookmarked, toggleBookmark } = useBookmarks();
 
   const isCurrentlyBookmarked = offerId ? isBookmarked(offerId) : false;
 
+  // Track if user has viewed this offer
+  const [hasViewed, setHasViewed] = useState(false);
+
+  // Check if offer has been viewed on mount
+  useEffect(() => {
+    if (offerId) {
+      const viewedOffers = JSON.parse(localStorage.getItem("viewedOffers") || "[]");
+      setHasViewed(viewedOffers.includes(offerId));
+    }
+  }, [offerId]);
+
   const handleCardClick = () => {
     if (offerId) {
+      // Mark offer as viewed
+      const viewedOffers = JSON.parse(localStorage.getItem("viewedOffers") || "[]");
+      if (!viewedOffers.includes(offerId)) {
+        viewedOffers.push(offerId);
+        localStorage.setItem("viewedOffers", JSON.stringify(viewedOffers));
+        setHasViewed(true);
+      }
+
       navigate(`/redemption/${offerId}`);
     }
   };
@@ -51,6 +73,9 @@ export const ProductCard = ({
 
   const isGolfCategory = category === "Golf";
 
+  // Show NEW badge if offer is new AND user hasn't viewed it
+  const showNewBadge = isNew && !hasViewed;
+
   return (
     <div
       className="group cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a2332] to-[#0f1729] border border-white/10 transition-all duration-500 ease-out hover:border-primary/30 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(218,165,32,0.15)] active:scale-[0.98]"
@@ -68,10 +93,12 @@ export const ProductCard = ({
         {/* Subtle gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Member Exclusive Badge - Top Left */}
-        <div className="absolute top-3 left-3 bg-primary/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-          <span className="text-xs font-bold text-white tracking-wide">MEMBER EXCLUSIVE</span>
-        </div>
+        {/* NEW Badge - Top Left (only if new and not viewed) */}
+        {showNewBadge && (
+          <div className="absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-1.5 rounded-full shadow-lg animate-pulse">
+            <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+          </div>
+        )}
 
         {/* Bookmark Heart - Top Right */}
         <button
