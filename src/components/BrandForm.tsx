@@ -156,7 +156,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({
       <div>
         <div className="flex items-center justify-between">
           <Label>Description</Label>
-          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/500</span>
+          <span className="text-xs text-muted-foreground">
+            {(brand.description?.length || 0)}/500
+          </span>
         </div>
         <Textarea
           value={brand.description || ""}
@@ -167,13 +169,17 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           }}
           placeholder="Brief description of the club and its amenities..."
           rows={3}
-          maxLength={200}
+          maxLength={500}
           className={errors.description ? "border-destructive" : ""}
         />
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-muted-foreground">Describe what makes this club unique</p>
+          <p className="text-xs text-muted-foreground">
+            Describe what makes this club unique
+          </p>
         </div>
-        {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
+        {errors.description && (
+          <p className="text-sm text-destructive mt-1">{errors.description}</p>
+        )}
       </div>
 
       <div>
