@@ -19,18 +19,24 @@ export default function Home() {
       {/* Header with Category Navigation */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/95 border-b border-white/10">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Top Row: Logo, Club Name, and Account */}
-          <div className="flex items-center justify-between py-4 border-b border-white/5">
-            <div className="flex items-center gap-4">
+          {/* Top Row: Logo, Centered Club Name, and Account */}
+          <div className="grid grid-cols-3 items-center py-4 border-b border-white/5">
+            {/* Left: Logo */}
+            <div className="flex items-center">
               {currentBrand?.logo_url && (
                 <img src={currentBrand.logo_url} alt={currentBrand.name} className="h-12 md:h-14 object-contain" />
               )}
-              <div className="hidden md:block">
-                <p className="text-white/90 font-medium text-sm">{currentBrand?.name || "The Country Club of Ocala"}</p>
-              </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Center: Club Name */}
+            <div className="text-center">
+              <h1 className="text-white font-bold text-base md:text-lg">
+                {currentBrand?.name || "The Country Club of Ocala - Hampton Golf"}
+              </h1>
+            </div>
+
+            {/* Right: Notifications & Account */}
+            <div className="flex items-center justify-end gap-3">
               <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/member-dashboard")}>
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary rounded-full text-[10px] flex items-center justify-center text-white">
@@ -48,7 +54,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Category Navigation - SMALLER BUTTONS */}
+          {/* Category Navigation */}
           <nav className="py-2">
             <div className="flex items-center justify-center gap-1 md:gap-2">
               <Button
@@ -133,7 +139,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section - NO CLUB NAME ON PHOTO */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background Image */}
         <div
@@ -146,7 +152,7 @@ export default function Home() {
           }}
         />
 
-        {/* Content - JUST WELCOME MESSAGE */}
+        {/* Content */}
         <div className="relative container mx-auto px-4 md:px-6 py-32 md:py-40 text-center">
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight">Welcome, {memberName}!</h1>
         </div>
