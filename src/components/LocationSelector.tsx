@@ -9,15 +9,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-import { getCitiesByState } from "@/data/allClubs";
 
 interface LocationSelectorProps {
   selectedLocation: string;
   onLocationChange: (location: string) => void;
+  citiesByState?: Record<string, string[]>; // Made optional with default
 }
 
-export const LocationSelector = ({ selectedLocation, onLocationChange }: LocationSelectorProps) => {
-  const citiesByState = getCitiesByState();
+export const LocationSelector = ({ 
+  selectedLocation, 
+  onLocationChange,
+  citiesByState = {} // Default to empty object
+}: LocationSelectorProps) => {
   
   return (
     <DropdownMenu>
