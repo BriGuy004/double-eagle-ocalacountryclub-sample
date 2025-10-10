@@ -63,7 +63,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         <div>
           <Label className="flex items-center gap-1">
             Club ID (unique, lowercase)
-            <span className="text-destructive">*</span>
           </Label>
           <Input
             value={brand.club_id || ""}
@@ -78,7 +77,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             placeholder="e.g., northgate"
             disabled={isEdit}
             className={isEdit ? "bg-muted" : errors.club_id ? "border-destructive" : ""}
-            required
           />
           {errors.club_id ? (
             <p className="text-sm text-destructive mt-1">{errors.club_id}</p>
@@ -91,14 +89,12 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         <div>
           <Label className="flex items-center gap-1">
             Name
-            <span className="text-destructive">*</span>
           </Label>
           <Input
             value={brand.name || ""}
             onChange={(e) => onChange({ name: e.target.value })}
             placeholder="e.g., Northgate Country Club"
             className={errors.name ? "border-destructive" : ""}
-            required
           />
           {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
         </div>
@@ -206,7 +202,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         <div className="flex items-center justify-between mb-2">
           <Label className="flex items-center gap-1">
             Images
-            <span className="text-destructive">*</span>
           </Label>
           <Button
             type="button"
@@ -357,12 +352,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               <div>
                 <Label className="flex items-center gap-1">
                   Logo URL
-                  <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={brand.logo_url || ""}
                   onChange={(e) => onChange({ logo_url: e.target.value })}
-                  required
                   placeholder="/lovable-uploads/logo.png"
                   className={errors.logo_url ? "border-destructive" : ""}
                 />
@@ -378,12 +371,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               <div>
                 <Label className="flex items-center gap-1">
                   Hero Image URL
-                  <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   value={brand.hero_image_url || ""}
                   onChange={(e) => onChange({ hero_image_url: e.target.value })}
-                  required
                   placeholder="/lovable-uploads/hero.png"
                   className={errors.hero_image_url ? "border-destructive" : ""}
                 />
