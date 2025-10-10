@@ -43,7 +43,7 @@ export const ProductCard = ({
     }
   };
 
-  // Extract city and state from tags
+  // Extract city and state from tags (should be like "Minneapolis, MN")
   const cityState = tags.find(tag => tag.includes(',')) || '';
 
   return (
@@ -74,15 +74,15 @@ export const ProductCard = ({
         </button>
       </div>
 
-      {/* Card Content - Brand name + Location + Button */}
-      <div className="p-6 space-y-4">
-        {/* Brand name below image */}
+      {/* Card Content - Brand name CLOSER + BIGGER */}
+      <div className="p-4 space-y-3">
+        {/* Brand name - BIGGER & CLOSER */}
         <div>
-          <h4 className="text-xl font-semibold text-white line-clamp-2 mb-1">
+          <h4 className="text-2xl font-bold text-white line-clamp-2 mb-1">
             {brand}
           </h4>
           {cityState && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {cityState}
             </p>
           )}
