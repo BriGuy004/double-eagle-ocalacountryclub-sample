@@ -66,6 +66,7 @@ const Shopping = () => {
     title: offer.name,
     description: offer.description || `Exclusive shopping experience at ${offer.name}`,
     discount: "Member Discount",
+    discountText: offer.discount_text,
     images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
     tags: ["Shopping", offer.city && offer.state ? `${offer.city}, ${offer.state}` : ''].filter(Boolean),
     category: "Shopping" as const,
@@ -137,6 +138,7 @@ const Shopping = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Shopping"
+                discountText={offer.discountText}
                 isNew={offer.isNew}
               />
             ))}

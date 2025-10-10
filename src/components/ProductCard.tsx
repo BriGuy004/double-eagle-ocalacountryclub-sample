@@ -14,6 +14,7 @@ interface ProductCardProps {
   category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   discountAmount?: number;
   discountPercent?: number;
+  discountText?: string;
   isNew?: boolean; // Optional prop to mark offers as new
 }
 
@@ -26,6 +27,7 @@ export const ProductCard = ({
   category = "Lifestyle",
   discountAmount,
   discountPercent,
+  discountText,
   isNew = false,
 }: ProductCardProps) => {
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ export const ProductCard = ({
   const cityState = tags.find((tag) => tag.includes(",")) || "";
 
   // Format discount display
-  const discountText = discountPercent ? `${discountPercent}% off` : discountAmount ? `$${discountAmount} off` : title;
+  const displayDiscountText = discountText || (discountPercent ? `${discountPercent}% off` : discountAmount ? `$${discountAmount} off` : title);
 
   const isGolfCategory = category === "Golf";
 
@@ -130,8 +132,8 @@ export const ProductCard = ({
             <h4 className="text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
               {brand}
             </h4>
-            <div className="flex-shrink-0 bg-primary/10 border border-primary/30 rounded-lg px-3 py-1.5 group-hover:bg-primary/20 group-hover:border-primary/50 transition-all duration-300">
-              <p className="text-sm font-bold text-primary whitespace-nowrap">{discountText}</p>
+            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-3 py-1.5 group-hover:border-primary transition-all duration-300">
+              <p className="text-sm font-bold text-white whitespace-nowrap">{displayDiscountText}</p>
             </div>
           </div>
         )}

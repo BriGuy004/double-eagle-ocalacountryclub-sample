@@ -70,6 +70,7 @@ export type Database = {
           club_id: string
           created_at: string
           description: string | null
+          discount_text: string | null
           full_address: string | null
           hero_image_url: string
           id: string
@@ -94,6 +95,7 @@ export type Database = {
           club_id: string
           created_at?: string
           description?: string | null
+          discount_text?: string | null
           full_address?: string | null
           hero_image_url: string
           id?: string
@@ -118,6 +120,7 @@ export type Database = {
           club_id?: string
           created_at?: string
           description?: string | null
+          discount_text?: string | null
           full_address?: string | null
           hero_image_url?: string
           id?: string

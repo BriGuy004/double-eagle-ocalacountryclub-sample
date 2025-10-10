@@ -26,6 +26,7 @@ interface Brand {
   website?: string;
   redemption_info?: string;
   description?: string;
+  discount_text?: string;
   is_active?: boolean;
 }
 
@@ -148,6 +149,22 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           <p className="text-xs text-muted-foreground mt-1">Must include http:// or https://</p>
         )}
       </div>
+
+      {categoryInfo.category !== "Golf" && (
+        <div>
+          <Label>Discount Text</Label>
+          <Input
+            value={brand.discount_text || ""}
+            onChange={(e) => onChange({ discount_text: e.target.value })}
+            placeholder="e.g., 25% off"
+            className={errors.discount_text ? "border-destructive" : ""}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            This will display on the offer card (e.g., "25% off", "$50 off")
+          </p>
+          {errors.discount_text && <p className="text-sm text-destructive mt-1">{errors.discount_text}</p>}
+        </div>
+      )}
 
       <div>
         <div className="flex items-center justify-between">

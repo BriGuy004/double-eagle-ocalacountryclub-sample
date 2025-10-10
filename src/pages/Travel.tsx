@@ -66,6 +66,7 @@ const Travel = () => {
     title: offer.name,
     description: offer.description || `Exclusive travel experience at ${offer.name}`,
     discount: "Member Discount",
+    discountText: offer.discount_text,
     images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
     tags: ["Travel", offer.city && offer.state ? `${offer.city}, ${offer.state}` : ''].filter(Boolean),
     category: "Travel" as const,
@@ -137,6 +138,7 @@ const Travel = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Travel"
+                discountText={offer.discountText}
                 isNew={offer.isNew}
               />
             ))}

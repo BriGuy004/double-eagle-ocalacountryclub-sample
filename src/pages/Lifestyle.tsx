@@ -66,6 +66,7 @@ const Index = () => {
     title: offer.name,
     description: offer.description || `Exclusive lifestyle benefits at ${offer.name}`,
     discount: "Member Pricing",
+    discountText: offer.discount_text,
     images: [offer.offer_card_url || offer.hero_image_url].filter(Boolean),
     tags: ["Lifestyle", offer.city && offer.state ? `${offer.city}, ${offer.state}` : ''].filter(Boolean),
     category: "Lifestyle" as const,
@@ -137,6 +138,7 @@ const Index = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Lifestyle"
+                discountText={offer.discountText}
                 isNew={offer.isNew}
               />
             ))}

@@ -11,6 +11,7 @@ export interface Product {
   category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   city?: string;
   majorCity?: string;
+  discountText?: string;
   isNew?: boolean;
 }
 

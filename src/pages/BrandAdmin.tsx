@@ -45,6 +45,7 @@ interface Brand {
   website?: string;
   redemption_info?: string;
   description?: string;
+  discount_text?: string;
   is_active?: boolean;
 }
 
@@ -77,7 +78,8 @@ const BrandAdmin = () => {
     full_address: "",
     website: "",
     redemption_info: "",
-    description: ""
+    description: "",
+    discount_text: ""
   });
 
   // Determine category based on route
@@ -269,7 +271,8 @@ const BrandAdmin = () => {
         full_address: "",
         website: "",
         redemption_info: "",
-        description: ""
+        description: "",
+        discount_text: ""
       });
       
       // Refresh brands from database
@@ -336,7 +339,8 @@ const BrandAdmin = () => {
         full_address: editedBrand.full_address || '',
         website: editedBrand.website || '',
         redemption_info: editedBrand.redemption_info || '',
-        description: editedBrand.description || ''
+        description: editedBrand.description || '',
+        discount_text: editedBrand.discount_text || ''
       };
 
       const { data, error } = await supabase
