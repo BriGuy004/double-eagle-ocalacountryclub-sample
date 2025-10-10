@@ -525,7 +525,7 @@ const BrandAdmin = () => {
               <div className="flex gap-4">
                 <Button 
                   onClick={handleAddBrand} 
-                  className="bg-primary hover:bg-primary/90"
+                  variant="orange"
                   disabled={isSaving}
                 >
                   {isSaving ? (
