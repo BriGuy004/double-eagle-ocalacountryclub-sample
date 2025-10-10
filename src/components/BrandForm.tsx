@@ -26,6 +26,7 @@ interface Brand {
   website?: string;
   redemption_info?: string;
   description?: string;
+  offer_text?: string;
   is_active?: boolean;
 }
 
@@ -61,9 +62,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className="flex items-center gap-1">
-            Club ID (unique, lowercase)
-          </Label>
+          <Label className="flex items-center gap-1">Club ID (unique, lowercase)</Label>
           <Input
             value={brand.club_id || ""}
             onChange={(e) => {
@@ -87,9 +86,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           )}
         </div>
         <div>
-          <Label className="flex items-center gap-1">
-            Name
-          </Label>
+          <Label className="flex items-center gap-1">Name</Label>
           <Input
             value={brand.name || ""}
             onChange={(e) => onChange({ name: e.target.value })}
@@ -152,9 +149,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
       <div>
         <div className="flex items-center justify-between">
           <Label>Description</Label>
-          <span className="text-xs text-muted-foreground">
-            {(brand.description?.length || 0)}/1500
-          </span>
+          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/1500</span>
         </div>
         <Textarea
           value={brand.description || ""}
@@ -169,13 +164,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           className={errors.description ? "border-destructive" : ""}
         />
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-muted-foreground">
-            Describe what makes this club unique
-          </p>
+          <p className="text-xs text-muted-foreground">Describe what makes this club unique</p>
         </div>
-        {errors.description && (
-          <p className="text-sm text-destructive mt-1">{errors.description}</p>
-        )}
+        {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
       </div>
 
       <div>
@@ -198,11 +189,27 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         {errors.redemption_info && <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>}
       </div>
 
+      {/* Offer Text - Only for Non-Golf Categories */}
+      {categoryInfo.category !== "Golf" && (
+        <div>
+          <Label>Offer Text (Display on Card)</Label>
+          <Input
+            value={brand.offer_text || ""}
+            onChange={(e) => onChange({ offer_text: e.target.value })}
+            placeholder="e.g., 25% off, $50 off, Buy 1 Get 1"
+            className={errors.offer_text ? "border-destructive" : ""}
+            maxLength={50}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            This will appear in the bordered box on the right side of the offer card. Keep it short and impactful!
+          </p>
+          {errors.offer_text && <p className="text-sm text-destructive mt-1">{errors.offer_text}</p>}
+        </div>
+      )}
+
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label className="flex items-center gap-1">
-            Images
-          </Label>
+          <Label className="flex items-center gap-1">Images</Label>
           <Button
             type="button"
             variant="ghost"
@@ -350,9 +357,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="flex items-center gap-1">
-                  Logo URL
-                </Label>
+                <Label className="flex items-center gap-1">Logo URL</Label>
                 <Input
                   value={brand.logo_url || ""}
                   onChange={(e) => onChange({ logo_url: e.target.value })}
@@ -369,9 +374,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 )}
               </div>
               <div>
-                <Label className="flex items-center gap-1">
-                  Hero Image URL
-                </Label>
+                <Label className="flex items-center gap-1">Hero Image URL</Label>
                 <Input
                   value={brand.hero_image_url || ""}
                   onChange={(e) => onChange({ hero_image_url: e.target.value })}
