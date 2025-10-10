@@ -8,7 +8,7 @@ export interface Product {
   tags: string[];
   description?: string;
   offerId?: string;
-  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment";
+  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   city?: string;
   majorCity?: string;
 }

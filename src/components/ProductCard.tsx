@@ -10,7 +10,7 @@ interface ProductCardProps {
   tags: string[];
   description?: string;
   offerId?: string;
-  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment";
+  category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   discountAmount?: number;
   discountPercent?: number;
 }
