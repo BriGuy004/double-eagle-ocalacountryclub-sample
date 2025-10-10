@@ -96,7 +96,7 @@ export default function RedemptionPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Image Carousel with Brand Name Overlay */}
+        {/* Image Carousel - NO TEXT OVERLAY */}
         <div className="relative mb-8">
           <div className="relative h-96 md:h-[500px] bg-muted rounded-xl overflow-hidden">
             <img
@@ -104,18 +104,6 @@ export default function RedemptionPage() {
               alt={`${offer.name} - Image ${currentImageIndex + 1}`}
               className="w-full h-full object-cover"
             />
-            
-            {/* Brand name overlay on image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-8">
-              <div className="text-center text-white">
-                <h1 className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">
-                  {offer.name}
-                </h1>
-                <p className="text-xl md:text-2xl font-medium drop-shadow-lg">
-                  {offer.city && offer.state ? `${offer.city}, ${offer.state}` : offer.city || offer.state || ''}
-                </p>
-              </div>
-            </div>
             
             {/* Navigation arrows */}
             {images.length > 1 && (
