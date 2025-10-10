@@ -34,8 +34,15 @@ interface BrandFormProps {
   onChange: (updates: Partial<Brand>) => void;
   categoryInfo: { category: string };
   isEdit?: boolean;
-  onImageUpload: (file: File, field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url', clubId: string) => Promise<string | null>;
-  onImageRemove?: (imageUrl: string, field: 'logo_url' | 'hero_image_url' | 'offer_card_url' | 'image_2_url' | 'image_3_url' | 'image_4_url') => Promise<void>;
+  onImageUpload: (
+    file: File,
+    field: "logo_url" | "hero_image_url" | "offer_card_url" | "image_2_url" | "image_3_url" | "image_4_url",
+    clubId: string,
+  ) => Promise<string | null>;
+  onImageRemove?: (
+    imageUrl: string,
+    field: "logo_url" | "hero_image_url" | "offer_card_url" | "image_2_url" | "image_3_url" | "image_4_url",
+  ) => Promise<void>;
   errors?: Record<string, string>;
 }
 
@@ -46,9 +53,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({
   isEdit = false,
   onImageUpload,
   onImageRemove,
-  errors = {}
+  errors = {},
 }) => {
-  const [uploadMethod, setUploadMethod] = useState<'upload' | 'url'>('url');
+  const [uploadMethod, setUploadMethod] = useState<"upload" | "url">("url");
 
   return (
     <div className="space-y-4">
@@ -64,8 +71,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({
               // Auto-format: lowercase, replace spaces with hyphens, remove invalid chars
               const formatted = e.target.value
                 .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '');
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "");
               onChange({ club_id: formatted });
             }}
             placeholder="e.g., northgate"
@@ -93,9 +100,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             className={errors.name ? "border-destructive" : ""}
             required
           />
-          {errors.name && (
-            <p className="text-sm text-destructive mt-1">{errors.name}</p>
-          )}
+          {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
         </div>
       </div>
 
@@ -108,9 +113,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             placeholder="e.g., Houston"
             className={errors.city ? "border-destructive" : ""}
           />
-          {errors.city && (
-            <p className="text-sm text-destructive mt-1">{errors.city}</p>
-          )}
+          {errors.city && <p className="text-sm text-destructive mt-1">{errors.city}</p>}
         </div>
         <div>
           <Label>State</Label>
@@ -120,9 +123,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             placeholder="e.g., TX"
             className={errors.state ? "border-destructive" : ""}
           />
-          {errors.state && (
-            <p className="text-sm text-destructive mt-1">{errors.state}</p>
-          )}
+          {errors.state && <p className="text-sm text-destructive mt-1">{errors.state}</p>}
         </div>
       </div>
 
@@ -134,9 +135,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           placeholder="e.g., 123 Golf Course Dr, Houston, TX 77001"
           className={errors.full_address ? "border-destructive" : ""}
         />
-        {errors.full_address && (
-          <p className="text-sm text-destructive mt-1">{errors.full_address}</p>
-        )}
+        {errors.full_address && <p className="text-sm text-destructive mt-1">{errors.full_address}</p>}
       </div>
 
       <div>
@@ -150,23 +149,19 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         {errors.website ? (
           <p className="text-sm text-destructive mt-1">{errors.website}</p>
         ) : (
-          <p className="text-xs text-muted-foreground mt-1">
-            Must include http:// or https://
-          </p>
+          <p className="text-xs text-muted-foreground mt-1">Must include http:// or https://</p>
         )}
       </div>
 
       <div>
         <div className="flex items-center justify-between">
           <Label>Description</Label>
-          <span className="text-xs text-muted-foreground">
-            {(brand.description?.length || 0)}/200
-          </span>
+          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/200</span>
         </div>
         <Textarea
           value={brand.description || ""}
           onChange={(e) => {
-            if (e.target.value.length <= 200) {
+            if (e.target.value.length <= 500) {
               onChange({ description: e.target.value });
             }
           }}
@@ -176,21 +171,15 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           className={errors.description ? "border-destructive" : ""}
         />
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-muted-foreground">
-            Describe what makes this club unique
-          </p>
+          <p className="text-xs text-muted-foreground">Describe what makes this club unique</p>
         </div>
-        {errors.description && (
-          <p className="text-sm text-destructive mt-1">{errors.description}</p>
-        )}
+        {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
       </div>
 
       <div>
         <div className="flex items-center justify-between">
           <Label>Redemption Information</Label>
-          <span className="text-xs text-muted-foreground">
-            {(brand.redemption_info?.length || 0)}/500
-          </span>
+          <span className="text-xs text-muted-foreground">{brand.redemption_info?.length || 0}/500</span>
         </div>
         <Textarea
           value={brand.redemption_info || ""}
@@ -204,9 +193,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           maxLength={500}
           className={errors.redemption_info ? "border-destructive" : ""}
         />
-        {errors.redemption_info && (
-          <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>
-        )}
+        {errors.redemption_info && <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>}
       </div>
 
       <div>
@@ -219,60 +206,72 @@ export const BrandForm: React.FC<BrandFormProps> = ({
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => setUploadMethod(prev => prev === 'upload' ? 'url' : 'upload')}
+            onClick={() => setUploadMethod((prev) => (prev === "upload" ? "url" : "upload"))}
           >
-            {uploadMethod === 'upload' ? 'Use URL instead' : 'Upload files instead'}
+            {uploadMethod === "upload" ? "Use URL instead" : "Upload files instead"}
           </Button>
         </div>
 
-        {uploadMethod === 'upload' ? (
+        {uploadMethod === "upload" ? (
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <ImageUpload
                 label="Logo"
                 currentUrl={brand.logo_url}
                 onImageSelect={async (file) => {
-                  const url = await onImageUpload(file, 'logo_url', brand.club_id || '');
+                  const url = await onImageUpload(file, "logo_url", brand.club_id || "");
                   if (url) onChange({ logo_url: url });
                 }}
-                onImageRemove={onImageRemove ? async () => {
-                  if (brand.logo_url) {
-                    await onImageRemove(brand.logo_url, 'logo_url');
-                    onChange({ logo_url: '' });
-                  }
-                } : undefined}
+                onImageRemove={
+                  onImageRemove
+                    ? async () => {
+                        if (brand.logo_url) {
+                          await onImageRemove(brand.logo_url, "logo_url");
+                          onChange({ logo_url: "" });
+                        }
+                      }
+                    : undefined
+                }
                 thumbnail
               />
               <ImageUpload
                 label="Hero Image"
                 currentUrl={brand.hero_image_url}
                 onImageSelect={async (file) => {
-                  const url = await onImageUpload(file, 'hero_image_url', brand.club_id || '');
+                  const url = await onImageUpload(file, "hero_image_url", brand.club_id || "");
                   if (url) onChange({ hero_image_url: url });
                 }}
-                onImageRemove={onImageRemove ? async () => {
-                  if (brand.hero_image_url) {
-                    await onImageRemove(brand.hero_image_url, 'hero_image_url');
-                    onChange({ hero_image_url: '' });
-                  }
-                } : undefined}
+                onImageRemove={
+                  onImageRemove
+                    ? async () => {
+                        if (brand.hero_image_url) {
+                          await onImageRemove(brand.hero_image_url, "hero_image_url");
+                          onChange({ hero_image_url: "" });
+                        }
+                      }
+                    : undefined
+                }
               />
               <ImageUpload
                 label="Offer Card"
                 currentUrl={brand.offer_card_url}
                 onImageSelect={async (file) => {
-                  const url = await onImageUpload(file, 'offer_card_url', brand.club_id || '');
+                  const url = await onImageUpload(file, "offer_card_url", brand.club_id || "");
                   if (url) onChange({ offer_card_url: url });
                 }}
-                onImageRemove={onImageRemove ? async () => {
-                  if (brand.offer_card_url) {
-                    await onImageRemove(brand.offer_card_url, 'offer_card_url');
-                    onChange({ offer_card_url: '' });
-                  }
-                } : undefined}
+                onImageRemove={
+                  onImageRemove
+                    ? async () => {
+                        if (brand.offer_card_url) {
+                          await onImageRemove(brand.offer_card_url, "offer_card_url");
+                          onChange({ offer_card_url: "" });
+                        }
+                      }
+                    : undefined
+                }
               />
             </div>
-            
+
             <div>
               <Label className="text-sm text-muted-foreground mb-2 block">Additional Carousel Images (Optional)</Label>
               <div className="grid grid-cols-3 gap-4">
@@ -280,43 +279,55 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                   label="Image 2"
                   currentUrl={brand.image_2_url}
                   onImageSelect={async (file) => {
-                    const url = await onImageUpload(file, 'image_2_url', brand.club_id || '');
+                    const url = await onImageUpload(file, "image_2_url", brand.club_id || "");
                     if (url) onChange({ image_2_url: url });
                   }}
-                  onImageRemove={onImageRemove ? async () => {
-                    if (brand.image_2_url) {
-                      await onImageRemove(brand.image_2_url, 'image_2_url');
-                      onChange({ image_2_url: '' });
-                    }
-                  } : undefined}
+                  onImageRemove={
+                    onImageRemove
+                      ? async () => {
+                          if (brand.image_2_url) {
+                            await onImageRemove(brand.image_2_url, "image_2_url");
+                            onChange({ image_2_url: "" });
+                          }
+                        }
+                      : undefined
+                  }
                 />
                 <ImageUpload
                   label="Image 3"
                   currentUrl={brand.image_3_url}
                   onImageSelect={async (file) => {
-                    const url = await onImageUpload(file, 'image_3_url', brand.club_id || '');
+                    const url = await onImageUpload(file, "image_3_url", brand.club_id || "");
                     if (url) onChange({ image_3_url: url });
                   }}
-                  onImageRemove={onImageRemove ? async () => {
-                    if (brand.image_3_url) {
-                      await onImageRemove(brand.image_3_url, 'image_3_url');
-                      onChange({ image_3_url: '' });
-                    }
-                  } : undefined}
+                  onImageRemove={
+                    onImageRemove
+                      ? async () => {
+                          if (brand.image_3_url) {
+                            await onImageRemove(brand.image_3_url, "image_3_url");
+                            onChange({ image_3_url: "" });
+                          }
+                        }
+                      : undefined
+                  }
                 />
                 <ImageUpload
                   label="Image 4"
                   currentUrl={brand.image_4_url}
                   onImageSelect={async (file) => {
-                    const url = await onImageUpload(file, 'image_4_url', brand.club_id || '');
+                    const url = await onImageUpload(file, "image_4_url", brand.club_id || "");
                     if (url) onChange({ image_4_url: url });
                   }}
-                  onImageRemove={onImageRemove ? async () => {
-                    if (brand.image_4_url) {
-                      await onImageRemove(brand.image_4_url, 'image_4_url');
-                      onChange({ image_4_url: '' });
-                    }
-                  } : undefined}
+                  onImageRemove={
+                    onImageRemove
+                      ? async () => {
+                          if (brand.image_4_url) {
+                            await onImageRemove(brand.image_4_url, "image_4_url");
+                            onChange({ image_4_url: "" });
+                          }
+                        }
+                      : undefined
+                  }
                 />
               </div>
             </div>
@@ -336,11 +347,13 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                   placeholder="/lovable-uploads/logo.png"
                   className={errors.logo_url ? "border-destructive" : ""}
                 />
-                {errors.logo_url && (
-                  <p className="text-sm text-destructive mt-1">{errors.logo_url}</p>
-                )}
+                {errors.logo_url && <p className="text-sm text-destructive mt-1">{errors.logo_url}</p>}
                 {brand.logo_url && (
-                  <img src={brand.logo_url} alt="Logo preview" className="mt-2 h-20 object-contain bg-muted rounded p-2" />
+                  <img
+                    src={brand.logo_url}
+                    alt="Logo preview"
+                    className="mt-2 h-20 object-contain bg-muted rounded p-2"
+                  />
                 )}
               </div>
               <div>
@@ -355,9 +368,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                   placeholder="/lovable-uploads/hero.png"
                   className={errors.hero_image_url ? "border-destructive" : ""}
                 />
-                {errors.hero_image_url && (
-                  <p className="text-sm text-destructive mt-1">{errors.hero_image_url}</p>
-                )}
+                {errors.hero_image_url && <p className="text-sm text-destructive mt-1">{errors.hero_image_url}</p>}
                 {brand.hero_image_url && (
                   <img src={brand.hero_image_url} alt="Hero preview" className="mt-2 h-20 object-cover rounded" />
                 )}
@@ -370,15 +381,13 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                   placeholder="/lovable-uploads/card.png"
                   className={errors.offer_card_url ? "border-destructive" : ""}
                 />
-                {errors.offer_card_url && (
-                  <p className="text-sm text-destructive mt-1">{errors.offer_card_url}</p>
-                )}
+                {errors.offer_card_url && <p className="text-sm text-destructive mt-1">{errors.offer_card_url}</p>}
                 {brand.offer_card_url && (
                   <img src={brand.offer_card_url} alt="Card preview" className="mt-2 h-20 object-cover rounded" />
                 )}
               </div>
             </div>
-            
+
             <div>
               <Label className="text-sm text-muted-foreground mb-2 block">Additional Carousel Images (Optional)</Label>
               <div className="grid grid-cols-3 gap-4">
@@ -421,7 +430,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         )}
       </div>
 
-      {categoryInfo.category === 'Golf' && (
+      {categoryInfo.category === "Golf" && (
         <div className="space-y-2">
           <Label>Brand Colors</Label>
           <p className="text-xs text-muted-foreground mb-2">
