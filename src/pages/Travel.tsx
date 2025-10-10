@@ -9,6 +9,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
 
+// Helper function to check if offer is new (created within last 7 days)
+const isOfferNew = (createdAt: string | null) => {
+  if (!createdAt) return false;
+  const offerDate = new Date(createdAt);
+  const daysSinceCreated = (Date.now() - offerDate.getTime()) / (1000 * 60 * 60 * 24);
+  return daysSinceCreated <= 7;
+};
+
 const Travel = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const isMobile = useIsMobile();
@@ -63,7 +71,8 @@ const Travel = () => {
     category: "Travel" as const,
     city: offer.city,
     state: offer.state,
-    majorCity: offer.city
+    majorCity: offer.city,
+    isNew: isOfferNew(offer.created_at)
   }));
   
   // Filter by selected location
@@ -128,6 +137,7 @@ const Travel = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Travel"
+                isNew={offer.isNew}
               />
             ))}
           </div>
