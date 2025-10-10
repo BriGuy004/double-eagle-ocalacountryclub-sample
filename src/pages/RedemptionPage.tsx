@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ArrowLeft, ExternalLink, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -69,8 +69,7 @@ export default function RedemptionPage() {
   const images = [
     offer.hero_image_url,
     offer.offer_card_url,
-    offer.logo_url, // Include logo as backup
-  ].filter(Boolean); // Remove any null/undefined values
+  ].filter(Boolean);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -97,7 +96,7 @@ export default function RedemptionPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Image Carousel */}
+        {/* Image Carousel with Brand Name Overlay */}
         <div className="relative mb-8">
           <div className="relative h-96 md:h-[500px] bg-muted rounded-xl overflow-hidden">
             <img
@@ -167,10 +166,11 @@ export default function RedemptionPage() {
           </p>
         </div>
 
-        {/* Two-Column Layout: Logo + Description */}
+        {/* Two-Column Layout: Logo + Visit Website LEFT, Description RIGHT */}
         <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-8 mb-8">
-          {/* LEFT COLUMN: Logo */}
+          {/* LEFT COLUMN: Logo, Address, Visit Website Button */}
           <div className="space-y-6">
+            {/* Logo Box */}
             <div className="bg-white rounded-lg p-6 border border-border flex items-center justify-center min-h-[200px]">
               <img
                 src={offer.logo_url}
@@ -192,26 +192,20 @@ export default function RedemptionPage() {
               </div>
             )}
 
-            {/* Website Link */}
+            {/* Visit Website Button - RIGHT BELOW ADDRESS */}
             {offer.website && (
-              <div className="flex items-start gap-3">
-                <ExternalLink className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-medium mb-1">Website:</p>
-                  <a
-                    href={offer.website.startsWith('http') ? offer.website : `https://${offer.website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline break-all"
-                  >
-                    {offer.website.replace(/^https?:\/\//, '')}
-                  </a>
-                </div>
-              </div>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="w-full px-6 py-6 text-lg font-semibold"
+                onClick={() => window.open(offer.website.startsWith('http') ? offer.website : `https://${offer.website}`, '_blank')}
+              >
+                Visit Website
+              </Button>
             )}
           </div>
 
-          {/* RIGHT COLUMN: Description */}
+          {/* RIGHT COLUMN: Description & Redemption Info */}
           <div className="space-y-6">
             {/* Description */}
             {offer.description && (
@@ -235,24 +229,14 @@ export default function RedemptionPage() {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+        {/* Book Now Button - LARGE & CENTERED AT BOTTOM */}
+        <div className="flex justify-center mt-12">
           <Button 
             size="lg" 
-            className="px-8 py-3 text-lg font-semibold min-w-[160px]"
+            className="px-16 py-8 text-2xl font-bold min-w-[300px] rounded-xl"
           >
             Book Now
           </Button>
-          {offer.website && (
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="px-8 py-3 text-lg font-semibold min-w-[160px]"
-              onClick={() => window.open(offer.website.startsWith('http') ? offer.website : `https://${offer.website}`, '_blank')}
-            >
-              Visit Website
-            </Button>
-          )}
         </div>
       </div>
     </div>
