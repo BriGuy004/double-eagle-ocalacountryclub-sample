@@ -2,7 +2,6 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarks } from "@/contexts/BookmarkContext";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 
 interface ProductCardProps {
   brand: string;
@@ -14,7 +13,7 @@ interface ProductCardProps {
   category?: "Golf" | "Hotels" | "Dining" | "Lifestyle" | "Entertainment" | "Shopping" | "Travel";
   discountAmount?: number;
   discountPercent?: number;
-  isNew?: boolean; // Optional prop to mark offers as new
+  offerText?: string;
 }
 
 export const ProductCard = ({
@@ -26,34 +25,15 @@ export const ProductCard = ({
   category = "Lifestyle",
   discountAmount,
   discountPercent,
-  isNew = false,
+  offerText,
 }: ProductCardProps) => {
   const navigate = useNavigate();
   const { isBookmarked, toggleBookmark } = useBookmarks();
 
   const isCurrentlyBookmarked = offerId ? isBookmarked(offerId) : false;
 
-  // Track if user has viewed this offer
-  const [hasViewed, setHasViewed] = useState(false);
-
-  // Check if offer has been viewed on mount
-  useEffect(() => {
-    if (offerId) {
-      const viewedOffers = JSON.parse(localStorage.getItem("viewedOffers") || "[]");
-      setHasViewed(viewedOffers.includes(offerId));
-    }
-  }, [offerId]);
-
   const handleCardClick = () => {
     if (offerId) {
-      // Mark offer as viewed
-      const viewedOffers = JSON.parse(localStorage.getItem("viewedOffers") || "[]");
-      if (!viewedOffers.includes(offerId)) {
-        viewedOffers.push(offerId);
-        localStorage.setItem("viewedOffers", JSON.stringify(viewedOffers));
-        setHasViewed(true);
-      }
-
       navigate(`/redemption/${offerId}`);
     }
   };
@@ -68,13 +48,11 @@ export const ProductCard = ({
   // Extract city and state from tags (for Golf category)
   const cityState = tags.find((tag) => tag.includes(",")) || "";
 
-  // Format discount display
-  const discountText = discountPercent ? `${discountPercent}% off` : discountAmount ? `$${discountAmount} off` : title;
+  // Format discount display - prioritize custom offer text
+  const discountText =
+    offerText || (discountPercent ? `${discountPercent}% off` : discountAmount ? `$${discountAmount} off` : title);
 
   const isGolfCategory = category === "Golf";
-
-  // Show NEW badge if offer is new AND user hasn't viewed it
-  const showNewBadge = isNew && !hasViewed;
 
   return (
     <div
@@ -93,12 +71,10 @@ export const ProductCard = ({
         {/* Subtle gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* NEW Badge - Top Left (only if new and not viewed) */}
-        {showNewBadge && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-1.5 rounded-full shadow-lg animate-pulse">
-            <span className="text-xs font-bold text-white tracking-wider">NEW</span>
-          </div>
-        )}
+        {/* Member Exclusive Badge - Top Left */}
+        <div className="absolute top-3 left-3 bg-primary/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+          <span className="text-xs font-bold text-white tracking-wide">MEMBER EXCLUSIVE</span>
+        </div>
 
         {/* Bookmark Heart - Top Right */}
         <button
@@ -125,13 +101,13 @@ export const ProductCard = ({
             {cityState && <p className="text-sm text-muted-foreground font-medium">{cityState}</p>}
           </div>
         ) : (
-          // OTHER CATEGORIES LAYOUT: Brand name left, Discount right
+          // OTHER CATEGORIES LAYOUT: Brand name left, Offer Text right
           <div className="flex items-start justify-between mb-4 gap-3 min-h-[68px]">
             <h4 className="text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
               {brand}
             </h4>
-            <div className="flex-shrink-0 bg-primary/10 border border-primary/30 rounded-lg px-3 py-1.5 group-hover:bg-primary/20 group-hover:border-primary/50 transition-all duration-300">
-              <p className="text-sm font-bold text-primary whitespace-nowrap">{discountText}</p>
+            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-3 py-1.5 group-hover:border-primary transition-all duration-300">
+              <p className="text-sm font-bold text-white whitespace-nowrap">{discountText}</p>
             </div>
           </div>
         )}
