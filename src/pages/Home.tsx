@@ -140,21 +140,34 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: currentBrand?.hero_image_url
-              ? `url(${currentBrand.hero_image_url})`
-              : 'url("https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1600&h=800&fit=crop")',
-            filter: "brightness(0.5)",
-          }}
+      <section className="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <img 
+          src={currentBrand?.hero_image_url || "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1600&h=800&fit=crop"}
+          alt="Golf course"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-
-        {/* Content */}
-        <div className="relative container mx-auto px-4 md:px-6 py-32 md:py-40 text-center">
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight">Welcome, {memberName}!</h1>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+        
+        <div className="relative z-10 text-center px-4">
+          <h1 
+            className="font-bold tracking-tight text-white leading-tight mb-4"
+            style={{ 
+              fontSize: 'clamp(2rem, 8vw, 4rem)',
+              fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
+              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+            }}
+          >
+            Welcome, {memberName}!
+          </h1>
+          <p 
+            className="text-white/90 text-lg md:text-xl"
+            style={{ 
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              textShadow: '0 1px 5px rgba(0,0,0,0.3)'
+            }}
+          >
+            {currentBrand.name}
+          </p>
         </div>
       </section>
     </div>
