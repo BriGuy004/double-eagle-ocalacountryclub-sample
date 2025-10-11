@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBrand } from "@/contexts/BrandContext";
+import { CategoryNav } from "@/components/CategoryNav";
 
 export default function Home() {
   const navigate = useNavigate();
   const { currentBrand } = useBrand();
+  const [selectedCategory] = useState("Golf");
 
   // This would come from your UserContext - replace with actual user name
   const memberName = "Justin";
@@ -170,6 +173,18 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* Category Navigation */}
+      <CategoryNav 
+        selectedCategory={selectedCategory}
+      />
+
+      {/* Content Section */}
+      <div className="container mx-auto px-4 py-6">
+        <p className="text-center text-muted-foreground">
+          Select a category above to explore available offers
+        </p>
+      </div>
     </div>
   );
 }
