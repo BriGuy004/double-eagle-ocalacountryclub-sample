@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import doubleEagleLogo from "@/assets/double-eagle-logo.png";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -93,7 +94,10 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome to Club Network</CardTitle>
+          <div className="flex justify-center mb-4">
+            <img src={doubleEagleLogo} alt="Double Eagle Network" className="h-24 w-24" />
+          </div>
+          <CardTitle className="text-2xl">Welcome to Double Eagle Network</CardTitle>
           <CardDescription>Sign in to manage your club and access exclusive benefits</CardDescription>
         </CardHeader>
         <CardContent>
