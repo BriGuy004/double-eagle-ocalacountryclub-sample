@@ -748,11 +748,17 @@ export default function ClubAdmin() {
           </CardHeader>
         </Card>
       ) : (
-        <Tabs defaultValue="own-course" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="own-course">Your Course Details</TabsTrigger>
-            <TabsTrigger value="visibility-control">Who Sees Your Course</TabsTrigger>
-            <TabsTrigger value="member-marketplace">Member Marketplace</TabsTrigger>
+        <Tabs defaultValue="own-course" className="space-y-4 md:space-y-6">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 gap-2 h-auto">
+            <TabsTrigger value="own-course" className="py-3 text-sm md:text-base">
+              Your Course Details
+            </TabsTrigger>
+            <TabsTrigger value="visibility-control" className="py-3 text-sm md:text-base">
+              Who Sees Your Course
+            </TabsTrigger>
+            <TabsTrigger value="member-marketplace" className="py-3 text-sm md:text-base">
+              Member Marketplace
+            </TabsTrigger>
           </TabsList>
 
           {/* TAB 1: Your Course Details */}
