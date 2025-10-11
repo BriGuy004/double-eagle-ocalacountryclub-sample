@@ -102,11 +102,6 @@ export const ProductCard = ({
           </div>
         )}
 
-        {/* Member Exclusive Badge - Smaller on mobile */}
-        <div className={`absolute top-2 ${showNewBadge ? 'right-2 md:right-3' : 'left-2 md:left-3'} md:top-3 bg-primary/95 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg`}>
-          <span className="text-xs font-bold text-white tracking-wide">MEMBER EXCLUSIVE</span>
-        </div>
-
         {/* Bookmark Heart - Touch-friendly */}
         <button
           onClick={handleBookmarkClick}
