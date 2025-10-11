@@ -13,16 +13,12 @@ interface HeaderProps {
   isSearching?: boolean;
 }
 
-export const Header = ({ 
-  searchQuery = "", 
-  onSearchChange, 
-  isSearching = false 
-}: HeaderProps) => {
+export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }: HeaderProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { currentBrand } = useBrand();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  
+
   // Fallback if brand isn't loaded yet
   if (!currentBrand) {
     return (
@@ -35,105 +31,107 @@ export const Header = ({
       </header>
     );
   }
-  
+
   return (
     <>
       <MobileNav isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
-      
+
       <header className="w-full border-b border-border/50 backdrop-blur-md bg-background/80 sticky top-0 z-30">
-        <div className="container mx-auto px-4 md:px-6 py-2">
+        <div className="container mx-auto px-4 md:px-6 py-3">
           {isMobile ? (
             /* Mobile Layout */
             <div className="space-y-3">
-              {/* Top Row: Hamburger + Logo + Notification */}
-              <div className="flex items-center justify-between">
-                {/* Hamburger Menu with Brand Color on Hover */}
+              {/* Top Row: Hamburger + Club Name + Notification */}
+              <div className="flex items-center justify-between gap-3">
+                {/* Hamburger Menu */}
                 <button
                   onClick={() => setIsMobileNavOpen(true)}
-                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative"
+                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all flex-shrink-0"
                   style={{ minWidth: "44px", minHeight: "44px" }}
                 >
                   <Menu className="h-6 w-6 text-white" />
                 </button>
-                
-                {/* Brand Logo */}
-                <a href="/" className="inline-block">
-                  <img 
-                    src={currentBrand.logo_url} 
-                    alt={currentBrand.name} 
-                    className="h-10 w-auto cursor-pointer"
-                  />
-                </a>
-                
-                {/* Quick Actions */}
+
+                {/* Club Name - Centered, Dynamic Size */}
+                <h1
+                  className="flex-1 text-center font-bold tracking-tight text-white px-2 leading-tight"
+                  style={{
+                    fontSize: "clamp(1rem, 5vw, 1.5rem)",
+                    fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
+                  }}
+                >
+                  {currentBrand.name}
+                </h1>
+
+                {/* Notification Bell */}
                 <button
-                  onClick={() => navigate('/notifications')}
-                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative"
+                  onClick={() => navigate("/notifications")}
+                  className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative flex-shrink-0"
                   style={{ minWidth: "44px", minHeight: "44px" }}
                 >
                   <Bell className="h-5 w-5 text-white" />
-                  {/* Notification Badge with Brand Color */}
-                  <span 
-                    className="absolute top-1 right-1 w-2 h-2 rounded-full"
-                    style={{ backgroundColor: 'var(--color-accent)' }}
-                  />
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent" />
                 </button>
               </div>
-              
+
+              {/* Logo - Centered below name */}
+              <div className="flex justify-center">
+                <a href="/" className="inline-block">
+                  <img src={currentBrand.logo_url} alt={currentBrand.name} className="h-12 w-auto cursor-pointer" />
+                </a>
+              </div>
+
               {/* Search Bar - Full Width */}
-              {onSearchChange && (
-                <SearchBar 
-                  value={searchQuery}
-                  onChange={onSearchChange}
-                  isSearching={isSearching}
-                />
-              )}
+              {onSearchChange && <SearchBar value={searchQuery} onChange={onSearchChange} isSearching={isSearching} />}
             </div>
           ) : (
             /* Desktop Layout */
-            <div className="flex items-center justify-between gap-8">
-              {/* Logo */}
-              <div className="flex items-center flex-shrink-0">
+            <div className="flex items-center justify-between gap-6">
+              {/* Logo - Fixed Width */}
+              <div className="flex items-center flex-shrink-0" style={{ width: "80px" }}>
                 <a href="/" className="inline-block">
-                  <img 
-                    src={currentBrand.logo_url} 
-                    alt={currentBrand.name} 
-                    className="h-20 w-auto cursor-pointer hover:opacity-90 transition-opacity"
+                  <img
+                    src={currentBrand.logo_url}
+                    alt={currentBrand.name}
+                    className="h-16 w-auto cursor-pointer hover:opacity-90 transition-opacity"
                   />
                 </a>
               </div>
-              
-              {/* Search Bar */}
-              {onSearchChange && (
-                <div className="flex items-center flex-1 max-w-xl">
-                  <SearchBar 
-                    value={searchQuery}
-                    onChange={onSearchChange}
-                    isSearching={isSearching}
-                  />
-                </div>
-              )}
-              
-              {/* Right Side Actions */}
-              <div className="flex items-center space-x-3 flex-shrink-0">
+
+              {/* Club Name - Centered, Dynamic Size */}
+              <div className="flex-1 flex justify-center px-4">
+                <h1
+                  className="font-bold tracking-tight text-white text-center leading-tight"
+                  style={{
+                    fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
+                    fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
+                    maxWidth: "600px",
+                  }}
+                >
+                  {currentBrand.name}
+                </h1>
+              </div>
+
+              {/* Right Side Actions - Fixed Width */}
+              <div className="flex items-center gap-3 flex-shrink-0">
                 {/* Notifications */}
                 <button
-                  onClick={() => navigate('/notifications')}
-                  className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
+                  onClick={() => navigate("/notifications")}
+                  className="relative p-2.5 rounded-full hover:bg-white/10 transition-colors"
                 >
                   <Bell className="h-5 w-5 text-white" />
-                  <span 
-                    className="absolute top-1 right-1 w-2 h-2 rounded-full"
-                    style={{ backgroundColor: 'var(--color-accent)' }}
-                  />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-accent border-2 border-background" />
                 </button>
-                
+
                 {/* Member Account Button */}
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => navigate('/member-dashboard')}
-                  className="bg-accent text-accent-foreground font-semibold border-0 hover:opacity-90 transition-opacity"
+                <Button
+                  size="default"
+                  onClick={() => navigate("/member-dashboard")}
+                  className="font-semibold shadow-lg hover:shadow-xl transition-all"
+                  style={{
+                    backgroundColor: "hsl(var(--accent))",
+                    color: "hsl(var(--accent-foreground))",
+                  }}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Account
@@ -142,6 +140,15 @@ export const Header = ({
             </div>
           )}
         </div>
+
+        {/* Search Bar - Below header on desktop if present */}
+        {!isMobile && onSearchChange && (
+          <div className="container mx-auto px-4 md:px-6 pb-3">
+            <div className="max-w-2xl mx-auto">
+              <SearchBar value={searchQuery} onChange={onSearchChange} isSearching={isSearching} />
+            </div>
+          </div>
+        )}
       </header>
     </>
   );
