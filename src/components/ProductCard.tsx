@@ -141,7 +141,8 @@ export const ProductCard = ({
         {/* View Offer Button */}
         <Button
           aria-label={`View offer for ${brand}`}
-          className="w-full font-semibold rounded-xl py-6 text-base transition-all duration-300 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl hover:shadow-primary/20 group-hover:scale-[1.02] active:scale-[0.98] pointer-events-none"
+          variant="default"
+          className="w-full font-semibold rounded-xl py-6 text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/20 group-hover:scale-[1.02] active:scale-[0.98] pointer-events-none"
           style={{ minHeight: "48px" }}
         >
           View Offer
