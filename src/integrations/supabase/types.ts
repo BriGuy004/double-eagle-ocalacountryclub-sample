@@ -62,9 +62,39 @@ export type Database = {
           },
         ]
       }
+      club_visibility_restrictions: {
+        Row: {
+          club_id: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          restricted_club_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          restricted_club_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          restricted_club_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       offers: {
         Row: {
           accent_color: string
+          availability_notes: string | null
+          available_days: string | null
+          available_times: string | null
           category: string
           city: string
           club_id: string
@@ -72,12 +102,14 @@ export type Database = {
           description: string | null
           discount_text: string | null
           full_address: string | null
+          guest_play_price: string | null
           hero_image_url: string
           id: string
           image_2_url: string | null
           image_3_url: string | null
           image_4_url: string | null
           is_active: boolean | null
+          last_availability_update: string | null
           logo_url: string
           name: string
           offer_card_url: string | null
@@ -90,6 +122,9 @@ export type Database = {
         }
         Insert: {
           accent_color: string
+          availability_notes?: string | null
+          available_days?: string | null
+          available_times?: string | null
           category?: string
           city?: string
           club_id: string
@@ -97,12 +132,14 @@ export type Database = {
           description?: string | null
           discount_text?: string | null
           full_address?: string | null
+          guest_play_price?: string | null
           hero_image_url: string
           id?: string
           image_2_url?: string | null
           image_3_url?: string | null
           image_4_url?: string | null
           is_active?: boolean | null
+          last_availability_update?: string | null
           logo_url: string
           name: string
           offer_card_url?: string | null
@@ -115,6 +152,9 @@ export type Database = {
         }
         Update: {
           accent_color?: string
+          availability_notes?: string | null
+          available_days?: string | null
+          available_times?: string | null
           category?: string
           city?: string
           club_id?: string
@@ -122,12 +162,14 @@ export type Database = {
           description?: string | null
           discount_text?: string | null
           full_address?: string | null
+          guest_play_price?: string | null
           hero_image_url?: string
           id?: string
           image_2_url?: string | null
           image_3_url?: string | null
           image_4_url?: string | null
           is_active?: boolean | null
+          last_availability_update?: string | null
           logo_url?: string
           name?: string
           offer_card_url?: string | null

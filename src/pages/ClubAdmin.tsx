@@ -33,10 +33,10 @@ interface Club {
 }
 
 interface OwnCourseDetails {
-  guest_play_price: number | null;
-  available_days: string[];
-  available_times: string;
-  availability_notes: string;
+  guest_play_price: string | null;
+  available_days: string | null;
+  available_times: string | null;
+  availability_notes: string | null;
   last_availability_update: string | null;
 }
 
@@ -64,9 +64,9 @@ export default function ClubAdmin() {
   // Own course details
   const [ownCourseDetails, setOwnCourseDetails] = useState<OwnCourseDetails>({
     guest_play_price: null,
-    available_days: [],
-    available_times: "",
-    availability_notes: "",
+    available_days: null,
+    available_times: null,
+    availability_notes: null,
     last_availability_update: null,
   });
 
@@ -165,11 +165,11 @@ export default function ClubAdmin() {
 
           // Set own course details
           setOwnCourseDetails({
-            guest_play_price: clubData.guest_play_price,
-            available_days: clubData.available_days || [],
-            available_times: clubData.available_times || "",
-            availability_notes: clubData.availability_notes || "",
-            last_availability_update: clubData.last_availability_update,
+            guest_play_price: clubData.guest_play_price || null,
+            available_days: clubData.available_days || null,
+            available_times: clubData.available_times || null,
+            availability_notes: clubData.availability_notes || null,
+            last_availability_update: clubData.last_availability_update || null,
           });
         }
 
@@ -309,12 +309,16 @@ export default function ClubAdmin() {
   };
 
   const toggleDayAvailability = (day: string) => {
-    setOwnCourseDetails((prev) => ({
-      ...prev,
-      available_days: prev.available_days.includes(day)
-        ? prev.available_days.filter((d) => d !== day)
-        : [...prev.available_days, day],
-    }));
+    setOwnCourseDetails((prev) => {
+      const currentDays = prev.available_days ? prev.available_days.split(',').filter(d => d.trim()) : [];
+      const newDays = currentDays.includes(day)
+        ? currentDays.filter((d) => d !== day)
+        : [...currentDays, day];
+      return {
+        ...prev,
+        available_days: newDays.join(','),
+      };
+    });
   };
 
   const toggleVisibilityRestriction = async (restrictedClubId: string) => {
@@ -465,11 +469,11 @@ export default function ClubAdmin() {
       if (clubData) {
         setOwnOfferId(clubData.id);
         setOwnCourseDetails({
-          guest_play_price: clubData.guest_play_price,
-          available_days: clubData.available_days || [],
-          available_times: clubData.available_times || "",
-          availability_notes: clubData.availability_notes || "",
-          last_availability_update: clubData.last_availability_update,
+          guest_play_price: clubData.guest_play_price || null,
+          available_days: clubData.available_days || null,
+          available_times: clubData.available_times || null,
+          availability_notes: clubData.availability_notes || null,
+          last_availability_update: clubData.last_availability_update || null,
         });
       }
     }
@@ -556,7 +560,7 @@ export default function ClubAdmin() {
                       onChange={(e) =>
                         setOwnCourseDetails((prev) => ({
                           ...prev,
-                          guest_play_price: e.target.value ? parseFloat(e.target.value) : null,
+                          guest_play_price: e.target.value || null,
                         }))
                       }
                       className="pl-10"
