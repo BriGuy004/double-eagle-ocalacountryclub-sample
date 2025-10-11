@@ -1,9 +1,8 @@
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
-import { CategorySelector } from "@/components/CategorySelector";
+import { CategoryNav } from "@/components/CategoryNav";
 import { useProductFilters } from "@/hooks/useProductFilters";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,7 +18,6 @@ const isOfferNew = (createdAt: string | null) => {
 
 const Travel = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
-  const isMobile = useIsMobile();
 
   // Fetch offers from Supabase
   const { data: offers = [] } = useQuery({
@@ -104,21 +102,15 @@ const Travel = () => {
         isSearching={isSearching}
       />
       
+      <CategoryNav selectedCategory="Travel" />
+      
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <CategorySelector 
-              selectedCategory="Travel"
-              onCategoryChange={() => {}}
-            />
-          </div>
-          <div className="flex justify-center mb-8">
-            <LocationSelector 
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-              citiesByState={citiesByState}
-            />
-          </div>
+        <div className="flex justify-center mb-8">
+          <LocationSelector 
+            selectedLocation={selectedLocation}
+            onLocationChange={setSelectedLocation}
+            citiesByState={citiesByState}
+          />
         </div>
 
         {filteredProducts.length === 0 ? (
