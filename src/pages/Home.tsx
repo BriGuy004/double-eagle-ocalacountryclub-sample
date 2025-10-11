@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useBrand } from "@/contexts/BrandContext";
 import { CategoryNav } from "@/components/CategoryNav";
-import { CityFilter } from "@/components/CityFilter";
+import { Header } from "@/components/Header";
 import { ProductCard } from "@/components/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +11,7 @@ export default function Home() {
   const { currentBrand } = useBrand();
   const [selectedCategory, setSelectedCategory] = useState("Golf");
   const [selectedCity, setSelectedCity] = useState("All Cities");
+  const [cities, setCities] = useState<string[]>([]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +22,36 @@ export default function Home() {
   const primaryColor = currentBrand?.primary_color || "38 70% 15%";
   const accentColor = currentBrand?.accent_color || "45 85% 50%";
 
+  // Load cities when category changes
+  useEffect(() => {
+    loadCitiesForCategory();
+  }, [selectedCategory]);
+
   // Load offers when category OR city changes
   useEffect(() => {
     loadOffers();
   }, [selectedCategory, selectedCity]);
+
+  const loadCitiesForCategory = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("offers")
+        .select("city, state")
+        .eq("category", selectedCategory)
+        .order("city");
+
+      if (error) throw error;
+
+      // Get unique cities
+      const uniqueCities = Array.from(
+        new Set(data.map(offer => `${offer.city}, ${offer.state}`))
+      ).sort();
+
+      setCities(uniqueCities);
+    } catch (error) {
+      console.error("Error loading cities:", error);
+    }
+  };
 
   const loadOffers = async () => {
     setLoading(true);
@@ -64,44 +89,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/95 border-b border-white/10">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-3 items-center py-4">
-            {/* Left: Logo */}
-            <div className="flex items-center">
-              {currentBrand?.logo_url && (
-                <img src={currentBrand.logo_url} alt={currentBrand.name} className="h-12 md:h-14 object-contain" />
-              )}
-            </div>
-
-            {/* Center: Club Name */}
-            <div className="text-center">
-              <h1 className="text-white font-bold text-base md:text-lg">
-                {currentBrand?.name || "The Country Club of Ocala - Hampton Golf"}
-              </h1>
-            </div>
-
-            {/* Right: Notifications & Account */}
-            <div className="flex items-center justify-end gap-3">
-              <Button variant="ghost" size="icon" className="relative" onClick={() => navigate("/member-dashboard")}>
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary rounded-full text-[10px] flex items-center justify-center text-white">
-                  3
-                </span>
-              </Button>
-              <Button
-                variant="default"
-                style={{ backgroundColor: `hsl(${accentColor})` }}
-                className="hover:opacity-90 text-white"
-                onClick={() => navigate("/member-dashboard")}
-              >
-                Account
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header with City Selector */}
+      <Header 
+        selectedCity={selectedCity}
+        onCityChange={setSelectedCity}
+        cities={cities}
+      />
 
       {/* Sticky Category Navigation */}
       <div className="sticky top-[73px] md:top-[88px] z-30">
@@ -151,14 +144,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Content with City Filter */}
+      {/* Content */}
       <div className="container mx-auto px-4 py-6">
-        <CityFilter 
-          selectedCity={selectedCity}
-          onCityChange={setSelectedCity}
-          category={selectedCategory}
-        />
-        
         {/* Show selected filters */}
         <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
           <span>Showing {selectedCategory} offers</span>

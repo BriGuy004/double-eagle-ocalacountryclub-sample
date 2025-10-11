@@ -3,17 +3,28 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SearchBar } from "@/components/SearchBar";
 import { MobileNav } from "@/components/MobileNav";
-import { Menu, User, Bell } from "lucide-react";
+import { Menu, User, Bell, MapPin, ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useBrand } from "@/contexts/BrandContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface HeaderProps {
   searchQuery?: string;
   onSearchChange?: (value: string) => void;
   isSearching?: boolean;
+  selectedCity?: string;
+  onCityChange?: (city: string) => void;
+  cities?: string[];
 }
 
-export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }: HeaderProps) => {
+export const Header = ({ 
+  searchQuery = "", 
+  onSearchChange, 
+  isSearching = false,
+  selectedCity = "All Cities",
+  onCityChange,
+  cities = []
+}: HeaderProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { currentBrand } = useBrand();
@@ -52,22 +63,39 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                   <Menu className="h-6 w-6 text-white" />
                 </button>
 
-                {/* Club Name - Centered, Dynamic Size */}
+              {/* Club Name - Centered, Dynamic Size */}
+              <div className="flex-1 flex flex-col items-center gap-1">
                 <h1
-                  className="flex-1 text-center font-bold tracking-tight text-white px-2 leading-tight"
+                  className="text-center font-bold tracking-tight text-white leading-tight"
                   style={{
                     fontSize: "clamp(1.25rem, 4vw, 1.75rem)",
                     fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
                   }}
                 >
                   {currentBrand.name}
                 </h1>
+                
+                {/* City Selector - Mobile */}
+                {onCityChange && cities.length > 0 && (
+                  <Select value={selectedCity} onValueChange={onCityChange}>
+                    <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-white/10 border-white/20 text-white hover:bg-white/20">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      <SelectValue />
+                      <ChevronDown className="h-3 w-3 ml-1 opacity-50" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="All Cities">All Cities</SelectItem>
+                      {cities.map(city => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
 
-                {/* Notification Bell */}
+              {/* Notification Bell */}
                 <button
                   onClick={() => navigate("/notifications")}
                   className="p-2 rounded-lg hover:bg-white/10 active:scale-95 transition-all relative flex-shrink-0"
@@ -102,8 +130,8 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 </a>
               </div>
 
-              {/* Club Name - Centered, Dynamic Size */}
-              <div className="flex-1 flex justify-center px-4">
+              {/* Club Name + City Selector - Centered */}
+              <div className="flex-1 flex items-center justify-center gap-4 px-4">
                 <h1
                   className="font-bold tracking-tight text-white text-center leading-tight"
                   style={{
@@ -117,6 +145,25 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 >
                   {currentBrand.name}
                 </h1>
+                
+                {/* City Selector - Desktop */}
+                {onCityChange && cities.length > 0 && (
+                  <Select value={selectedCity} onValueChange={onCityChange}>
+                    <SelectTrigger className="w-auto min-w-[140px] h-9 bg-white/10 border-white/20 text-white hover:bg-white/20">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <SelectValue />
+                      <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border z-50">
+                      <SelectItem value="All Cities">All Cities</SelectItem>
+                      {cities.map(city => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               {/* Right Side Actions - Fixed Width */}
