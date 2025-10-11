@@ -17,6 +17,15 @@ export default function Home() {
   const primaryColor = currentBrand?.primary_color || "38 70% 15%";
   const accentColor = currentBrand?.accent_color || "45 85% 50%";
 
+  // Show loading state if brand isn't loaded yet
+  if (!currentBrand) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Category Navigation */}
