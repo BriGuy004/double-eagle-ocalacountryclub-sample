@@ -28,11 +28,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Category Navigation */}
+      {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/95 border-b border-white/10">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Top Row: Logo, Centered Club Name, and Account */}
-          <div className="grid grid-cols-3 items-center py-4 border-b border-white/5">
+          <div className="grid grid-cols-3 items-center py-4">
             {/* Left: Logo */}
             <div className="flex items-center">
               {currentBrand?.logo_url && (
@@ -65,91 +64,15 @@ export default function Home() {
               </Button>
             </div>
           </div>
-
-          {/* Category Navigation */}
-          <nav className="py-2">
-            <div className="flex items-center justify-center gap-1 md:gap-2">
-              <Button
-                size="sm"
-                onClick={() => navigate("/golf")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Golf
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/lifestyle")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Lifestyle
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/dining")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Dining
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/shopping")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Shopping
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/entertainment")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Entertainment
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/hotels")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Hotels
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/travel")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Travel
-              </Button>
-            </div>
-          </nav>
         </div>
       </header>
+
+      {/* Sticky Category Navigation */}
+      <div className="sticky top-[73px] md:top-[88px] z-30">
+        <CategoryNav 
+          selectedCategory={selectedCategory}
+        />
+      </div>
 
       {/* Hero Section - Mobile Optimized */}
       <div className="relative w-full overflow-hidden">
@@ -190,11 +113,6 @@ export default function Home() {
           )}
         </div>
       </div>
-
-      {/* Category Navigation */}
-      <CategoryNav 
-        selectedCategory={selectedCategory}
-      />
 
       {/* Content Section */}
       <div className="container mx-auto px-4 py-6">
