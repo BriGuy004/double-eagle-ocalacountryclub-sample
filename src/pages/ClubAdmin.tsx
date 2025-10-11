@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,6 +73,7 @@ const TIME_OPTIONS = [
 ];
 
 export default function ClubAdmin() {
+  const navigate = useNavigate();
   const [clubId, setClubId] = useState<string | null>(null);
   const [clubName, setClubName] = useState<string>("");
   const [clubCity, setClubCity] = useState<string>("");
@@ -118,6 +120,13 @@ export default function ClubAdmin() {
         data: { user },
       } = await supabase.auth.getUser();
 
+      // If no user, redirect to auth page
+      if (!user) {
+        navigate("/auth");
+        setLoading(false);
+        return;
+      }
+
       // Load ONLY Golf clubs for the dropdown
       const { data: offersData, error: offersError } = await supabase
         .from("offers")
@@ -147,11 +156,6 @@ export default function ClubAdmin() {
         }, []);
         setAvailableClubs(uniqueClubs);
         setAllGolfClubs(uniqueClubs);
-      }
-
-      if (!user) {
-        setLoading(false);
-        return;
       }
 
       // Check if user is an admin

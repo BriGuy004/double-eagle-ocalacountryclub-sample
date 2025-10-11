@@ -20,6 +20,7 @@ import MemberDashboard from "./pages/MemberDashboard";
 import RedemptionPage from "./pages/RedemptionPage";
 import BrandAdmin from "./pages/BrandAdmin";
 import ClubAdmin from "./pages/ClubAdmin";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="/lifestyle" element={<Lifestyle />} />
                 <Route path="/state/:state" element={<StateProducts />} />
                 <Route path="/state/:state/city/:city" element={<CityProducts />} />
@@ -54,6 +56,7 @@ const App = () => (
                 <Route path="/admin/travel" element={<BrandAdmin />} />
                 <Route path="/admin/entertainment" element={<BrandAdmin />} />
                 <Route path="/clubadmin" element={<ClubAdmin />} />
+                <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
