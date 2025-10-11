@@ -190,7 +190,7 @@ export default function Home() {
                 images={[offer.offer_card_url || offer.hero_image_url]}
                 tags={[`${offer.city}, ${offer.state}`]}
                 category={offer.category}
-                discountText={offer.discount_text}
+                offerText={offer.discount_text}
               />
             ))}
           </div>

@@ -130,8 +130,7 @@ const Travel = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Travel"
-                discountText={offer.discountText}
-                isNew={offer.isNew}
+                offerText={offer.discountText}
               />
             ))}
           </div>

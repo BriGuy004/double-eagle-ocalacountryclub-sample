@@ -130,8 +130,7 @@ const Dining = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Dining"
-                discountText={offer.discountText}
-                isNew={offer.isNew}
+                offerText={offer.discountText}
               />
             ))}
           </div>

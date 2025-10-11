@@ -130,8 +130,7 @@ const Shopping = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Shopping"
-                discountText={offer.discountText}
-                isNew={offer.isNew}
+                offerText={offer.discountText}
               />
             ))}
           </div>

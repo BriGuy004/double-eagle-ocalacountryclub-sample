@@ -130,8 +130,7 @@ const Index = () => {
                 description={offer.description}
                 offerId={offer.offerId}
                 category="Lifestyle"
-                discountText={offer.discountText}
-                isNew={offer.isNew}
+                offerText={offer.discountText}
               />
             ))}
           </div>

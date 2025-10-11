@@ -138,7 +138,6 @@ const Golf = () => {
               description={offer.description}
               offerId={offer.offerId}
               category="Golf"
-              isNew={offer.isNew}
             />
             ))}
           </div>
