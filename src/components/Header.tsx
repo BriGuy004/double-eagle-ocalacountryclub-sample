@@ -107,7 +107,7 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 <h1
                   className="font-bold tracking-tight text-white text-center leading-tight"
                   style={{
-                    fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
+                    fontSize: 'clamp(1rem, 3.5vw, 1.5rem)',
                     fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
                     maxWidth: '100%',
                     overflow: 'hidden',
