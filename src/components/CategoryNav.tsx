@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 const CATEGORIES = [
   { name: "Golf", path: "/golf" },
   { name: "Dining", path: "/dining" },
+  { name: "Shopping", path: "/shopping" },
+  { name: "Entertainment", path: "/entertainment" },
   { name: "Hotels", path: "/hotels" },
   { name: "Lifestyle", path: "/lifestyle" },
-  { name: "Entertainment", path: "/entertainment" },
-  { name: "Shopping", path: "/shopping" },
   { name: "Travel", path: "/travel" }
 ];
 
