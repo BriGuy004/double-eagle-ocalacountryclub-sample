@@ -56,8 +56,12 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 <h1
                   className="flex-1 text-center font-bold tracking-tight text-white px-2 leading-tight"
                   style={{
-                    fontSize: "clamp(1rem, 5vw, 1.5rem)",
+                    fontSize: "clamp(1.25rem, 4vw, 1.75rem)",
                     fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
                   }}
                 >
                   {currentBrand.name}
@@ -103,9 +107,12 @@ export const Header = ({ searchQuery = "", onSearchChange, isSearching = false }
                 <h1
                   className="font-bold tracking-tight text-white text-center leading-tight"
                   style={{
-                    fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
+                    fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
                     fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
-                    maxWidth: "600px",
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   {currentBrand.name}
