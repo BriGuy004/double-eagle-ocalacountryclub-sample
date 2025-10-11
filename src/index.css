@@ -75,67 +75,90 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     background: var(--gradient-premium);
     min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+    font-size: 16px; /* Prevent iOS zoom on input focus */
   }
 
-  /* Premium typography - Mobile optimized */
+  /* Mobile-optimized typography */
   h1 {
-    @apply text-2xl md:text-4xl lg:text-6xl font-light tracking-tight;
-    line-height: 1.6;
+    @apply text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+    line-height: 1.2;
   }
 
   h2 {
-    @apply text-xl md:text-2xl lg:text-3xl font-light tracking-tight;
-    line-height: 1.6;
+    @apply text-xl md:text-2xl lg:text-3xl font-bold tracking-tight;
+    line-height: 1.3;
   }
-  
-  /* Mobile-optimized body text */
-  body {
-    line-height: 1.6;
+
+  h3 {
+    @apply text-lg md:text-xl lg:text-2xl font-semibold tracking-tight;
+    line-height: 1.4;
   }
   
   /* Touch-friendly minimum sizes */
+  button, a[role="button"], input, select, textarea {
+    min-height: 44px;
+  }
+
+  /* Prevent iOS zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Custom scrollbar - hide on mobile */
   @media (max-width: 768px) {
-    button, a, input, select {
-      min-height: 44px;
+    ::-webkit-scrollbar {
+      display: none;
     }
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
+  @media (min-width: 769px) {
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
 
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
+    ::-webkit-scrollbar-track {
+      @apply bg-muted;
+    }
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-accent rounded-full;
-  }
+    ::-webkit-scrollbar-thumb {
+      @apply bg-accent rounded-full;
+    }
 
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-ring;
+    ::-webkit-scrollbar-thumb:hover {
+      @apply bg-ring;
+    }
   }
 }
 
 @layer components {
+  /* Mobile container with proper padding */
+  .container {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+
+  /* Mobile-optimized card */
   .card-luxury {
     @apply bg-card border border-border rounded-lg overflow-hidden;
     background: var(--gradient-card);
     box-shadow: var(--shadow-card);
     transition: var(--transition-luxury);
-    transform-style: preserve-3d;
   }
 
-  .card-luxury:hover {
-    box-shadow: var(--shadow-luxury);
-    transform: translateY(-8px) scale(1.02);
+  /* Only hover effects on non-touch devices */
+  @media (hover: hover) {
+    .card-luxury:hover {
+      box-shadow: var(--shadow-luxury);
+      transform: translateY(-8px) scale(1.02);
+    }
   }
 
   .card-dynamic {
@@ -196,23 +219,24 @@
       box-shadow: 0 4px 12px hsl(238 90% 5% / 0.3);
     }
   }
-  
-  /* Mobile-specific styles */
-  .mobile-container {
-    @apply px-4 md:px-6;
+
+  /* Touch-active states for mobile */
+  .touch-active {
+    @apply active:scale-95 active:opacity-90 transition-transform;
   }
-  
+
+  /* Mobile grid system */
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6;
+  }
+
+  /* Mobile spacing */
   .mobile-spacing {
-    @apply py-8 md:py-12;
+    @apply py-6 md:py-8 lg:py-12;
   }
-  
+
   .mobile-gap {
-    @apply gap-4 md:gap-6;
-  }
-  
-  /* Touch states for mobile */
-  .touch-active:active {
-    @apply scale-95 opacity-90;
+    @apply gap-3 md:gap-4 lg:gap-6;
   }
   
   /* Lazy loading placeholder */
@@ -225,7 +249,7 @@
   }
 }
 
-/* Animation for mobile nav */
+/* Mobile-specific animations */
 @keyframes slide-in-right {
   from {
     transform: translateX(-100%);
@@ -237,6 +261,30 @@
   }
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .animate-slide-in-right {
   animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Safe area for iOS notch */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
 }
