@@ -238,6 +238,16 @@
   .mobile-gap {
     @apply gap-3 md:gap-4 lg:gap-6;
   }
+
+  /* Hide scrollbars */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
   
   /* Lazy loading placeholder */
   .lazy-image {

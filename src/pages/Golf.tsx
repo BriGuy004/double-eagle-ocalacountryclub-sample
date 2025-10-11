@@ -1,11 +1,8 @@
 import { Header } from "@/components/Header";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ProductCard } from "@/components/ProductCard";
-import { CategorySelector } from "@/components/CategorySelector";
-import { FilterPanel } from "@/components/FilterPanel";
-import { FilterDrawer } from "@/components/FilterDrawer";
+import { CategoryNav } from "@/components/CategoryNav";
 import { useProductFilters } from "@/hooks/useProductFilters";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser } from "@/contexts/UserContext";
 import { useBrand } from "@/contexts/BrandContext";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +20,6 @@ const isOfferNew = (createdAt: string | null) => {
 const Golf = () => {
   const { selectedLocation, setSelectedLocation } = useUser();
   const { currentBrand } = useBrand();
-  const isMobile = useIsMobile();
 
   // Fetch offers from Supabase with refetch interval to catch updates
   const { data: offers = [] } = useQuery({
@@ -113,21 +109,15 @@ const Golf = () => {
         isSearching={isSearching}
       />
       
+      <CategoryNav selectedCategory="Golf" />
+      
       <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <CategorySelector 
-              selectedCategory="Golf"
-              onCategoryChange={() => {}}
-            />
-          </div>
-          <div className="flex justify-center mb-8">
-            <LocationSelector 
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-              citiesByState={citiesByState}
-            />
-          </div>
+        <div className="flex justify-center mb-8">
+          <LocationSelector 
+            selectedLocation={selectedLocation}
+            onLocationChange={setSelectedLocation}
+            citiesByState={citiesByState}
+          />
         </div>
 
         {/* Products Grid */}
