@@ -151,37 +151,46 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* Hero Section - Mobile Optimized */}
+      <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden">
+        {/* Background Image */}
         <img 
-          src={currentBrand?.hero_image_url || "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1600&h=800&fit=crop"}
-          alt="Golf course"
-          className="absolute inset-0 w-full h-full object-cover"
+          src={currentBrand?.hero_image_url || "/default-hero.jpg"}
+          alt={currentBrand?.name || "Golf course"}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ objectPosition: '50% 40%' }} // Adjust to focus on best part of image
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
         
-        <div className="relative z-10 text-center px-4">
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
           <h1 
-            className="font-bold tracking-tight text-white leading-tight mb-4"
+            className="font-bold tracking-tight text-white leading-tight mb-3"
             style={{ 
-              fontSize: 'clamp(2rem, 8vw, 4rem)',
+              fontSize: 'clamp(2rem, 10vw, 5rem)',
               fontFamily: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
-              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              maxWidth: '90%'
             }}
           >
-            Welcome, {memberName}!
+            Welcome, Justin!
           </h1>
-          <p 
-            className="text-white/90 text-lg md:text-xl"
-            style={{ 
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              textShadow: '0 1px 5px rgba(0,0,0,0.3)'
-            }}
-          >
-            {currentBrand.name}
-          </p>
+          
+          {currentBrand && (
+            <p 
+              className="text-white/90 font-medium mt-2"
+              style={{ 
+                fontSize: 'clamp(1rem, 4vw, 1.5rem)',
+                textShadow: '0 2px 8px rgba(0,0,0,0.5)'
+              }}
+            >
+              {currentBrand.name}
+            </p>
+          )}
         </div>
-      </section>
+      </div>
 
       {/* Category Navigation */}
       <CategoryNav 
