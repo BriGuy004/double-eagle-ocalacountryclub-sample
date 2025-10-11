@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -71,14 +70,17 @@ export const CategoryNav = ({ selectedCategory, onCategoryChange }: CategoryNavP
         {/* Desktop: Regular flex */}
         <div className="hidden md:flex items-center gap-3 justify-center flex-wrap">
           {CATEGORIES.map((category) => (
-            <Button
+            <button
               key={category.name}
-              variant={selectedCategory === category.name ? "default" : "outline"}
               onClick={() => handleCategoryChange(category.name, category.path)}
-              className="font-semibold px-6 py-2 transition-all touch-active"
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                selectedCategory === category.name
+                  ? 'bg-primary text-black'
+                  : 'bg-transparent text-white/70 hover:text-white'
+              }`}
             >
               {category.name}
-            </Button>
+            </button>
           ))}
         </div>
 
@@ -101,14 +103,18 @@ export const CategoryNav = ({ selectedCategory, onCategoryChange }: CategoryNavP
             className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-4 py-1"
           >
             {CATEGORIES.map((category) => (
-              <Button
+              <button
                 key={category.name}
-                variant={selectedCategory === category.name ? "default" : "outline"}
                 onClick={() => handleCategoryChange(category.name, category.path)}
-                className="font-semibold px-4 py-2 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px] touch-active"
+                className={`px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all active:scale-95 ${
+                  selectedCategory === category.name
+                    ? 'bg-primary text-black'
+                    : 'bg-transparent text-white/70 hover:text-white'
+                }`}
+                style={{ minHeight: '44px' }}
               >
                 {category.name}
-              </Button>
+              </button>
             ))}
           </div>
 
