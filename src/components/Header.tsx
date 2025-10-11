@@ -133,10 +133,7 @@ export const Header = ({
                   variant="outline" 
                   size="sm"
                   onClick={() => navigate('/member-dashboard')}
-                  className="text-white font-semibold border-0 hover:opacity-90 transition-opacity"
-                  style={{
-                    backgroundColor: 'hsl(50, 35%, 40%)'
-                  }}
+                  className="bg-accent text-accent-foreground font-semibold border-0 hover:opacity-90 transition-opacity"
                 >
                   <User className="h-4 w-4 mr-2" />
                   Account

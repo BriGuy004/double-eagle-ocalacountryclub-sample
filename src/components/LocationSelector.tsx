@@ -27,10 +27,7 @@ export const LocationSelector = ({
       <DropdownMenuTrigger asChild>
         <Button 
           variant="default"
-          className="px-8 py-6 text-lg font-semibold rounded-lg min-w-[200px] text-white border-0"
-          style={{
-            backgroundColor: 'hsl(50, 35%, 40%)'
-          }}
+          className="bg-accent text-accent-foreground px-8 py-6 text-lg font-semibold rounded-lg min-w-[200px] border-0"
         >
           {selectedLocation}
           <ChevronDown className="ml-2 h-5 w-5" />
