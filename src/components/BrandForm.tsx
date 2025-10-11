@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ImageUpload";
-import { ColorPicker } from "@/components/ColorPicker";
+import { Upload, X } from "lucide-react";
 
 interface Brand {
   id?: string;
@@ -26,7 +26,7 @@ interface Brand {
   website?: string;
   redemption_info?: string;
   description?: string;
-  discount_text?: string;
+  offer_text?: string;
   is_active?: boolean;
 }
 
@@ -47,6 +47,169 @@ interface BrandFormProps {
   errors?: Record<string, string>;
 }
 
+// Helper function to convert RGB to HSL
+const rgbToHsl = (r: number, g: number, b: number): string => {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+
+  const hDeg = Math.round(h * 360);
+  const sPercent = Math.round(s * 100);
+  const lPercent = Math.round(l * 100);
+
+  return `${hDeg} ${sPercent}% ${lPercent}%`;
+};
+
+// Helper function to convert HSL string to CSS color
+const hslToCss = (hsl: string): string => {
+  return `hsl(${hsl})`;
+};
+
+// Color Picker Component
+const ColorPickerFromImage = ({
+  currentColor,
+  onColorChange,
+  label,
+}: {
+  currentColor: string;
+  onColorChange: (hsl: string) => void;
+  label: string;
+}) => {
+  const [colorImage, setColorImage] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setColorImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const imageData = ctx.getImageData(x, y, 1, 1);
+    const [r, g, b] = imageData.data;
+
+    const hsl = rgbToHsl(r, g, b);
+    onColorChange(hsl);
+  };
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const canvas = canvasRef.current;
+    const img = e.target as HTMLImageElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Set canvas size to match image (max 400px width)
+    const maxWidth = 400;
+    const scale = Math.min(1, maxWidth / img.width);
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  };
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="flex gap-2 items-start">
+        <Input
+          value={currentColor || ""}
+          onChange={(e) => onColorChange(e.target.value)}
+          placeholder="38 70% 15%"
+          className="flex-1"
+        />
+        <div
+          className="w-12 h-10 rounded border-2 border-white/20 flex-shrink-0"
+          style={{ backgroundColor: hslToCss(currentColor || "38 70% 15%") }}
+          title="Color preview"
+        />
+      </div>
+
+      <div className="mt-2">
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full"
+        >
+          <Upload className="w-4 h-4 mr-2" />
+          Upload Screenshot to Pick Color
+        </Button>
+      </div>
+
+      {colorImage && (
+        <div className="mt-3 relative border border-white/20 rounded-lg p-2 bg-muted/50">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setColorImage(null)}
+            className="absolute top-1 right-1 z-10"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+          <p className="text-xs text-muted-foreground mb-2">Click anywhere on the image to extract that color:</p>
+          <div className="relative">
+            <img src={colorImage} alt="Color reference" className="hidden" onLoad={handleImageLoad} />
+            <canvas
+              ref={canvasRef}
+              onClick={handleCanvasClick}
+              className="cursor-crosshair border border-white/10 rounded max-w-full"
+              title="Click to pick a color"
+            />
+          </div>
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground mt-1">
+        Upload a screenshot of your brand colors and click to extract the exact color
+      </p>
+    </div>
+  );
+};
+
 export const BrandForm: React.FC<BrandFormProps> = ({
   brand,
   onChange,
@@ -62,9 +225,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className="flex items-center gap-1">
-            Club ID (unique, lowercase)
-          </Label>
+          <Label className="flex items-center gap-1">Club ID (unique, lowercase)</Label>
           <Input
             value={brand.club_id || ""}
             onChange={(e) => {
@@ -88,9 +249,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           )}
         </div>
         <div>
-          <Label className="flex items-center gap-1">
-            Name
-          </Label>
+          <Label className="flex items-center gap-1">Name</Label>
           <Input
             value={brand.name || ""}
             onChange={(e) => onChange({ name: e.target.value })}
@@ -150,28 +309,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         )}
       </div>
 
-      {categoryInfo.category !== "Golf" && (
-        <div>
-          <Label>Discount Text</Label>
-          <Input
-            value={brand.discount_text || ""}
-            onChange={(e) => onChange({ discount_text: e.target.value })}
-            placeholder="e.g., 25% off"
-            className={errors.discount_text ? "border-destructive" : ""}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            This will display on the offer card (e.g., "25% off", "$50 off")
-          </p>
-          {errors.discount_text && <p className="text-sm text-destructive mt-1">{errors.discount_text}</p>}
-        </div>
-      )}
-
       <div>
         <div className="flex items-center justify-between">
           <Label>Description</Label>
-          <span className="text-xs text-muted-foreground">
-            {(brand.description?.length || 0)}/1500
-          </span>
+          <span className="text-xs text-muted-foreground">{brand.description?.length || 0}/1500</span>
         </div>
         <Textarea
           value={brand.description || ""}
@@ -186,13 +327,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           className={errors.description ? "border-destructive" : ""}
         />
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-muted-foreground">
-            Describe what makes this club unique
-          </p>
+          <p className="text-xs text-muted-foreground">Describe what makes this club unique</p>
         </div>
-        {errors.description && (
-          <p className="text-sm text-destructive mt-1">{errors.description}</p>
-        )}
+        {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
       </div>
 
       <div>
@@ -215,11 +352,27 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         {errors.redemption_info && <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>}
       </div>
 
+      {/* Offer Text - Only for Non-Golf Categories */}
+      {categoryInfo.category !== "Golf" && (
+        <div>
+          <Label>Offer Text (Display on Card)</Label>
+          <Input
+            value={brand.offer_text || ""}
+            onChange={(e) => onChange({ offer_text: e.target.value })}
+            placeholder="e.g., 25% off, $50 off, Buy 1 Get 1"
+            className={errors.offer_text ? "border-destructive" : ""}
+            maxLength={50}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            This will appear in the bordered box on the right side of the offer card. Keep it short and impactful!
+          </p>
+          {errors.offer_text && <p className="text-sm text-destructive mt-1">{errors.offer_text}</p>}
+        </div>
+      )}
+
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label className="flex items-center gap-1">
-            Images
-          </Label>
+          <Label className="flex items-center gap-1">Images</Label>
           <Button
             type="button"
             variant="ghost"
@@ -367,9 +520,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="flex items-center gap-1">
-                  Logo URL
-                </Label>
+                <Label className="flex items-center gap-1">Logo URL</Label>
                 <Input
                   value={brand.logo_url || ""}
                   onChange={(e) => onChange({ logo_url: e.target.value })}
@@ -386,9 +537,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({
                 )}
               </div>
               <div>
-                <Label className="flex items-center gap-1">
-                  Hero Image URL
-                </Label>
+                <Label className="flex items-center gap-1">Hero Image URL</Label>
                 <Input
                   value={brand.hero_image_url || ""}
                   onChange={(e) => onChange({ hero_image_url: e.target.value })}
@@ -457,27 +606,33 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         )}
       </div>
 
+      {/* Brand Colors - Only for Golf Category */}
       {categoryInfo.category === "Golf" && (
-        <div className="space-y-2">
-          <Label>Brand Colors</Label>
-          <p className="text-xs text-muted-foreground mb-2">
-            Colors in HSL format (e.g., "38 70% 15%"). Used to theme the brand's pages.
-          </p>
-          <div className="grid grid-cols-3 gap-4">
-            <ColorPicker
-              label="Primary"
-              value={brand.primary_color || "38 70% 15%"}
-              onChange={(val) => onChange({ primary_color: val })}
+        <div className="space-y-4 border-t border-white/10 pt-6">
+          <div>
+            <Label className="text-lg font-semibold">Brand Colors</Label>
+            <p className="text-xs text-muted-foreground mt-1">
+              Upload a screenshot of your brand colors and click on them to extract the exact color values
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6">
+            <ColorPickerFromImage
+              label="Primary Color"
+              currentColor={brand.primary_color || "38 70% 15%"}
+              onColorChange={(hsl) => onChange({ primary_color: hsl })}
             />
-            <ColorPicker
-              label="Primary Glow"
-              value={brand.primary_glow_color || "38 70% 25%"}
-              onChange={(val) => onChange({ primary_glow_color: val })}
+
+            <ColorPickerFromImage
+              label="Primary Glow Color"
+              currentColor={brand.primary_glow_color || "38 70% 25%"}
+              onColorChange={(hsl) => onChange({ primary_glow_color: hsl })}
             />
-            <ColorPicker
-              label="Accent"
-              value={brand.accent_color || "45 85% 50%"}
-              onChange={(val) => onChange({ accent_color: val })}
+
+            <ColorPickerFromImage
+              label="Accent Color"
+              currentColor={brand.accent_color || "45 85% 50%"}
+              onColorChange={(hsl) => onChange({ accent_color: hsl })}
             />
           </div>
         </div>
