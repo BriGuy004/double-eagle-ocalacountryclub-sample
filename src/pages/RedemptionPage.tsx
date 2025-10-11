@@ -20,16 +20,24 @@ export default function RedemptionPage() {
       
       setLoading(true);
       try {
+        console.log("Loading offer with ID:", offerId); // Debug log
+        
         const { data, error } = await supabase
           .from('offers')
           .select('*')
-          .eq('club_id', offerId)
+          .eq('id', offerId)
           .single();
 
         if (error) {
-          console.error('Error fetching offer:', error);
+          console.error('Supabase error:', error);
           toast.error("Could not load offer details");
           return;
+        }
+
+        if (!data) {
+          console.error("No offer found for ID:", offerId);
+        } else {
+          console.log("Offer loaded successfully:", data);
         }
 
         setOffer(data);
