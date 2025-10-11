@@ -7,10 +7,10 @@
 @layer base {
   :root {
     /* Country Club of Ocala Theme - Dark & Gold */
-    --background: 0 0% 10%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 95%;
 
-    --card: 0 0% 14%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 95%;
 
     --popover: 0 0% 16%;
@@ -50,9 +50,9 @@
   }
 
   .dark {
-    --background: 0 0% 10%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 95%;
-    --card: 0 0% 14%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 16%;
     --popover-foreground: 0 0% 95%;
