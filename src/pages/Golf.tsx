@@ -127,7 +127,7 @@ const Golf = () => {
             <p className="text-sm md:text-base text-[#94a3b8]">Try different keywords or adjust filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade-in">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 p-4 md:p-6 animate-fade-in">
             {filteredProducts.map((offer) => (
             <ProductCard
               key={offer.offerId}
