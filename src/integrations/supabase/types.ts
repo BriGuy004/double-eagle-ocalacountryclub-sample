@@ -89,6 +89,50 @@ export type Database = {
         }
         Relationships: []
       }
+      golf_course_availability: {
+        Row: {
+          available_date: string
+          created_at: string | null
+          end_time: string | null
+          id: string
+          notes: string | null
+          offer_id: string
+          price_override: number | null
+          start_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          available_date: string
+          created_at?: string | null
+          end_time?: string | null
+          id?: string
+          notes?: string | null
+          offer_id: string
+          price_override?: number | null
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          available_date?: string
+          created_at?: string | null
+          end_time?: string | null
+          id?: string
+          notes?: string | null
+          offer_id?: string
+          price_override?: number | null
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "golf_course_availability_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           accent_color: string

@@ -7,11 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2, Eye, EyeOff, Save, DollarSign, Calendar, Clock, Lock, Unlock } from "lucide-react";
+import { Loader2, Eye, EyeOff, Save, DollarSign, Calendar as CalendarIcon, Clock, Lock, Unlock, Trash2, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format, isAfter, startOfToday } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface OfferVisibility {
   id: string;
@@ -47,7 +51,25 @@ interface VisibilityRestriction {
   notes: string | null;
 }
 
+interface AvailabilitySlot {
+  id: string;
+  offer_id: string;
+  available_date: string;
+  start_time: string | null;
+  end_time: string | null;
+  price_override: number | null;
+  notes: string | null;
+}
+
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const TIME_OPTIONS = [
+  "6:00 AM", "6:30 AM", "7:00 AM", "7:30 AM", "8:00 AM", "8:30 AM",
+  "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
+  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
+  "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"
+];
 
 export default function ClubAdmin() {
   const [clubId, setClubId] = useState<string | null>(null);
@@ -73,6 +95,16 @@ export default function ClubAdmin() {
   // Visibility restrictions (who can't see YOUR course)
   const [visibilityRestrictions, setVisibilityRestrictions] = useState<VisibilityRestriction[]>([]);
   const [allGolfClubs, setAllGolfClubs] = useState<Club[]>([]);
+
+  // Availability slots
+  const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [newSlot, setNewSlot] = useState({
+    start_time: "",
+    end_time: "",
+    price_override: null as number | null,
+    notes: "",
+  });
 
   const { toast } = useToast();
 
@@ -171,6 +203,9 @@ export default function ClubAdmin() {
             availability_notes: clubData.availability_notes || null,
             last_availability_update: clubData.last_availability_update || null,
           });
+
+          // Load availability slots
+          await loadAvailabilitySlots(clubData.id);
         }
 
         await loadVisibilitySettings(roleData.club_id, clubData?.city || "");
@@ -319,6 +354,111 @@ export default function ClubAdmin() {
         available_days: newDays.join(','),
       };
     });
+  };
+
+  // Load availability slots
+  const loadAvailabilitySlots = async (offerId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("golf_course_availability")
+        .select("*")
+        .eq("offer_id", offerId)
+        .gte("available_date", format(startOfToday(), "yyyy-MM-dd"))
+        .order("available_date", { ascending: true });
+
+      if (error) throw error;
+      setAvailabilitySlots(data || []);
+    } catch (error) {
+      console.error("Error loading availability slots:", error);
+    }
+  };
+
+  // Add availability slot
+  const addAvailabilitySlot = async () => {
+    if (!ownOfferId || !selectedDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please select a date first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("golf_course_availability")
+        .insert({
+          offer_id: ownOfferId,
+          available_date: format(selectedDate, "yyyy-MM-dd"),
+          start_time: newSlot.start_time || null,
+          end_time: newSlot.end_time || null,
+          price_override: newSlot.price_override,
+          notes: newSlot.notes || null,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAvailabilitySlots(prev => [...prev, data].sort((a, b) => 
+        new Date(a.available_date).getTime() - new Date(b.available_date).getTime()
+      ));
+
+      // Update last_availability_update
+      await supabase
+        .from("offers")
+        .update({ last_availability_update: new Date().toISOString() })
+        .eq("id", ownOfferId);
+
+      setSelectedDate(undefined);
+      setNewSlot({ start_time: "", end_time: "", price_override: null, notes: "" });
+
+      toast({
+        title: "Availability Added",
+        description: "Guest play slot has been added to your calendar.",
+      });
+    } catch (error: any) {
+      console.error("Error adding availability:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add availability slot.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Delete availability slot
+  const deleteAvailabilitySlot = async (slotId: string) => {
+    try {
+      const { error } = await supabase
+        .from("golf_course_availability")
+        .delete()
+        .eq("id", slotId);
+
+      if (error) throw error;
+
+      setAvailabilitySlots(prev => prev.filter(s => s.id !== slotId));
+
+      // Update last_availability_update
+      if (ownOfferId) {
+        await supabase
+          .from("offers")
+          .update({ last_availability_update: new Date().toISOString() })
+          .eq("id", ownOfferId);
+      }
+
+      toast({
+        title: "Availability Removed",
+        description: "Guest play slot has been removed.",
+      });
+    } catch (error) {
+      console.error("Error deleting availability:", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove availability slot.",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleVisibilityRestriction = async (restrictedClubId: string) => {
@@ -475,6 +615,9 @@ export default function ClubAdmin() {
           availability_notes: clubData.availability_notes || null,
           last_availability_update: clubData.last_availability_update || null,
         });
+
+        // Load availability slots
+        await loadAvailabilitySlots(clubData.id);
       }
     }
   };
@@ -539,15 +682,15 @@ export default function ClubAdmin() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Reciprocal Guest Play Settings
+                  <CalendarIcon className="h-5 w-5" />
+                  Availability Calendar
                 </CardTitle>
-                <CardDescription>Set your pricing and availability for members from other golf clubs</CardDescription>
+                <CardDescription>Manage your guest play tee times and pricing</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Pricing */}
+                {/* Default Pricing */}
                 <div className="space-y-2">
-                  <Label htmlFor="guest-price">Guest Play Price (per round)</Label>
+                  <Label htmlFor="guest-price">Default Guest Play Price (per round)</Label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -567,85 +710,211 @@ export default function ClubAdmin() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    This is what you'll charge reciprocal members per round
+                    This is the default price. You can override it for specific dates below.
                   </p>
                 </div>
 
-                {/* Available Days */}
-                <div className="space-y-3">
-                  <Label className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Available Days
-                  </Label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {DAYS_OF_WEEK.map((day) => (
-                      <div key={day} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`day-${day}`}
-                          checked={ownCourseDetails.available_days.includes(day)}
-                          onCheckedChange={() => toggleDayAvailability(day)}
+                {/* Add Availability Slot */}
+                <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Available Date
+                  </h3>
+                  
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Select Date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !selectedDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            disabled={(date) => date < startOfToday()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="price-override">Price Override (optional)</Label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="price-override"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Leave blank for default"
+                          value={newSlot.price_override ?? ""}
+                          onChange={(e) =>
+                            setNewSlot((prev) => ({
+                              ...prev,
+                              price_override: e.target.value ? parseFloat(e.target.value) : null,
+                            }))
+                          }
+                          className="pl-10"
                         />
-                        <Label htmlFor={`day-${day}`} className="text-sm font-normal cursor-pointer">
-                          {day}
-                        </Label>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Start Time (optional)</Label>
+                      <Select
+                        value={newSlot.start_time}
+                        onValueChange={(value) =>
+                          setNewSlot((prev) => ({ ...prev, start_time: value }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Any time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Any time</SelectItem>
+                          {TIME_OPTIONS.map((time) => (
+                            <SelectItem key={time} value={time}>
+                              {time}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>End Time (optional)</Label>
+                      <Select
+                        value={newSlot.end_time}
+                        onValueChange={(value) =>
+                          setNewSlot((prev) => ({ ...prev, end_time: value }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Any time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Any time</SelectItem>
+                          {TIME_OPTIONS.map((time) => (
+                            <SelectItem key={time} value={time}>
+                              {time}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="slot-notes">Notes (optional)</Label>
+                      <Textarea
+                        id="slot-notes"
+                        placeholder="e.g., Cart fee additional, Must call pro shop to confirm"
+                        value={newSlot.notes}
+                        onChange={(e) =>
+                          setNewSlot((prev) => ({ ...prev, notes: e.target.value }))
+                        }
+                        rows={2}
+                      />
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">Select which days reciprocal play is available</p>
+
+                  <Button onClick={addAvailabilitySlot} className="w-full">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add to Calendar
+                  </Button>
                 </div>
 
-                {/* Available Times */}
-                <div className="space-y-2">
-                  <Label htmlFor="available-times" className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Available Times
-                  </Label>
-                  <Input
-                    id="available-times"
-                    placeholder="e.g., 7:00 AM - 2:00 PM, After 1:00 PM on weekends"
-                    value={ownCourseDetails.available_times}
-                    onChange={(e) =>
-                      setOwnCourseDetails((prev) => ({
-                        ...prev,
-                        available_times: e.target.value,
-                      }))
-                    }
-                  />
-                  <p className="text-sm text-muted-foreground">Specify time windows when reciprocal play is allowed</p>
+                {/* Upcoming Availability */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">Upcoming Availability</h3>
+                    <Badge variant="secondary">{availabilitySlots.length} slots</Badge>
+                  </div>
+
+                  {availabilitySlots.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <p>No upcoming availability. Add dates above to get started.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {availabilitySlots.map((slot) => (
+                        <div
+                          key={slot.id}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">
+                                {format(new Date(slot.available_date), "EEEE, MMMM d, yyyy")}
+                              </span>
+                            </div>
+                            {(slot.start_time || slot.end_time) && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
+                                <Clock className="h-3 w-3" />
+                                <span>
+                                  {slot.start_time || "Any time"} - {slot.end_time || "Any time"}
+                                </span>
+                              </div>
+                            )}
+                            {slot.price_override && (
+                              <div className="flex items-center gap-2 text-sm ml-6">
+                                <DollarSign className="h-3 w-3" />
+                                <span className="font-semibold text-green-600 dark:text-green-400">
+                                  ${slot.price_override.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
+                            {slot.notes && (
+                              <p className="text-sm text-muted-foreground mt-2 ml-6">{slot.notes}</p>
+                            )}
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => deleteAvailabilitySlot(slot.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Notes */}
+                {/* General Availability Notes */}
                 <div className="space-y-2">
-                  <Label htmlFor="availability-notes">Additional Information</Label>
+                  <Label htmlFor="availability-notes">General Availability Notes</Label>
                   <Textarea
                     id="availability-notes"
-                    placeholder="e.g., Must book 48 hours in advance, Cart fee additional $25, Dress code strictly enforced"
-                    value={ownCourseDetails.availability_notes}
+                    placeholder="e.g., Advance booking required, Cart fee additional, Dress code strictly enforced"
+                    value={ownCourseDetails.availability_notes ?? ""}
                     onChange={(e) =>
                       setOwnCourseDetails((prev) => ({
                         ...prev,
-                        availability_notes: e.target.value,
+                        availability_notes: e.target.value || null,
                       }))
                     }
-                    rows={4}
+                    rows={3}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Add booking requirements, restrictions, or other important details
+                    These notes will appear on your offer card for all dates
                   </p>
                 </div>
-
-                {/* Last Updated Badge */}
-                {ownCourseDetails.last_availability_update && (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm">
-                      <strong>Last Updated:</strong>{" "}
-                      {new Date(ownCourseDetails.last_availability_update).toLocaleDateString()}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Your offer card will show a "New" badge for 30 days after each update
-                    </p>
-                  </div>
-                )}
 
                 <Button onClick={saveOwnCourseDetails} disabled={saving === "own-course"} className="w-full" size="lg">
                   {saving === "own-course" ? (
@@ -656,7 +925,7 @@ export default function ClubAdmin() {
                   ) : (
                     <>
                       <Save className="mr-2 h-4 w-4" />
-                      Save Course Details
+                      Save General Settings
                     </>
                   )}
                 </Button>
