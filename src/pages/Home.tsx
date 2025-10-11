@@ -104,6 +104,17 @@ export default function Home() {
               </Button>
               <Button
                 size="sm"
+                onClick={() => navigate("/shopping")}
+                style={{
+                  backgroundColor: `hsl(${primaryColor})`,
+                  color: "white",
+                }}
+                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
+              >
+                Shopping
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => navigate("/entertainment")}
                 style={{
                   backgroundColor: `hsl(${primaryColor})`,
@@ -134,17 +145,6 @@ export default function Home() {
                 className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
               >
                 Travel
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => navigate("/shopping")}
-                style={{
-                  backgroundColor: `hsl(${primaryColor})`,
-                  color: "white",
-                }}
-                className="hover:opacity-90 font-medium px-3 md:px-5 py-2 text-sm"
-              >
-                Shopping
               </Button>
             </div>
           </nav>
