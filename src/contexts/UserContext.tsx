@@ -76,7 +76,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Global location state persisted in localStorage
   const [selectedLocation, setSelectedLocation] = useState<string>(() => {
     const saved = localStorage.getItem('doubleEagleSelectedLocation');
-    return saved || "Rochester";
+    return saved || "All Cities";
   });
 
   // Save to localStorage whenever userData changes
