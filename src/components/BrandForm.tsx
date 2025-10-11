@@ -1,10 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ImageUpload";
-import { Upload, X } from "lucide-react";
+import { Clipboard, X } from "lucide-react";
 
 interface Brand {
   id?: string;
@@ -88,8 +88,8 @@ const hslToCss = (hsl: string): string => {
   return `hsl(${hsl})`;
 };
 
-// Color Picker Component
-const ColorPickerFromImage = ({
+// Paste-only Color Picker - Auto-extracts color from pasted image
+const PasteColorPicker = ({
   currentColor,
   onColorChange,
   label,
@@ -98,114 +98,147 @@ const ColorPickerFromImage = ({
   onColorChange: (hsl: string) => void;
   label: string;
 }) => {
-  const [colorImage, setColorImage] = useState<string | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isPasteReady, setIsPasteReady] = useState(false);
+  const pasteAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setColorImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const extractColorFromImage = (imageDataUrl: string) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      // Sample the center pixel area and average for better accuracy
+      const centerX = Math.floor(img.width / 2);
+      const centerY = Math.floor(img.height / 2);
+
+      let totalR = 0,
+        totalG = 0,
+        totalB = 0,
+        count = 0;
+
+      for (let x = centerX - 2; x <= centerX + 2; x++) {
+        for (let y = centerY - 2; y <= centerY + 2; y++) {
+          const imageData = ctx.getImageData(x, y, 1, 1);
+          const [r, g, b] = imageData.data;
+          totalR += r;
+          totalG += g;
+          totalB += b;
+          count++;
+        }
+      }
+
+      const avgR = Math.round(totalR / count);
+      const avgG = Math.round(totalG / count);
+      const avgB = Math.round(totalB / count);
+
+      const hsl = rgbToHsl(avgR, avgG, avgB);
+      onColorChange(hsl);
+      setPreviewImage(imageDataUrl);
+    };
+    img.src = imageDataUrl;
   };
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      if (!isPasteReady) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+      const items = e.clipboardData?.items;
+      if (!items) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          e.preventDefault();
+          const blob = items[i].getAsFile();
+          if (blob) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const imageDataUrl = event.target?.result as string;
+              extractColorFromImage(imageDataUrl);
+              setIsPasteReady(false);
+            };
+            reader.readAsDataURL(blob);
+          }
+        }
+      }
+    };
 
-    const imageData = ctx.getImageData(x, y, 1, 1);
-    const [r, g, b] = imageData.data;
-
-    const hsl = rgbToHsl(r, g, b);
-    onColorChange(hsl);
-  };
-
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const canvas = canvasRef.current;
-    const img = e.target as HTMLImageElement;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Set canvas size to match image (max 400px width)
-    const maxWidth = 400;
-    const scale = Math.min(1, maxWidth / img.width);
-    canvas.width = img.width * scale;
-    canvas.height = img.height * scale;
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  };
+    document.addEventListener("paste", handlePaste);
+    return () => document.removeEventListener("paste", handlePaste);
+  }, [isPasteReady]);
 
   return (
-    <div>
+    <div className="space-y-2">
       <Label>{label}</Label>
-      <div className="flex gap-2 items-start">
-        <Input
-          value={currentColor || ""}
-          onChange={(e) => onColorChange(e.target.value)}
-          placeholder="38 70% 15%"
-          className="flex-1"
-        />
+
+      {/* Color Preview and Value */}
+      <div className="flex gap-2 items-center">
         <div
-          className="w-12 h-10 rounded border-2 border-white/20 flex-shrink-0"
+          className="w-16 h-16 rounded-lg border-2 border-white/20 flex-shrink-0 shadow-lg"
           style={{ backgroundColor: hslToCss(currentColor || "38 70% 15%") }}
-          title="Color preview"
+          title="Current color"
         />
+        <div className="flex-1">
+          <Input
+            value={currentColor || ""}
+            onChange={(e) => onColorChange(e.target.value)}
+            placeholder="38 70% 15%"
+            className="font-mono text-sm"
+            readOnly
+          />
+          <p className="text-xs text-muted-foreground mt-1">HSL: {currentColor || "Not set"}</p>
+        </div>
       </div>
 
-      <div className="mt-2">
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Upload Screenshot to Pick Color
-        </Button>
+      {/* Paste Area */}
+      <div
+        ref={pasteAreaRef}
+        onClick={() => setIsPasteReady(true)}
+        onBlur={() => setTimeout(() => setIsPasteReady(false), 200)}
+        tabIndex={0}
+        className={`
+          border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
+          transition-all duration-200
+          ${
+            isPasteReady
+              ? "border-primary bg-primary/10 ring-2 ring-primary/20"
+              : "border-white/20 hover:border-white/40 hover:bg-white/5"
+          }
+        `}
+      >
+        <Clipboard className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+        <p className="text-sm font-medium text-white">
+          {isPasteReady ? "Ready! Press Ctrl+V (or Cmd+V) to paste" : "Click here, then paste your screenshot"}
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Screenshot a solid color from your brand guidelines and paste it here
+        </p>
       </div>
 
-      {colorImage && (
-        <div className="mt-3 relative border border-white/20 rounded-lg p-2 bg-muted/50">
+      {/* Preview of pasted image */}
+      {previewImage && (
+        <div className="relative inline-block">
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => setColorImage(null)}
-            className="absolute top-1 right-1 z-10"
+            onClick={() => setPreviewImage(null)}
+            className="absolute -top-2 -right-2 z-10 h-6 w-6 p-0 rounded-full bg-background"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3 h-3" />
           </Button>
-          <p className="text-xs text-muted-foreground mb-2">Click anywhere on the image to extract that color:</p>
-          <div className="relative">
-            <img src={colorImage} alt="Color reference" className="hidden" onLoad={handleImageLoad} />
-            <canvas
-              ref={canvasRef}
-              onClick={handleCanvasClick}
-              className="cursor-crosshair border border-white/10 rounded max-w-full"
-              title="Click to pick a color"
-            />
-          </div>
+          <img
+            src={previewImage}
+            alt="Pasted color"
+            className="w-20 h-20 object-cover rounded border-2 border-white/20"
+          />
         </div>
       )}
-
-      <p className="text-xs text-muted-foreground mt-1">
-        Upload a screenshot of your brand colors and click to extract the exact color
-      </p>
     </div>
   );
 };
@@ -229,7 +262,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({
           <Input
             value={brand.club_id || ""}
             onChange={(e) => {
-              // Auto-format: lowercase, replace spaces with hyphens, remove invalid chars
               const formatted = e.target.value
                 .toLowerCase()
                 .replace(/\s+/g, "-")
@@ -352,7 +384,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({
         {errors.redemption_info && <p className="text-sm text-destructive mt-1">{errors.redemption_info}</p>}
       </div>
 
-      {/* Offer Text - Only for Non-Golf Categories */}
       {categoryInfo.category !== "Golf" && (
         <div>
           <Label>Offer Text (Display on Card)</Label>
@@ -608,28 +639,28 @@ export const BrandForm: React.FC<BrandFormProps> = ({
 
       {/* Brand Colors - Only for Golf Category */}
       {categoryInfo.category === "Golf" && (
-        <div className="space-y-4 border-t border-white/10 pt-6">
+        <div className="space-y-6 border-t border-white/10 pt-6">
           <div>
             <Label className="text-lg font-semibold">Brand Colors</Label>
-            <p className="text-xs text-muted-foreground mt-1">
-              Upload a screenshot of your brand colors and click on them to extract the exact color values
+            <p className="text-sm text-muted-foreground mt-1">
+              Click the paste area, then paste (Ctrl+V or Cmd+V) screenshots of your solid brand colors
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            <ColorPickerFromImage
+            <PasteColorPicker
               label="Primary Color"
               currentColor={brand.primary_color || "38 70% 15%"}
               onColorChange={(hsl) => onChange({ primary_color: hsl })}
             />
 
-            <ColorPickerFromImage
+            <PasteColorPicker
               label="Primary Glow Color"
               currentColor={brand.primary_glow_color || "38 70% 25%"}
               onColorChange={(hsl) => onChange({ primary_glow_color: hsl })}
             />
 
-            <ColorPickerFromImage
+            <PasteColorPicker
               label="Accent Color"
               currentColor={brand.accent_color || "45 85% 50%"}
               onColorChange={(hsl) => onChange({ accent_color: hsl })}
