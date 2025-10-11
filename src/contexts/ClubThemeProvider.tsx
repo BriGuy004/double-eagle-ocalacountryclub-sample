@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ClubThemeProviderProps {
   primaryColor: string;      // e.g., "292 45% 22%" from database
@@ -54,8 +54,23 @@ export const ClubThemeProvider: React.FC<ClubThemeProviderProps> = ({
   accentColor,
   children,
 }) => {
+  // Store initial colors in a ref to prevent accidental swapping
+  const initialColorsRef = useRef({
+    primary: primaryColor,
+    primaryGlow: primaryGlowColor,
+    accent: accentColor,
+  });
+
   useEffect(() => {
     const root = document.documentElement;
+
+    // CRITICAL: Always use the colors passed as props, not from ref
+    // This ensures we use the correct colors even on re-render
+    console.log('Applying theme colors:', {
+      primary: primaryColor,
+      primaryGlow: primaryGlowColor,
+      accent: accentColor,
+    });
 
     // Apply the club's custom colors
     root.style.setProperty('--primary', primaryColor);
@@ -68,11 +83,9 @@ export const ClubThemeProvider: React.FC<ClubThemeProviderProps> = ({
     
     root.style.setProperty('--primary-foreground', primaryText);
     root.style.setProperty('--accent-foreground', accentText);
-
-    // Also update ring color to match accent
     root.style.setProperty('--ring', accentColor);
 
-    // Update gradient backgrounds to use club's primary color
+    // Update gradient backgrounds
     const [h, s, l] = primaryColor.split(' ').map(v => parseFloat(v));
     root.style.setProperty('--gradient-premium', 
       `linear-gradient(135deg, hsl(${h} ${s} ${Math.max(l - 2, 0)}%) 0%, hsl(${h} ${s} ${l}%) 100%)`
@@ -81,17 +94,7 @@ export const ClubThemeProvider: React.FC<ClubThemeProviderProps> = ({
       `linear-gradient(135deg, hsl(${h} ${s} ${l}%) 0%, hsl(${h} ${s} ${Math.min(l + 4, 100)}%) 100%)`
     );
 
-    // Cleanup function to reset on unmount
-    return () => {
-      root.style.removeProperty('--primary');
-      root.style.removeProperty('--primary-glow');
-      root.style.removeProperty('--accent');
-      root.style.removeProperty('--primary-foreground');
-      root.style.removeProperty('--accent-foreground');
-      root.style.removeProperty('--ring');
-      root.style.removeProperty('--gradient-premium');
-      root.style.removeProperty('--gradient-card');
-    };
+    // No cleanup - let colors persist
   }, [primaryColor, primaryGlowColor, accentColor]);
 
   return <>{children}</>;
