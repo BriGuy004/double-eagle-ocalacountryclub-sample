@@ -152,20 +152,19 @@ export default function Home() {
       </header>
 
       {/* Hero Section - Mobile Optimized */}
-      <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden">
+      <div className="relative w-full overflow-hidden">
         {/* Background Image */}
         <img 
           src={currentBrand?.hero_image_url || "/default-hero.jpg"}
           alt={currentBrand?.name || "Golf course"}
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          style={{ objectPosition: '50% 40%' }} // Adjust to focus on best part of image
+          className="hero-image-mobile"
         />
         
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
           <h1 
             className="font-bold tracking-tight text-white leading-tight mb-3"
             style={{ 

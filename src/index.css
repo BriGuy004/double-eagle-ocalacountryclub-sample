@@ -257,6 +257,33 @@
   .lazy-image.loaded {
     @apply animate-none;
   }
+
+  /* Mobile-optimized hero */
+  .hero-image-mobile {
+    width: 100%;
+    height: 50vh;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+
+  @media (min-width: 640px) {
+    .hero-image-mobile {
+      height: 60vh;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-image-mobile {
+      height: 70vh;
+      object-position: center 50%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-image-mobile {
+      height: 80vh;
+    }
+  }
 }
 
 /* Mobile-specific animations */
