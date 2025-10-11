@@ -37,7 +37,7 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange }: Categor
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="text-6xl font-light tracking-wider text-foreground hover:text-accent-foreground hover:bg-transparent px-0"
+          className="text-6xl font-bold tracking-wider text-foreground hover:text-accent-foreground hover:bg-transparent px-0"
         >
           {selectedCategory}
           <ChevronDown className="ml-4 h-8 w-8" />

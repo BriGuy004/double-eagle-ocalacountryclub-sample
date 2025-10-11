@@ -132,8 +132,8 @@ export const ProductCard = ({
             <h4 className="text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
               {brand}
             </h4>
-            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-3 py-1.5 group-hover:border-primary transition-all duration-300">
-              <p className="text-sm font-bold text-white whitespace-nowrap">{displayDiscountText}</p>
+            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-3 py-2 min-w-[100px] max-w-[140px] flex items-center justify-center group-hover:border-primary transition-all duration-300">
+              <p className="text-xs font-bold text-white text-center leading-tight">{displayDiscountText}</p>
             </div>
           </div>
         )}
