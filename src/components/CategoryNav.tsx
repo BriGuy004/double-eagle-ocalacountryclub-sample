@@ -15,9 +15,10 @@ const CATEGORIES = [
 
 interface CategoryNavProps {
   selectedCategory: string;
+  onCategoryChange?: (category: string) => void;
 }
 
-export const CategoryNav = ({ selectedCategory }: CategoryNavProps) => {
+export const CategoryNav = ({ selectedCategory, onCategoryChange }: CategoryNavProps) => {
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -54,8 +55,14 @@ export const CategoryNav = ({ selectedCategory }: CategoryNavProps) => {
     }
   };
 
-  const handleCategoryChange = (path: string) => {
-    navigate(path);
+  const handleCategoryChange = (categoryName: string, path: string) => {
+    if (onCategoryChange) {
+      // If callback provided, use it (for Home page)
+      onCategoryChange(categoryName);
+    } else {
+      // Otherwise navigate to the category page
+      navigate(path);
+    }
   };
 
   return (
@@ -67,7 +74,7 @@ export const CategoryNav = ({ selectedCategory }: CategoryNavProps) => {
             <Button
               key={category.name}
               variant={selectedCategory === category.name ? "default" : "outline"}
-              onClick={() => handleCategoryChange(category.path)}
+              onClick={() => handleCategoryChange(category.name, category.path)}
               className="font-semibold px-6 py-2 transition-all touch-active"
             >
               {category.name}
@@ -97,7 +104,7 @@ export const CategoryNav = ({ selectedCategory }: CategoryNavProps) => {
               <Button
                 key={category.name}
                 variant={selectedCategory === category.name ? "default" : "outline"}
-                onClick={() => handleCategoryChange(category.path)}
+                onClick={() => handleCategoryChange(category.name, category.path)}
                 className="font-semibold px-4 py-2 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px] touch-active"
               >
                 {category.name}
