@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ArrowLeft, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ClubThemeProvider } from "@/contexts/ClubThemeProvider";
 
 export default function RedemptionPage() {
   const { offerId } = useParams();
@@ -82,153 +83,159 @@ export default function RedemptionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with back button */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <Button 
-            variant="ghost" 
-            onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')}
-            className="flex items-center gap-2 text-foreground hover:text-primary"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Image Carousel - NO TEXT OVERLAY */}
-        <div className="relative mb-8">
-          <div className="relative h-96 md:h-[500px] bg-muted rounded-xl overflow-hidden">
-            <img
-              src={images[currentImageIndex]}
-              alt={`${offer.name} - Image ${currentImageIndex + 1}`}
-              className="w-full h-full object-cover"
-            />
-            
-            {/* Navigation arrows */}
-            {images.length > 1 && (
-              <>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
-                  onClick={prevImage}
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
-                  onClick={nextImage}
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </Button>
-              </>
-            )}
-            
-            {/* Image indicators */}
-            {images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
-                    }`}
-                    onClick={() => setCurrentImageIndex(index)}
-                  />
-                ))}
-              </div>
-            )}
+    <ClubThemeProvider
+      primaryColor={offer.primary_color || "38 70% 15%"}
+      primaryGlowColor={offer.primary_glow_color || "38 70% 25%"}
+      accentColor={offer.accent_color || "45 85% 50%"}
+    >
+      <div className="min-h-screen bg-background">
+        {/* Header with back button */}
+        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
+          <div className="container mx-auto px-4 py-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')}
+              className="flex items-center gap-2 text-foreground hover:text-primary"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
           </div>
         </div>
 
-        {/* Brand Name (repeated below image for clarity) */}
-        <div className="mb-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-            {offer.name}
-          </h2>
-          <p className="text-xl text-muted-foreground mt-2">
-            {offer.city && offer.state ? `${offer.city}, ${offer.state}` : offer.city || offer.state || ''}
-          </p>
-        </div>
-
-        {/* Two-Column Layout: Logo + Visit Website LEFT, Description RIGHT */}
-        <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-8 mb-8">
-          {/* LEFT COLUMN: Logo, Address, Visit Website Button */}
-          <div className="space-y-6">
-            {/* Logo Box */}
-            <div className="bg-white rounded-lg p-6 border border-border flex items-center justify-center min-h-[200px]">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          {/* Image Carousel - NO TEXT OVERLAY */}
+          <div className="relative mb-8">
+            <div className="relative h-96 md:h-[500px] bg-muted rounded-xl overflow-hidden">
               <img
-                src={offer.logo_url}
-                alt={`${offer.name} logo`}
-                className="max-w-full max-h-[180px] object-contain"
+                src={images[currentImageIndex]}
+                alt={`${offer.name} - Image ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover"
               />
+              
+              {/* Navigation arrows */}
+              {images.length > 1 && (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-white/90 text-black"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </Button>
+                </>
+              )}
+              
+              {/* Image indicators */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {images.map((_, index) => (
+                    <button
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
+                      }`}
+                      onClick={() => setCurrentImageIndex(index)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Brand Name (repeated below image for clarity) */}
+          <div className="mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {offer.name}
+            </h2>
+            <p className="text-xl text-muted-foreground mt-2">
+              {offer.city && offer.state ? `${offer.city}, ${offer.state}` : offer.city || offer.state || ''}
+            </p>
+          </div>
+
+          {/* Two-Column Layout: Logo + Visit Website LEFT, Description RIGHT */}
+          <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-8 mb-8">
+            {/* LEFT COLUMN: Logo, Address, Visit Website Button */}
+            <div className="space-y-6">
+              {/* Logo Box */}
+              <div className="bg-white rounded-lg p-6 border border-border flex items-center justify-center min-h-[200px]">
+                <img
+                  src={offer.logo_url}
+                  alt={`${offer.name} logo`}
+                  className="max-w-full max-h-[180px] object-contain"
+                />
+              </div>
+
+              {/* Address */}
+              {offer.full_address && (
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                  <div className="text-foreground">
+                    <p className="font-medium mb-1">Address:</p>
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {offer.full_address}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Visit Website Button - RIGHT BELOW ADDRESS */}
+              {offer.website && (
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="w-full px-6 py-6 text-lg font-semibold"
+                  onClick={() => window.open(offer.website.startsWith('http') ? offer.website : `https://${offer.website}`, '_blank')}
+                >
+                  Visit Website
+                </Button>
+              )}
             </div>
 
-            {/* Address */}
-            {offer.full_address && (
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                <div className="text-foreground">
-                  <p className="font-medium mb-1">Address:</p>
-                  <p className="text-muted-foreground whitespace-pre-line">
-                    {offer.full_address}
+            {/* RIGHT COLUMN: Description & Redemption Info */}
+            <div className="space-y-6">
+              {/* Description */}
+              {offer.description && (
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">About</h3>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {offer.description}
                   </p>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Visit Website Button - RIGHT BELOW ADDRESS */}
-            {offer.website && (
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="w-full px-6 py-6 text-lg font-semibold"
-                onClick={() => window.open(offer.website.startsWith('http') ? offer.website : `https://${offer.website}`, '_blank')}
-              >
-                Visit Website
-              </Button>
-            )}
+              {/* Redemption Info */}
+              {offer.redemption_info && (
+                <div className="bg-muted/50 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">How to Redeem</h3>
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {offer.redemption_info}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* RIGHT COLUMN: Description & Redemption Info */}
-          <div className="space-y-6">
-            {/* Description */}
-            {offer.description && (
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">About</h3>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {offer.description}
-                </p>
-              </div>
-            )}
-
-            {/* Redemption Info */}
-            {offer.redemption_info && (
-              <div className="bg-muted/50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-3">How to Redeem</h3>
-                <p className="text-muted-foreground whitespace-pre-line">
-                  {offer.redemption_info}
-                </p>
-              </div>
-            )}
+          {/* Book Now Button - LARGE & CENTERED AT BOTTOM */}
+          <div className="flex justify-center mt-12">
+            <Button 
+              size="lg" 
+              className="px-16 py-8 text-2xl font-bold min-w-[300px] rounded-xl"
+            >
+              Book Now
+            </Button>
           </div>
-        </div>
-
-        {/* Book Now Button - LARGE & CENTERED AT BOTTOM */}
-        <div className="flex justify-center mt-12">
-          <Button 
-            size="lg" 
-            className="px-16 py-8 text-2xl font-bold min-w-[300px] rounded-xl"
-          >
-            Book Now
-          </Button>
         </div>
       </div>
-    </div>
+    </ClubThemeProvider>
   );
 }
