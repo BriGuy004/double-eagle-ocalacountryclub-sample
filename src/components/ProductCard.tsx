@@ -56,19 +56,20 @@ export const ProductCard = ({
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a2332] to-[#0f1729] border border-white/10 transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 active:scale-[0.98] h-full flex flex-col"
+      className="group cursor-pointer rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] h-full"
       onClick={handleCardClick}
     >
-      {/* Image Container */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted flex-shrink-0">
+      {/* Full Bleed Image with Overlaid Content */}
+      <div className="relative aspect-[4/3] w-full">
         <img
           src={images[0]}
           alt={brand}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover"
           loading="lazy"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
         {/* Bookmark Heart - Top Right */}
         <button
@@ -83,46 +84,33 @@ export const ProductCard = ({
             }`}
           />
         </button>
-      </div>
 
-      {/* Card Content - FIXED COLORS */}
-      <div className="p-4 md:p-5 flex flex-col flex-1 bg-gradient-to-b from-[#1a2332] to-[#151f2e]">
-        {isGolfCategory ? (
-          // GOLF LAYOUT: Brand name + City/State stacked
-          <div className="mb-3 md:mb-4 flex-1">
-            <h4 className="text-lg md:text-xl font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors duration-300">
-              {brand}
-            </h4>
-            {cityState && (
-              <p className="text-sm text-white/60 font-medium">
-                {cityState}
-              </p>
-            )}
-          </div>
-        ) : (
-          // OTHER CATEGORIES: Brand name + Offer box
-          <div className="flex items-start justify-between mb-3 md:mb-4 gap-3 flex-1">
-            <h4 className="text-lg md:text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
-              {brand}
-            </h4>
-            
-            {/* Offer Badge - Better Colors */}
-            <div className="flex-shrink-0 bg-primary/20 border-2 border-primary rounded-lg px-3 py-2 min-w-[100px] max-w-[140px] flex items-center justify-center">
-              <p className="text-xs font-bold text-primary text-center leading-tight">
+        {/* Text overlaid on image at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          {isGolfCategory ? (
+            // GOLF LAYOUT: Brand name + City/State stacked
+            <>
+              <h3 className="text-2xl font-bold text-white mb-1 line-clamp-2">
+                {brand}
+              </h3>
+              {cityState && (
+                <p className="text-white/80 text-sm font-medium">
+                  {cityState}
+                </p>
+              )}
+            </>
+          ) : (
+            // OTHER CATEGORIES: Brand name + Offer text
+            <>
+              <h3 className="text-2xl font-bold text-white mb-1 line-clamp-2">
+                {brand}
+              </h3>
+              <p className="text-white/80 text-sm">
                 {discountText}
               </p>
-            </div>
-          </div>
-        )}
-
-        {/* View Offer Button - Better Contrast */}
-        <Button
-          aria-label={`View offer for ${brand}`}
-          className="w-full font-semibold rounded-xl py-5 md:py-6 text-sm md:text-base transition-all duration-300 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] pointer-events-none mt-auto"
-          style={{ minHeight: "48px" }}
-        >
-          View Offer
-        </Button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
