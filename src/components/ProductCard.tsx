@@ -80,33 +80,39 @@ export const ProductCard = ({
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a2332] to-[#0f1729] border border-white/10 transition-all duration-500 ease-out hover:border-primary/30 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(218,165,32,0.15)] active:scale-[0.98]"
+      className="group cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a2332] to-[#0f1729] border border-white/10 transition-all duration-300 hover:border-primary/30 hover:shadow-xl active:scale-[0.98]"
       onClick={handleCardClick}
     >
-      {/* Image Container */}
+      {/* Image Container - Mobile optimized aspect ratio */}
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         <img
           src={images[0]}
           alt={brand}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
 
         {/* Subtle gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* NEW Badge - Top Left (only if new and not viewed) */}
+        {/* NEW Badge - Top Left (only if new and not viewed) - Smaller on mobile */}
         {showNewBadge && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-1.5 rounded-full shadow-lg animate-pulse">
-            <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+          <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-accent/95 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg z-10">
+            <span className="text-xs font-bold text-accent-foreground tracking-wide">NEW</span>
           </div>
         )}
 
-        {/* Bookmark Heart - Top Right */}
+        {/* Member Exclusive Badge - Smaller on mobile */}
+        <div className={`absolute top-2 ${showNewBadge ? 'right-2 md:right-3' : 'left-2 md:left-3'} md:top-3 bg-primary/95 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg`}>
+          <span className="text-xs font-bold text-white tracking-wide">MEMBER EXCLUSIVE</span>
+        </div>
+
+        {/* Bookmark Heart - Touch-friendly */}
         <button
           onClick={handleBookmarkClick}
           aria-label={isCurrentlyBookmarked ? "Remove bookmark" : "Add bookmark"}
-          className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 transition-all duration-300 hover:scale-110 active:scale-95"
+          className="absolute top-2 right-2 md:top-3 md:right-3 z-10 p-2 md:p-2.5 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 transition-all duration-300 active:scale-95"
+          style={{ minWidth: '44px', minHeight: '44px' }}
         >
           <Heart
             className={`h-5 w-5 transition-all duration-300 ${
@@ -116,33 +122,33 @@ export const ProductCard = ({
         </button>
       </div>
 
-      {/* Card Content */}
-      <div className="p-5">
+      {/* Card Content - Better mobile padding */}
+      <div className="p-4 md:p-5">
         {isGolfCategory ? (
           // GOLF LAYOUT: Brand name + City/State stacked
-          <div className="mb-4 min-h-[68px]">
-            <h4 className="text-xl font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors duration-300">
+          <div className="mb-3 md:mb-4 min-h-[60px] md:min-h-[68px]">
+            <h4 className="text-lg md:text-xl font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors duration-300">
               {brand}
             </h4>
             {cityState && <p className="text-sm text-muted-foreground font-medium">{cityState}</p>}
           </div>
         ) : (
-          // OTHER CATEGORIES LAYOUT: Brand name left, Discount right
-          <div className="flex items-start justify-between mb-4 gap-3 min-h-[68px]">
-            <h4 className="text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
+          // OTHER CATEGORIES LAYOUT: Brand name left, Offer Text right
+          <div className="flex items-start justify-between mb-3 md:mb-4 gap-2 md:gap-3 min-h-[60px] md:min-h-[68px]">
+            <h4 className="text-lg md:text-xl font-bold text-white line-clamp-2 flex-1 group-hover:text-primary transition-colors duration-300">
               {brand}
             </h4>
-            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-3 py-2 min-w-[100px] max-w-[140px] flex items-center justify-center group-hover:border-primary transition-all duration-300">
+            <div className="flex-shrink-0 bg-transparent border-2 border-white rounded-lg px-2 py-1.5 md:px-3 md:py-2 min-w-[90px] md:min-w-[100px] max-w-[120px] md:max-w-[140px] flex items-center justify-center group-hover:border-primary transition-all duration-300">
               <p className="text-xs font-bold text-white text-center leading-tight">{displayDiscountText}</p>
             </div>
           </div>
         )}
 
-        {/* View Offer Button */}
+        {/* View Offer Button - Touch-friendly */}
         <Button
           aria-label={`View offer for ${brand}`}
           variant="default"
-          className="w-full font-semibold rounded-xl py-6 text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/20 group-hover:scale-[1.02] active:scale-[0.98] pointer-events-none"
+          className="w-full font-semibold rounded-xl py-5 md:py-6 text-sm md:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98] pointer-events-none"
           style={{ minHeight: "48px" }}
         >
           View Offer
