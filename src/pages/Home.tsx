@@ -182,7 +182,16 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {offers.map(offer => (
-              <ProductCard key={offer.id} {...offer} />
+              <ProductCard 
+                key={offer.id}
+                offerId={offer.id}
+                brand={offer.name}
+                title={offer.name}
+                images={[offer.offer_card_url || offer.hero_image_url]}
+                tags={[`${offer.city}, ${offer.state}`]}
+                category={offer.category}
+                discountText={offer.discount_text}
+              />
             ))}
           </div>
         )}
