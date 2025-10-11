@@ -682,15 +682,16 @@ export default function ClubAdmin() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
-                  Availability Calendar
+                  <DollarSign className="h-5 w-5" />
+                  Default Guest Play Price
                 </CardTitle>
-                <CardDescription>Manage your guest play tee times and pricing</CardDescription>
+                <CardDescription>
+                  Set your standard pricing (can be overridden for specific dates below)
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Default Pricing */}
+              <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="guest-price">Default Guest Play Price (per round)</Label>
+                  <Label htmlFor="guest-price">Price per Round</Label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -700,223 +701,33 @@ export default function ClubAdmin() {
                       step="0.01"
                       placeholder="0.00"
                       value={ownCourseDetails.guest_play_price ?? ""}
-                      onChange={(e) =>
-                        setOwnCourseDetails((prev) => ({
-                          ...prev,
-                          guest_play_price: e.target.value || null,
-                        }))
-                      }
+                      onChange={(e) => setOwnCourseDetails(prev => ({
+                        ...prev,
+                        guest_play_price: e.target.value ? parseFloat(e.target.value).toString() : null,
+                      }))}
                       className="pl-10"
                     />
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    This is the default price. You can override it for specific dates below.
-                  </p>
                 </div>
 
-                {/* Add Availability Slot */}
-                <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Add Available Date
-                  </h3>
-                  
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label>Select Date</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !selectedDate && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={setSelectedDate}
-                            disabled={(date) => date < startOfToday()}
-                            initialFocus
-                            className="pointer-events-auto"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="price-override">Price Override (optional)</Label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="price-override"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Leave blank for default"
-                          value={newSlot.price_override ?? ""}
-                          onChange={(e) =>
-                            setNewSlot((prev) => ({
-                              ...prev,
-                              price_override: e.target.value ? parseFloat(e.target.value) : null,
-                            }))
-                          }
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Start Time (optional)</Label>
-                      <Select
-                        value={newSlot.start_time}
-                        onValueChange={(value) =>
-                          setNewSlot((prev) => ({ ...prev, start_time: value }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Any time" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="">Any time</SelectItem>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>End Time (optional)</Label>
-                      <Select
-                        value={newSlot.end_time}
-                        onValueChange={(value) =>
-                          setNewSlot((prev) => ({ ...prev, end_time: value }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Any time" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="">Any time</SelectItem>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="slot-notes">Notes (optional)</Label>
-                      <Textarea
-                        id="slot-notes"
-                        placeholder="e.g., Cart fee additional, Must call pro shop to confirm"
-                        value={newSlot.notes}
-                        onChange={(e) =>
-                          setNewSlot((prev) => ({ ...prev, notes: e.target.value }))
-                        }
-                        rows={2}
-                      />
-                    </div>
-                  </div>
-
-                  <Button onClick={addAvailabilitySlot} className="w-full">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add to Calendar
-                  </Button>
-                </div>
-
-                {/* Upcoming Availability */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">Upcoming Availability</h3>
-                    <Badge variant="secondary">{availabilitySlots.length} slots</Badge>
-                  </div>
-
-                  {availabilitySlots.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p>No upcoming availability. Add dates above to get started.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {availabilitySlots.map((slot) => (
-                        <div
-                          key={slot.id}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium">
-                                {format(new Date(slot.available_date), "EEEE, MMMM d, yyyy")}
-                              </span>
-                            </div>
-                            {(slot.start_time || slot.end_time) && (
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
-                                <Clock className="h-3 w-3" />
-                                <span>
-                                  {slot.start_time || "Any time"} - {slot.end_time || "Any time"}
-                                </span>
-                              </div>
-                            )}
-                            {slot.price_override && (
-                              <div className="flex items-center gap-2 text-sm ml-6">
-                                <DollarSign className="h-3 w-3" />
-                                <span className="font-semibold text-green-600 dark:text-green-400">
-                                  ${slot.price_override.toFixed(2)}
-                                </span>
-                              </div>
-                            )}
-                            {slot.notes && (
-                              <p className="text-sm text-muted-foreground mt-2 ml-6">{slot.notes}</p>
-                            )}
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => deleteAvailabilitySlot(slot.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* General Availability Notes */}
                 <div className="space-y-2">
-                  <Label htmlFor="availability-notes">General Availability Notes</Label>
+                  <Label htmlFor="general-notes">General Booking Information</Label>
                   <Textarea
-                    id="availability-notes"
-                    placeholder="e.g., Advance booking required, Cart fee additional, Dress code strictly enforced"
+                    id="general-notes"
+                    placeholder="e.g., Must book 48 hours in advance, Cart fee additional $25, Dress code strictly enforced"
                     value={ownCourseDetails.availability_notes ?? ""}
-                    onChange={(e) =>
-                      setOwnCourseDetails((prev) => ({
-                        ...prev,
-                        availability_notes: e.target.value || null,
-                      }))
-                    }
+                    onChange={(e) => setOwnCourseDetails(prev => ({
+                      ...prev,
+                      availability_notes: e.target.value,
+                    }))}
                     rows={3}
                   />
-                  <p className="text-sm text-muted-foreground">
-                    These notes will appear on your offer card for all dates
-                  </p>
                 </div>
 
-                <Button onClick={saveOwnCourseDetails} disabled={saving === "own-course"} className="w-full" size="lg">
+                <Button
+                  onClick={saveOwnCourseDetails}
+                  disabled={saving === "own-course"}
+                >
                   {saving === "own-course" ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -925,10 +736,196 @@ export default function ClubAdmin() {
                   ) : (
                     <>
                       <Save className="mr-2 h-4 w-4" />
-                      Save General Settings
+                      Save Default Settings
                     </>
                   )}
                 </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Guest Play Availability Calendar
+                </CardTitle>
+                <CardDescription>
+                  Select specific dates and times when reciprocal play is available
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Add New Date */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label>Select Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={setSelectedDate}
+                          disabled={(date) => !isAfter(date, startOfToday())}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label>Time Window</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Select
+                        value={newSlot.start_time}
+                        onValueChange={(val) => setNewSlot(prev => ({ ...prev, start_time: val }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Start" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_OPTIONS.map(time => (
+                            <SelectItem key={time} value={time}>{time}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select
+                        value={newSlot.end_time}
+                        onValueChange={(val) => setNewSlot(prev => ({ ...prev, end_time: val }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="End" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_OPTIONS.map(time => (
+                            <SelectItem key={time} value={time}>{time}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Price Override (optional)</Label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Use default price"
+                        value={newSlot.price_override ?? ""}
+                        onChange={(e) => setNewSlot(prev => ({
+                          ...prev,
+                          price_override: e.target.value ? parseFloat(e.target.value) : null,
+                        }))}
+                        className="pl-10"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Leave empty to use default price
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Date-Specific Notes (optional)</Label>
+                    <Input
+                      placeholder="e.g., Tournament day - limited availability"
+                      value={newSlot.notes}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, notes: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  onClick={addAvailabilitySlot}
+                  disabled={!selectedDate}
+                  className="w-full"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Availability Slot
+                </Button>
+
+                {/* Current Availability */}
+                <div className="space-y-3 mt-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Current Availability</h3>
+                    <Badge variant="secondary">{availabilitySlots.length} dates</Badge>
+                  </div>
+
+                  {availabilitySlots.length === 0 ? (
+                    <Card className="border-dashed">
+                      <CardContent className="pt-6 text-center text-muted-foreground">
+                        <CalendarIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                        <p>No availability slots added yet</p>
+                        <p className="text-sm">Add dates above to allow reciprocal play</p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="space-y-2">
+                      {availabilitySlots.map(slot => (
+                        <Card key={slot.id}>
+                          <CardContent className="pt-4">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-semibold">
+                                    {format(new Date(slot.available_date), "EEEE, MMMM d, yyyy")}
+                                  </span>
+                                </div>
+                                
+                                {(slot.start_time || slot.end_time) && (
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                                    <Clock className="h-3 w-3" />
+                                    <span>
+                                      {slot.start_time || "Any time"} - {slot.end_time || "Any time"}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {slot.price_override && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <DollarSign className="h-3 w-3 text-primary" />
+                                    <span className="font-semibold text-primary">
+                                      ${slot.price_override.toFixed(2)} (override)
+                                    </span>
+                                  </div>
+                                )}
+
+                                {slot.notes && (
+                                  <p className="text-sm text-muted-foreground mt-2">
+                                    {slot.notes}
+                                  </p>
+                                )}
+                              </div>
+
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => deleteAvailabilitySlot(slot.id)}
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
