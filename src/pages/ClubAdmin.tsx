@@ -462,27 +462,54 @@ export default function ClubAdmin() {
   };
 
   const toggleVisibilityRestriction = async (restrictedClubId: string) => {
-    if (!clubId) return;
+    if (!clubId) {
+      toast({
+        title: "Error",
+        description: "Club ID not found.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const existing = visibilityRestrictions.find((r) => r.restricted_club_id === restrictedClubId);
+    const existing = visibilityRestrictions.find(r => r.restricted_club_id === restrictedClubId);
+
+    console.log("Toggle visibility restriction:", {
+      clubId,
+      restrictedClubId,
+      existing,
+      action: existing ? "remove" : "add"
+    });
 
     try {
       if (existing) {
-        // Remove restriction
-        const { error } = await supabase.from("club_visibility_restrictions").delete().eq("id", existing.id);
+        // Remove restriction - allow them to see our course
+        console.log("Deleting restriction with id:", existing.id);
+        
+        const { error } = await supabase
+          .from("club_visibility_restrictions")
+          .delete()
+          .eq("id", existing.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Delete error:", error);
+          throw error;
+        }
 
-        setVisibilityRestrictions((prev) => prev.filter((r) => r.id !== existing.id));
+        setVisibilityRestrictions(prev => prev.filter(r => r.id !== existing.id));
 
         toast({
           title: "Visibility Updated",
-          description: "This club can now see your course.",
+          description: "This club can now see your course in their marketplace.",
         });
       } else {
-        // Add restriction
-        const club = allGolfClubs.find((c) => c.club_id === restrictedClubId);
-
+        // Add restriction - hide our course from them
+        const club = allGolfClubs.find(c => c.club_id === restrictedClubId);
+        
+        console.log("Inserting new restriction:", {
+          club_id: clubId,
+          restricted_club_id: restrictedClubId
+        });
+        
         const { data, error } = await supabase
           .from("club_visibility_restrictions")
           .insert({
@@ -492,9 +519,14 @@ export default function ClubAdmin() {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Insert error:", error);
+          throw error;
+        }
 
-        setVisibilityRestrictions((prev) => [
+        console.log("Restriction added successfully:", data);
+
+        setVisibilityRestrictions(prev => [
           ...prev,
           {
             id: data.id,
@@ -506,23 +538,37 @@ export default function ClubAdmin() {
 
         toast({
           title: "Visibility Updated",
-          description: "This club can no longer see your course.",
+          description: "This club can no longer see your course in their marketplace.",
         });
       }
-    } catch (error) {
-      console.error("Error toggling visibility restriction:", error);
+    } catch (error: any) {
+      console.error("Full error object:", error);
       toast({
         title: "Error",
-        description: "Failed to update visibility restriction.",
+        description: error.message || "Failed to update visibility restriction. Check console for details.",
         variant: "destructive",
       });
     }
   };
 
   const updateVisibilitySetting = async (offerSetting: OfferVisibility) => {
-    if (!clubId) return;
+    if (!clubId) {
+      toast({
+        title: "Error",
+        description: "Club ID not found.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setSaving(offerSetting.offer_id);
+
+    console.log("Updating visibility setting:", {
+      clubId,
+      offerId: offerSetting.offer_id,
+      isVisible: offerSetting.is_visible,
+      hasExistingId: !!offerSetting.id
+    });
 
     try {
       const settingData = {
@@ -534,16 +580,44 @@ export default function ClubAdmin() {
       };
 
       if (offerSetting.id) {
-        const { error } = await supabase.from("club_offer_visibility").update(settingData).eq("id", offerSetting.id);
+        // Update existing setting
+        console.log("Updating existing setting with id:", offerSetting.id);
+        
+        const { error } = await supabase
+          .from("club_offer_visibility")
+          .update(settingData)
+          .eq("id", offerSetting.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Update error:", error);
+          throw error;
+        }
+
+        console.log("Update successful");
       } else {
-        const { data, error } = await supabase.from("club_offer_visibility").insert(settingData).select().single();
+        // Insert new setting
+        console.log("Inserting new setting");
+        
+        const { data, error } = await supabase
+          .from("club_offer_visibility")
+          .insert(settingData)
+          .select()
+          .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Insert error:", error);
+          throw error;
+        }
 
-        setVisibilitySettings((prev) =>
-          prev.map((s) => (s.offer_id === offerSetting.offer_id ? { ...s, id: data.id } : s)),
+        console.log("Insert successful:", data);
+
+        // Update local state with new ID
+        setVisibilitySettings(prev =>
+          prev.map(s =>
+            s.offer_id === offerSetting.offer_id
+              ? { ...s, id: data.id }
+              : s
+          )
         );
       }
 
@@ -551,11 +625,11 @@ export default function ClubAdmin() {
         title: "Settings Updated",
         description: "Offer visibility settings have been saved.",
       });
-    } catch (error) {
-      console.error("Error updating visibility setting:", error);
+    } catch (error: any) {
+      console.error("Full error object:", error);
       toast({
         title: "Error",
-        description: "Failed to update visibility settings.",
+        description: error.message || "Failed to update visibility settings. Check console for details.",
         variant: "destructive",
       });
     } finally {
