@@ -1,5 +1,6 @@
-import { X, Home, Trophy, Hotel, UtensilsCrossed, ShoppingBag, User } from "lucide-react";
+import { X, Home, Trophy, Building2, Utensils, ShoppingBag, User, Music, Plane, ShoppingCart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useBrand } from "@/contexts/BrandContext";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -9,15 +10,18 @@ interface MobileNavProps {
 const navItems = [
   { name: "Home", path: "/", icon: Home },
   { name: "Golf", path: "/golf", icon: Trophy },
-  { name: "Hotels", path: "/hotels", icon: Hotel },
-  { name: "Dining", path: "/dining", icon: UtensilsCrossed },
-  { name: "Lifestyle", path: "/", icon: ShoppingBag },
-  { name: "Member Account", path: "/member-dashboard", icon: User }
+  { name: "Dining", path: "/dining", icon: Utensils },
+  { name: "Shopping", path: "/shopping", icon: ShoppingCart },
+  { name: "Entertainment", path: "/entertainment", icon: Music },
+  { name: "Hotels", path: "/hotels", icon: Building2 },
+  { name: "Lifestyle", path: "/lifestyle", icon: ShoppingBag },
+  { name: "Travel", path: "/travel", icon: Plane },
 ];
 
 export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentBrand } = useBrand();
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -30,55 +34,75 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-in fade-in"
         onClick={onClose}
       />
       
-      {/* Drawer */}
-      <nav 
-        className="fixed top-0 left-0 h-full w-[280px] bg-[#1a2332] z-50 shadow-2xl animate-slide-in-right"
-      >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors active:scale-95"
-        >
-          <X className="h-6 w-6 text-white" />
-        </button>
-
-        {/* Logo */}
-        <div className="p-6 border-b border-white/10">
-          <img 
-            src="/lovable-uploads/lantana-logo.png" 
-            alt="Lantana Golf Club" 
-            className="h-16 w-auto"
-          />
-        </div>
-
-        {/* Nav Links */}
-        <div className="py-4">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            
-            return (
+      {/* Sidebar */}
+      <div className="fixed inset-y-0 left-0 w-[280px] bg-gradient-to-b from-[#1a2332] to-[#0f1729] z-50 shadow-2xl animate-in slide-in-from-left duration-300">
+        <div className="flex flex-col h-full">
+          {/* Header with dynamic brand */}
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              {currentBrand ? (
+                <img 
+                  src={currentBrand.logo_url} 
+                  alt={currentBrand.name}
+                  className="h-16 w-auto"
+                />
+              ) : (
+                <div className="h-16 w-16 bg-primary/20 rounded animate-pulse" />
+              )}
+              
               <button
-                key={item.name}
-                onClick={() => handleNavigation(item.path)}
-                className={`w-full flex items-center gap-4 px-6 py-4 text-left transition-colors active:scale-95 ${
-                  isActive 
-                    ? "bg-[#e67e3c] text-white" 
-                    : "text-white hover:bg-white/10"
-                }`}
-                style={{ minHeight: "56px" }}
+                onClick={onClose}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
               >
-                <Icon className="h-6 w-6" />
-                <span className="text-lg font-medium">{item.name}</span>
+                <X className="h-6 w-6 text-white" />
               </button>
-            );
-          })}
+            </div>
+            
+            {currentBrand && (
+              <p className="text-sm text-white/70 font-medium">
+                {currentBrand.name}
+              </p>
+            )}
+          </div>
+
+          {/* Navigation Items */}
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavigation(item.path)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive 
+                      ? "bg-white/20 text-white" 
+                      : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="font-medium">{item.name}</span>
+                </button>
+              );
+            })}
+
+            <div className="border-t border-white/10 my-4" />
+
+            <button
+              onClick={() => handleNavigation("/member-dashboard")}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-white/10 transition-colors"
+            >
+              <User className="h-5 w-5" />
+              <span className="font-medium">Member Account</span>
+            </button>
+          </nav>
         </div>
-      </nav>
+      </div>
     </>
   );
 };
